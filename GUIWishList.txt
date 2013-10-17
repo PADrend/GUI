@@ -1,0 +1,13 @@
+Was hätt'ns denn gerne?
+
+- [Claudius] : Rendern von veränderten Bereichen in Hintergrudpuffer (13:19 21.06.2009)
+- [Ralf] : Andockbare Fenster (z.B. an den rechten Bildschirmrand)
+- [Claudius] : Neues transparentes Design (15:55 21.04.2008)
+- [Claudius] : Unterschidliche Mauscursor (z.B. beim Verschieben) (15:57 21.04.2008)
+- [Claudius] : Funktionierende Speicherverwaltung (17:13 21.04.2008)
+
+Erledigt:
+- [Ralf] : Flag zum entfernen des Größenänderungsbuttons bei Fenstern (15:54 21.04.2008)
+- [Ralf] : Deaktivierbare Icons zum Minimieren und Schließen (10:25 25.04.2008)
+- [Claudius] : EScript interface (15:56 21.04.2008)
+- [Claudius] : Listen-Element (15:56 21.04.2008)

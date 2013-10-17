@@ -1,0 +1,7 @@
+# - Configuration file for the GUI library
+# It defines the target "GUI".
+#
+@PACKAGE_INIT@
+
+# Import the exported targets
+include("@PACKAGE_CMAKE_INSTALL_CMAKECONFIGDIR@/GUITargets.cmake")
