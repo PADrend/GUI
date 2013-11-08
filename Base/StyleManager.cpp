@@ -118,19 +118,23 @@ void StyleManager::setDefaultFont(propertyId_t type,AbstractFont * f){
 
 // registry for mouse cursor
 
-void StyleManager::setMouseCursor(propertyName_t name, Util::UI::Cursor * cursor) {
+void StyleManager::setMouseCursor(propertyName_t name, std::shared_ptr<Util::UI::Cursor> cursor) {
 	if(name.empty()) {
 		WARN("Invalid name or cursor.");
 	} else {
-		cursorRegistry[name].reset(cursor);
+		cursorRegistry[name] = std::move(cursor);
 	}
 }
 
-Util::UI::Cursor * StyleManager::getMouseCursor(propertyName_t name) const{
-	const auto it = cursorRegistry.find(name);
-	return (it == cursorRegistry.end() || !it->second) ? nullptr : it->second.get();
+void StyleManager::setDefaultMouseCursor(propertyName_t name) {
+	setMouseCursor(name, nullptr);
 }
-	
+
+std::shared_ptr<Util::UI::Cursor> StyleManager::getMouseCursor(propertyName_t name) const{
+	const auto it = cursorRegistry.find(name);
+	return (it == cursorRegistry.end() || !it->second) ? nullptr : it->second;
+}
+
 void StyleManager::removeMouseCursor(propertyName_t name) {
 	cursorRegistry.erase(name);
 }

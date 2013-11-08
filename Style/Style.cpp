@@ -143,7 +143,7 @@ void Style::initStyleManager(StyleManager & m){
 	m.setGlobalValue(PROPERTY_WINDOW_TITLEBAR_HEIGHT , 16);
 
 	// mousecursor
-	m.setMouseCursor(PROPERTY_MOUSECURSOR_DEFAULT, nullptr);
+	m.setDefaultMouseCursor(PROPERTY_MOUSECURSOR_DEFAULT);
 
 	// misc
 	m.setGlobalValue(PROPERTY_KEY_REPEAT_DELAY_1 , 0.5 );

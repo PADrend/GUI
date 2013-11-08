@@ -81,12 +81,13 @@ class StyleManager{
 	//! @name Mousecursor
 	//  @{
 	private:
-		std::unordered_map<propertyName_t, std::unique_ptr<Util::UI::Cursor>> cursorRegistry;
-		std::unique_ptr<Util::UI::Cursor> defaultMouseCursor;
+		std::unordered_map<propertyName_t, std::shared_ptr<Util::UI::Cursor>> cursorRegistry;
+		std::shared_ptr<Util::UI::Cursor> defaultMouseCursor;
 
 	public:
-		void setMouseCursor(propertyName_t name, Util::UI::Cursor * cursor);
-		Util::UI::Cursor * getMouseCursor(propertyName_t name) const;
+		void setMouseCursor(propertyName_t name, std::shared_ptr<Util::UI::Cursor> cursor);
+		void setDefaultMouseCursor(propertyName_t name);
+		std::shared_ptr<Util::UI::Cursor> getMouseCursor(propertyName_t name) const;
 		void removeMouseCursor(propertyName_t name);
 	
 	//  @}

@@ -104,22 +104,22 @@ class MouseCursorHandler : public MouseMotionListener, public MouseButtonListene
 			activateCursor(nullptr);
 		}
 		
-		Util::UI::Cursor * queryHoverComponentMouseCursor(const Vec2 & absPos)const{
+		std::shared_ptr<Util::UI::Cursor> queryHoverComponentMouseCursor(const Vec2 & absPos)const{
 			for(Component * c=gui->getComponentAtPos(absPos);c!=nullptr;c=c->getParent()){
 				if(c->hasMouseCursorProperty())
-					return gui->getStyleManager().getMouseCursor(c->getMouseCursorProperty());
+					return std::move(gui->getStyleManager().getMouseCursor(c->getMouseCursorProperty()));
 			}
 			return nullptr;
 		}
 		// if no cursor is given, the systems's default cursor is used (internally represented by nullptr)
-		void activateCursor(Util::UI::Cursor * cursor){
-			if(gui->getWindow()!=nullptr && gui->getWindow()->getCursor()!=cursor)
-				gui->getWindow()->setCursor(cursor);
+		void activateCursor(std::shared_ptr<Util::UI::Cursor> cursor){
+			if(gui->getWindow()!=nullptr && gui->getWindow()->getCursor() != cursor)
+				gui->getWindow()->setCursor(std::move(cursor));
 		}
 		
 		// ---|> MouseButtonListener
 		listenerResult_t onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) override    {
-			activateCursor(queryHoverComponentMouseCursor(Geometry::Vec2(buttonEvent.x, buttonEvent.y)));
+			activateCursor(std::move(queryHoverComponentMouseCursor(Geometry::Vec2(buttonEvent.x, buttonEvent.y))));
 			cursorLockedByButton = buttonEvent.pressed;
 			return LISTENER_EVENT_NOT_CONSUMED;
 		}
@@ -128,7 +128,7 @@ class MouseCursorHandler : public MouseMotionListener, public MouseButtonListene
 		listenerResult_t onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) override{
 			// if mouse button is pressed cursor should not be changed, cause position can be outside component and would end in cursor switch!
 			if(!cursorLockedByButton){
-				activateCursor(queryHoverComponentMouseCursor(Geometry::Vec2(motionEvent.x, motionEvent.y)));
+				activateCursor(std::move(queryHoverComponentMouseCursor(Geometry::Vec2(motionEvent.x, motionEvent.y))));
 			}
 			return LISTENER_EVENT_NOT_CONSUMED;
 		}
