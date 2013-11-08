@@ -77,7 +77,9 @@ class BitmapFont : public AbstractFont{
 			const auto it = glyphs.find(characterCode);
 			return it == glyphs.end() ? emptyGlyph : it->second;
 		}
-		Util::Bitmap * getBitmap()const			{	return bitmap->getBitmap();	}
+		const Util::Reference<Util::Bitmap> & getBitmap() const {
+			return bitmap->getBitmap();
+		}
 
 		// ---|> AbstractFont
 		virtual void enable();

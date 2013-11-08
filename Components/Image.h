@@ -48,10 +48,9 @@ class Image: public Component {
 			invalidateRegion();
 		}
 		ImageData * getImageData()const				{	return data.get();	}
-		Util::Bitmap * getBitmap()					{	return data->getBitmap();	}
-		const Util::Bitmap * getBitmap()const		{	return data->getBitmap();	}
+		const Util::Bitmap * getBitmap() const		{	return data->getBitmap().get();	}
 		void updateData(const Util::Bitmap * bitmap){	
-			data->updateData(bitmap);	
+			data->updateData(*bitmap);	
 			invalidateRegion();
 		}
 

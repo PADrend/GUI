@@ -17,8 +17,11 @@
 namespace GUI{
 
 //! (ctor)
-ImageData::ImageData(Util::Bitmap * _bitmap):
-		ReferenceCounter_t(),bitmap(_bitmap),textureId(0),dataHasChanged(false) {
+ImageData::ImageData(Util::Reference<Util::Bitmap> _bitmap):
+		ReferenceCounter_t(),
+		bitmap(std::move(_bitmap)),
+		textureId(0),
+		dataHasChanged(false) {
 	dataChanged();
 }
 
@@ -72,12 +75,12 @@ void ImageData::dataChanged() {
 	dataHasChanged=true;
 }
 
-void ImageData::updateData(const Util::Bitmap * _bitmap) {
-	if(_bitmap->getPixelFormat() != getBitmap()->getPixelFormat()){
+void ImageData::updateData(const Util::Bitmap & _bitmap) {
+	if(_bitmap.getPixelFormat() != getBitmap()->getPixelFormat()){
 		WARN("updateData: Different pixel formats!");
 		return;
 	}
-	std::copy(_bitmap->data(), _bitmap->data() + std::min<size_t>(_bitmap->getDataSize(),getBitmap()->getDataSize()), getLocalData());
+	std::copy(_bitmap.data(), _bitmap.data() + std::min<size_t>(_bitmap.getDataSize(), getBitmap()->getDataSize()), getLocalData());
 	dataChanged();
 }
 

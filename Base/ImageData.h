@@ -40,7 +40,7 @@ namespace GUI {
 class ImageData: public Util::ReferenceCounter<ImageData> {
 	public:
 
-		ImageData(Util::Bitmap * _bitmap);
+		ImageData(Util::Reference<Util::Bitmap> _bitmap);
 		~ImageData();
 
 	public:
@@ -49,10 +49,11 @@ class ImageData: public Util::ReferenceCounter<ImageData> {
 		uint8_t * getLocalData();
 		const uint8_t * getLocalData() const;
 
-		Util::Bitmap * getBitmap()				{	return bitmap.get();	}
-		const Util::Bitmap * getBitmap()const	{	return bitmap.get();	}
+		const Util::Reference<Util::Bitmap> & getBitmap() const {
+			return bitmap;
+		}
 
-		void updateData(const Util::Bitmap * bitmap);
+		void updateData(const Util::Bitmap & bitmap);
 
 		bool enable();
 		void disable();
