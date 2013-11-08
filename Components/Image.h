@@ -37,7 +37,7 @@ class Image: public Component {
 	public:
 
 		Image(GUI_Manager & gui,const Geometry::Rect & relRect,flag_t flags=0);
-		Image(GUI_Manager & gui,Util::Bitmap * bitmap,flag_t flags=0);
+		Image(GUI_Manager & gui, const Util::Bitmap & bitmap, flag_t flags=0);
 
 		virtual ~Image();
 
@@ -48,9 +48,11 @@ class Image: public Component {
 			invalidateRegion();
 		}
 		ImageData * getImageData()const				{	return data.get();	}
-		const Util::Bitmap * getBitmap() const		{	return data->getBitmap().get();	}
-		void updateData(const Util::Bitmap * bitmap){	
-			data->updateData(*bitmap);	
+		const Util::Reference<Util::Bitmap> & getBitmap() const {
+			return data->getBitmap();
+		}
+		void updateData(const Util::Bitmap & bitmap) {
+			data->updateData(bitmap);
 			invalidateRegion();
 		}
 

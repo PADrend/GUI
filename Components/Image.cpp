@@ -29,18 +29,17 @@ Image::Image(GUI_Manager & _gui,const Geometry::Rect & _r,flag_t _flags/*=0*/):
 }
 
 //! (ctor)
-Image::Image(GUI_Manager & _gui,Util::Bitmap * _bitmap,flag_t _flags/*=0*/):
-		Component(_gui,_flags),data(nullptr ) {
-	data = new ImageData(new Util::Bitmap(*_bitmap));
-	if(_bitmap){
-		setWidth(_bitmap->getWidth());
-		setHeight(_bitmap->getHeight());
-	}
+Image::Image(GUI_Manager & _gui, 
+			 const Util::Bitmap & _bitmap, 
+			 flag_t _flags/*=0*/):
+		Component(_gui,_flags),
+		data(new ImageData(new Util::Bitmap(_bitmap))) {
+	setWidth(_bitmap.getWidth());
+	setHeight(_bitmap.getHeight());
 }
 
 //! (dtor)
-Image::~Image() {
-}
+Image::~Image() = default;
 
 //! ---|> Component
 void Image::doDisplay(const Geometry::Rect & /*region*/) {

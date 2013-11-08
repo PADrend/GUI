@@ -884,12 +884,12 @@ Image *GUI_Manager::createImage(const Util::FileName & fileName, flag_t flags/*=
 	if (bitmap.isNull()) {
 		return nullptr;
 	}
-	auto image = new Image(*this, bitmap.get(), flags);
+	auto image = new Image(*this, *bitmap.get(), flags);
 	return image;
 }
 
 //! [factory] Image
-Image *GUI_Manager::createImage(Util::Bitmap * bitmap, flag_t flags/*=0*/) {
+Image *GUI_Manager::createImage(const Util::Bitmap & bitmap, flag_t flags/*=0*/) {
 	return new Image(*this, bitmap, flags);
 }
 

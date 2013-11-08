@@ -269,7 +269,7 @@ class GUI_Manager : public Util::ReferenceCounter<GUI_Manager>{
 		Icon * createIcon(const Geometry::Rect & r,flag_t flags=0);
 		Image * createImage(const Geometry::Rect & r,flag_t flags=0);
 		Image * createImage(const Util::FileName & fileName,flag_t flags=0);
-		Image * createImage(Util::Bitmap * bitmap,flag_t flags=0);
+		Image * createImage(const Util::Bitmap & bitmap,flag_t flags=0);
 		Label * createLabel(const Geometry::Rect & r,const std::string & text="",flag_t flags=0);
 		Label * createLabel(const std::string & text="",flag_t flags=0);
 		ListView * createListView(flag_t flags=0);
