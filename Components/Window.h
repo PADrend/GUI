@@ -32,7 +32,7 @@ class Window : public Container,public ActionListener,public MouseButtonListener
 		static const flag_t NO_CLOSE_BUTTON=1<<24;
 		static const flag_t NO_MINIMIZE_BUTTON=1<<25;
 		static const flag_t NO_RESIZE_PANEL=1<<26;
-		static const flag_t HIDDEN_WINDOW=1<<27;  //!< Only the content of the window is shown, if it is not selected.
+		static const flag_t HIDDEN_WINDOW=1<<27; //!< Only the content of the window is shown, if it is not selected.
 		static const flag_t ONE_TIME_WINDOW=1<<28; //! Destroy the content when closed.
 
 		Window(GUI_Manager & gui,const Geometry::Rect & r,const std::string & title="",flag_t flags=0);

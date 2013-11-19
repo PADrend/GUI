@@ -20,7 +20,7 @@ namespace GUI {
  **     Checkbox ---|> Component
  **
  **/
-class Checkbox : public Container,public MouseButtonListener,public MouseClickListener,public KeyListener  {
+class Checkbox : public Container,public MouseButtonListener,public MouseClickListener,public KeyListener {
 		PROVIDES_TYPE_NAME(Checkbox)
 	public:
 		Checkbox(GUI_Manager & gui,bool checked=false,const std::string & text="",flag_t flags=0);

@@ -32,8 +32,8 @@ class AbstractFont : public Util::ReferenceCounter<AbstractFont> {
 		// ---o
 		virtual void enable()	{	}
 		virtual void disable()	{	}
-		virtual void renderText( const Geometry::Vec2 & pos, const std::string  & text, const Util::Color4ub & color )=0;
-		virtual Geometry::Vec2 getRenderedTextSize( const std::string  & text )=0;
+		virtual void renderText( const Geometry::Vec2 & pos, const std::string & text, const Util::Color4ub & color )=0;
+		virtual Geometry::Vec2 getRenderedTextSize( const std::string & text )=0;
 
 		uint32_t getLineHeight()const				{	return lineHeight;	}
 

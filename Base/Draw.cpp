@@ -364,7 +364,7 @@ void Draw::drawText(const std::string & text, const Geometry::Vec2 pos,AbstractF
 }
 
 //! (static)
-void Draw::drawText(const std::string & text,const Geometry::Rect & rect,AbstractFont * font,const Util::Color4ub &  c,unsigned int style){
+void Draw::drawText(const std::string & text,const Geometry::Rect & rect,AbstractFont * font,const Util::Color4ub & c,unsigned int style){
 	if(font==nullptr || text.empty())
 		return;
 	font->enable();

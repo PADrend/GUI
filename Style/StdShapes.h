@@ -22,7 +22,7 @@ namespace GUI {
  **/
 class RectShape : public AbstractShape{
 	public:
-		RectShape(Util::Color4ub  _bgColor, Util::Color4ub  _lineColor, bool _blend) :
+		RectShape(Util::Color4ub _bgColor, Util::Color4ub _lineColor, bool _blend) :
 				bgColor(std::move(_bgColor)),lineColor(std::move(_lineColor)),blend(_blend)	{}
 		virtual ~RectShape()	{}
 
@@ -40,7 +40,7 @@ class RectShape : public AbstractShape{
  **/
 class Rect3dShape : public AbstractShape{
 	public:
-		Rect3dShape(Util::Color4ub  _bgColor1, Util::Color4ub  _bgColor2,bool _blend,bool _invert=false) :
+		Rect3dShape(Util::Color4ub _bgColor1, Util::Color4ub _bgColor2,bool _blend,bool _invert=false) :
 				bgColor1(std::move(_bgColor1)),bgColor2(std::move(_bgColor2)),blend(_blend),invert(_invert){}
 		virtual ~Rect3dShape()	{}
 
@@ -59,7 +59,7 @@ class Rect3dShape : public AbstractShape{
  **/
 class ShadowedRectShape : public AbstractShape{
 	public:
-		ShadowedRectShape(Util::Color4ub  _bgColor, Util::Color4ub  _lineColor, bool _blend) :
+		ShadowedRectShape(Util::Color4ub _bgColor, Util::Color4ub _lineColor, bool _blend) :
 				bgColor(std::move(_bgColor)),lineColor(std::move(_lineColor)),blend(_blend)	{}
 		virtual ~ShadowedRectShape()	{}
 
@@ -77,7 +77,7 @@ class ShadowedRectShape : public AbstractShape{
  **/
 class Rounded3dRectShape : public AbstractShape{
 	public:
-		Rounded3dRectShape(Util::Color4ub  _bgColor1, Util::Color4ub  _bgColor2,bool _blend,
+		Rounded3dRectShape(Util::Color4ub _bgColor1, Util::Color4ub _bgColor2,bool _blend,
 							float _roundnessTL=2,float _roundnessTR=2,float _roundnessBL=2,float _roundnessBR=2) :
 				bgColor1(std::move(_bgColor1)),bgColor2(std::move(_bgColor2)),blend(_blend),
 				roundnessTL(_roundnessTL),roundnessTR(_roundnessTR),roundnessBL(_roundnessBL),roundnessBR(_roundnessBR){}
@@ -98,7 +98,7 @@ class Rounded3dRectShape : public AbstractShape{
  **/
 class ResizerShape : public AbstractShape{
 	public:
-		ResizerShape(Util::Color4ub  _color,bool _blend) :
+		ResizerShape(Util::Color4ub _color,bool _blend) :
 				color(std::move(_color)),blend(_blend){}
 		virtual ~ResizerShape()	{}
 
@@ -115,7 +115,7 @@ class ResizerShape : public AbstractShape{
  **/
 class TriangleSelectorShape : public AbstractShape{
 	public:
-		TriangleSelectorShape(Util::Color4ub  _color) :
+		TriangleSelectorShape(Util::Color4ub _color) :
 				color(std::move(_color))	{}
 		virtual ~TriangleSelectorShape()	{}
 
@@ -131,8 +131,8 @@ class TriangleSelectorShape : public AbstractShape{
  **/
 class ScrollableMarkerShape : public AbstractShape{
 	public:
-		ScrollableMarkerShape(Util::Color4ub  _colorTop,Util::Color4ub  _colorRight,
-								Util::Color4ub  _colorBottom,Util::Color4ub  _colorLeft,float _width) :
+		ScrollableMarkerShape(Util::Color4ub _colorTop,Util::Color4ub _colorRight,
+								Util::Color4ub _colorBottom,Util::Color4ub _colorLeft,float _width) :
 				colorTop(std::move(_colorTop)),colorRight(std::move(_colorRight)),colorBottom(std::move(_colorBottom)),colorLeft(std::move(_colorLeft)),width(_width)	{}
 		virtual ~ScrollableMarkerShape()	{}
 
@@ -149,7 +149,7 @@ class ScrollableMarkerShape : public AbstractShape{
  **/
 class SliderMarkerShape : public AbstractShape{
 	public:
-		SliderMarkerShape(Util::Color4ub  c1, Util::Color4ub  c2) :
+		SliderMarkerShape(Util::Color4ub c1, Util::Color4ub c2) :
 				color1(std::move(c1)),color2(std::move(c2)){}
 		virtual ~SliderMarkerShape()	{}
 
@@ -166,7 +166,7 @@ class SliderMarkerShape : public AbstractShape{
  **/
 class TabHeaderShape : public AbstractShape{
 	public:
-		TabHeaderShape(Util::Color4ub  c1, Util::Color4ub  c2, Util::Color4ub  c3)
+		TabHeaderShape(Util::Color4ub c1, Util::Color4ub c2, Util::Color4ub c3)
 				: color1(std::move(c1)),color2(std::move(c2)),color3(std::move(c3)){}
 		virtual ~TabHeaderShape()	{}
 
@@ -184,7 +184,7 @@ class TabHeaderShape : public AbstractShape{
  **/
 class GridShape : public AbstractShape{
 	public:
-		GridShape(Util::Color4ub  _majorColor,Util::Color4ub  _minorColor,float _hDistance,float _vDistance,int _hNumMinors=0,int _vNumMinors=0) :
+		GridShape(Util::Color4ub _majorColor,Util::Color4ub _minorColor,float _hDistance,float _vDistance,int _hNumMinors=0,int _vNumMinors=0) :
 				majorColor(std::move(_majorColor)),minorColor(std::move(_minorColor)),hDistance(_hDistance),vDistance(_vDistance),hNumMinors(_hNumMinors),vNumMinors(_vNumMinors)	{}
 		virtual ~GridShape()	{}
 
@@ -205,7 +205,7 @@ class GridShape : public AbstractShape{
  **/
 class CrossShape : public AbstractShape{
 	public:
-		CrossShape(Util::Color4ub  _color1,Util::Color4ub  _color2,float _lineWidth) :
+		CrossShape(Util::Color4ub _color1,Util::Color4ub _color2,float _lineWidth) :
 				color1(std::move(_color1)),color2(std::move(_color2)),lineWidth(_lineWidth)	{}
 		virtual ~CrossShape()	{}
 
@@ -226,7 +226,7 @@ class CrossShape : public AbstractShape{
  **/
 class StraightLineShape : public AbstractLineShape{
 	public:
-		StraightLineShape(Util::Color4ub  _color,float _lineWidth) : 
+		StraightLineShape(Util::Color4ub _color,float _lineWidth) : 
 				color(std::move(_color)),lineWidth(_lineWidth){}
 		virtual ~StraightLineShape()	{}
 
@@ -246,7 +246,7 @@ class StraightLineShape : public AbstractLineShape{
  **/
 class SmoothConnectorShape : public AbstractLineShape{
 	public:
-		SmoothConnectorShape(Util::Color4ub  _color,float _lineWidth) : 
+		SmoothConnectorShape(Util::Color4ub _color,float _lineWidth) : 
 				color(std::move(_color)),lineWidth(_lineWidth){}
 		virtual ~SmoothConnectorShape()	{}
 

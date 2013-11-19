@@ -45,7 +45,7 @@ BitmapFont * BitmapFont::createFont(const Util::FileName & fontFile,uint32_t fon
 	Util::Reference<BitmapFont> font = new BitmapFont(new ImageData(bitmap.get()),bitmapAndFontInfo.second.height);
 	for(const auto glyph : bitmapAndFontInfo.second.glyphMap){
 		font->addGlyph(glyph.first, 
-				static_cast<uint32_t>(glyph.second.size.first),  static_cast<uint32_t>(glyph.second.size.second), 
+				static_cast<uint32_t>(glyph.second.size.first), static_cast<uint32_t>(glyph.second.size.second), 
 				Geometry::Vec2i(glyph.second.position.first, glyph.second.position.second),
 				Geometry::Vec2i(glyph.second.offset.first,bitmapAndFontInfo.second.height- glyph.second.offset.second),
 				glyph.second.xAdvance);
@@ -94,7 +94,7 @@ void BitmapFont::disable(){
 }
 
 //!	---|> AbstractFont
-void BitmapFont::renderText( const Vec2 & _pos, const std::string  & text, const Util::Color4ub & color){
+void BitmapFont::renderText( const Vec2 & _pos, const std::string & text, const Util::Color4ub & color){
 	std::vector<float> posAndUV;
 	posAndUV.reserve(text.length()*24);
 
@@ -143,7 +143,7 @@ void BitmapFont::renderText( const Vec2 & _pos, const std::string  & text, const
 }
 
 //!	---|> AbstractFont
-Vec2 BitmapFont::getRenderedTextSize( const std::string  & text ){
+Vec2 BitmapFont::getRenderedTextSize( const std::string & text ){
 	float maxX=0;
 	float x=0;
 	float y=0;

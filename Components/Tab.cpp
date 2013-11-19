@@ -24,7 +24,7 @@ namespace GUI {
 /***
  **  TabTitlePanel ---|> Container ---|> Component
  **/
-struct TabTitlePanel:public Container,public MouseMotionListener ,public MouseButtonListener, public KeyListener  {
+struct TabTitlePanel:public Container,public MouseMotionListener ,public MouseButtonListener, public KeyListener {
 	TabbedPanel::Tab & myTab;
 	TabTitlePanel(GUI_Manager & _gui,TabbedPanel::Tab & tab)
 			:Container(_gui),MouseMotionListener(),MouseButtonListener(),KeyListener(),myTab(tab) {
@@ -126,7 +126,7 @@ struct TabTitlePanel:public Container,public MouseMotionListener ,public MouseBu
 
 			if (myTab.getPrev() != ttp->getTab()) {
 				tp->insertAfter(&myTab,ttp->getTab());
-			}  else {
+			} else {
 				// Flackert (wegem schnellen hi-und hertauschen)
 //				tp->insertChildBefore(&myTab,ttp->getTab());
 			}
@@ -224,7 +224,7 @@ void TabbedPanel::Tab::init() {
 }
 
 //! [Tab] ---|> Component
-void  TabbedPanel::Tab::doLayout() {
+void TabbedPanel::Tab::doLayout() {
 	const int titleHeight=static_cast<int>(getGUI().getGlobalValue(PROPERTY_TAB_HEADER_HEIGHT));
 
 	int shift = 0;
@@ -302,7 +302,7 @@ TabbedPanel::TabbedPanel(GUI_Manager & _gui,flag_t _flags/*=0*/) :
 }
 
 
-TabbedPanel::Tab * TabbedPanel::createTab(const std::string  & name,Container * clientArea/*=0*/) {
+TabbedPanel::Tab * TabbedPanel::createTab(const std::string & name,Container * clientArea/*=0*/) {
 	auto t=new Tab(getGUI(),Geometry::Rect(0,0,getWidth(),getHeight()),name,clientArea);
 	addContent(t);
 	if(!getActiveTab()) setActiveTab(t);

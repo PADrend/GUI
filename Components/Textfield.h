@@ -52,7 +52,7 @@ class Textfield: public Component,public MouseButtonListener,public MouseMotionL
 
 		std::string text;
 		std::string * textRef;
-		Util::Reference<AbstractFont>  fontReference; // this is updated by the actual font property on each call of display
+		Util::Reference<AbstractFont> fontReference; // this is updated by the actual font property on each call of display
 
 		int selectionStart;
 		int selectionEnd;
@@ -62,7 +62,7 @@ class Textfield: public Component,public MouseButtonListener,public MouseMotionL
 		std::string dataName;
 
 		Geometry::Vec2 getCursorCoordinate(int cursorPos);
-		int getCursorPositionFromCoordinate(const  Geometry::Vec2 & pos);
+		int getCursorPositionFromCoordinate(const Geometry::Vec2 & pos);
 		void setCursorPos(int _cursorPos,bool shift=false);
 
 		bool isTextSelected()const	{	return selectionStart!=selectionEnd;	}

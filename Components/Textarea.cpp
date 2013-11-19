@@ -417,11 +417,11 @@ bool Textarea::onKeyEvent(Component * /*component*/, const Util::UI::KeyboardEve
 		moveCursor(std::make_pair(cursor.first+1,cursor.second),shiftPressed);
 	} else if(keyEvent.key == Util::UI::KEY_END) {
 		moveCursor(std::make_pair(cursor.first,std::string::npos-1),shiftPressed);
-	} else if(keyEvent.key ==  Util::UI::KEY_HOME) {
+	} else if(keyEvent.key == Util::UI::KEY_HOME) {
 		moveCursor(std::make_pair(cursor.first,0),shiftPressed);
-	} else if(keyEvent.key ==  Util::UI::KEY_PAGEUP) {
+	} else if(keyEvent.key == Util::UI::KEY_PAGEUP) {
 		moveCursor(std::make_pair(std::max(0,static_cast<int>(cursor.first-getHeight()/lineHeight+2)),cursor.second),shiftPressed);
-	} else if(keyEvent.key ==  Util::UI::KEY_PAGEDOWN) {
+	} else if(keyEvent.key == Util::UI::KEY_PAGEDOWN) {
 		moveCursor(std::make_pair(cursor.first+getHeight()/lineHeight-2,cursor.second),shiftPressed);
 	} else if(keyEvent.key == Util::UI::KEY_DELETE) {
 		cursor_t pos2;

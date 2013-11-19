@@ -19,7 +19,7 @@ namespace GUI {
  **     TabbedPanel ---|> Container ---|> Component
  **                   0..1 ------------> *
  **/
-class TabbedPanel : public Container   {
+class TabbedPanel : public Container {
 		PROVIDES_TYPE_NAME(TabbedPanel)
 	public:
 
@@ -76,7 +76,7 @@ class TabbedPanel : public Container   {
 		TabbedPanel(GUI_Manager & gui,flag_t flags=0);
 		virtual ~TabbedPanel(){}
 
-		Tab * createTab(const std::string  & title,Container * clientArea=nullptr);
+		Tab * createTab(const std::string & title,Container * clientArea=nullptr);
 
 		void setActiveTab(Tab * tab);
 		Tab * getActiveTab()const			{	return activeTab;	}

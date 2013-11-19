@@ -118,7 +118,7 @@ class MouseCursorHandler : public MouseMotionListener, public MouseButtonListene
 		}
 		
 		// ---|> MouseButtonListener
-		listenerResult_t onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) override    {
+		listenerResult_t onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) override {
 			activateCursor(std::move(queryHoverComponentMouseCursor(Geometry::Vec2(buttonEvent.x, buttonEvent.y))));
 			cursorLockedByButton = buttonEvent.pressed;
 			return LISTENER_EVENT_NOT_CONSUMED;
@@ -199,7 +199,7 @@ class TooltipHandler:public Component, public MouseMotionListener,public FrameLi
 		void onFrame(float timeSecs) override{
 			if(mode==INACTIVE){
 				return;
-			}else if(mode==SEARCHING &&  timeSecs-startingTime > 0.250){
+			}else if(mode==SEARCHING && timeSecs-startingTime > 0.250){
 				mode=activeComponent.isNull() ? INACTIVE : ACTIVE;
 				invalidateRegion();
 			}

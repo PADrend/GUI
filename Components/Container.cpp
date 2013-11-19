@@ -140,7 +140,7 @@ std::string Container::toString()const {
 	return s.str();
 }
 
-void Container::displayChildren(const Geometry::Rect & region,bool useScissor/*=false*/)   {
+void Container::displayChildren(const Geometry::Rect & region,bool useScissor/*=false*/) {
 	const Geometry::Rect myRegion=region.isValid() ? getAbsRect().clipBy(region) : getAbsRect();
 	if(myRegion.isInvalid())
 		return;
@@ -226,7 +226,7 @@ std::vector<Component*> Container::getContents() {
 void Container::childRectChanged(Component * /*c*/){
 	// if(getFlag(LAYOUT_DEPENDS_ON_CHILDREN)) !!!!!!!!!!!!!!!!!!
 	invalidateLayout();
-	// if  is sensible to child changes && internal layout is valid
+	// if is sensible to child changes && internal layout is valid
 	//	 invalidate internal layout, inform parent
 }
 

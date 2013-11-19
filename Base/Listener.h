@@ -36,7 +36,7 @@ class RegisteredListenerRegistry {
 public:
 	// Component --> Listener*
 	typedef typename std::list< Listener_t * > listenerList_t;
-	typedef std::unordered_map<Component *, listenerList_t >  listenerMap_t;
+	typedef std::unordered_map<Component *, listenerList_t > listenerMap_t;
 	listenerMap_t listenerMap;
 
 	/*! Register a Listener to the given Component.	*/

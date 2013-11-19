@@ -25,7 +25,7 @@
 namespace GUI {
 
 //! (static)
-AbstractShape *  Style::createButtonShape(float _roundnessTL,float _roundnessTR,float _roundnessBL,float _roundnessBR){
+AbstractShape * Style::createButtonShape(float _roundnessTL,float _roundnessTR,float _roundnessBL,float _roundnessBR){
 	return new Rounded3dRectShape(Colors::BUTTON_BG_1,Colors::BUTTON_BG_2,false,_roundnessTL,_roundnessTR,_roundnessBL,_roundnessBR);
 }
 

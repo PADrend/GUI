@@ -347,7 +347,7 @@ class ListView_ScrollAnimation: public AnimationHandler {
 	public:
 		Geometry::Vec2 targetPos;
 
-		ListView_ScrollAnimation(ListView * p, Geometry::Vec2  _targetPos, float _duration) :
+		ListView_ScrollAnimation(ListView * p, Geometry::Vec2 _targetPos, float _duration) :
 			AnimationHandler(p, _duration), targetPos(std::move(_targetPos)) {
 		}
 		virtual ~ListView_ScrollAnimation()	{}

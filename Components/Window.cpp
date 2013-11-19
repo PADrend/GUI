@@ -150,7 +150,7 @@ class WindowRectAnimation:public AnimationHandler{
 		Geometry::Rect sourceRect;
 		Geometry::Rect targetRect;
 		bool enableClientRect;
-		WindowRectAnimation(Window * w,Geometry::Rect  _targetRect, float _duration,bool _enableClientRect) :
+		WindowRectAnimation(Window * w,Geometry::Rect _targetRect, float _duration,bool _enableClientRect) :
 			AnimationHandler(w,_duration),sourceRect(w->getRect()),targetRect(std::move(_targetRect)),enableClientRect(_enableClientRect){
 		}
 		virtual ~WindowRectAnimation()	{}
@@ -222,7 +222,7 @@ class WindowSpielereiAnimation:public AnimationHandler{
 				prevTime=getLastTime();
 
 			float lastDuration=getLastTime() - prevTime;
-			Geometry::Vec2f movement=  lastDuration==0 ? Geometry::Vec2f(0,0) :
+			Geometry::Vec2f movement= lastDuration==0 ? Geometry::Vec2f(0,0) :
 					(w->getPosition()-lastPos+ Geometry::Vec2f(0, 0.098))/lastDuration * (t-getLastTime()) ;
 			prevTime=getLastTime();
 
@@ -356,7 +356,7 @@ void Window::init(){
 }
 
 //! ---|> Component
-void  Window::doLayout(){
+void Window::doLayout(){
 	const unsigned int titleHeight=getGUI().getGlobalValue(PROPERTY_WINDOW_TITLEBAR_HEIGHT);
 	const bool hideComponents = getFlag(HIDDEN_WINDOW) && !isSelected();
 

@@ -137,7 +137,7 @@ const std::string & Textfield::getText()const {
 }
 
 Geometry::Vec2 Textfield::getCursorCoordinate(int _cursorPos) {
-	const std::string  s=(_cursorPos>=static_cast<int>(getText().length()))?getText():getText().substr(0,_cursorPos);
+	const std::string s=(_cursorPos>=static_cast<int>(getText().length()))?getText():getText().substr(0,_cursorPos);
 	Geometry::Vec2 c=Draw::getTextSize(s,fontReference.get());
 	c.setX(c.getX()+getGUI().getGlobalValue(PROPERTY_TEXTFIELD_INDENTATION)+scrollPos);
 	return c;
@@ -209,7 +209,7 @@ bool Textfield::onKeyEvent(Component * /*component*/, const Util::UI::KeyboardEv
 			setCursorPos(cursorPos-1,_shift);
 	} else if (keyEvent.key == Util::UI::KEY_END) {
 		setCursorPos(getText().length(),_shift);
-	} else if (keyEvent.key ==  Util::UI::KEY_HOME) {
+	} else if (keyEvent.key == Util::UI::KEY_HOME) {
 		setCursorPos(0,_shift);
 	} else if (keyEvent.key == Util::UI::KEY_DELETE) {
 		if (isTextSelected()) {
@@ -233,7 +233,7 @@ bool Textfield::onKeyEvent(Component * /*component*/, const Util::UI::KeyboardEv
 				eraseText(leftSelect(),selectionLength());
 			}
 
-		} else  if (cursorPos>0) {
+		} else if (cursorPos>0) {
 			cursorPos--;
 			eraseText(cursorPos,1);
 		}
@@ -288,7 +288,7 @@ bool Textfield::onKeyEvent(Component * /*component*/, const Util::UI::KeyboardEv
 			setCurrentOptionIndex(countOptions()-1);
 
 
-	} else if (keyEvent.key == Util::UI::KEY_DOWN  && hasOptions()) {
+	} else if (keyEvent.key == Util::UI::KEY_DOWN && hasOptions()) {
 		if(getCurrentOptionIndex()<countOptions()-1)
 			setCurrentOptionIndex(getCurrentOptionIndex()+1);
 		else

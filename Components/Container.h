@@ -19,7 +19,7 @@ namespace GUI {
  **     Container ---|> Component
  **       0..1 ------------> *
  **/
-class Container : public Component    {
+class Container : public Component {
 		PROVIDES_TYPE_NAME(Container)
 	public:
 		Container(GUI_Manager & gui,flag_t flags=0);

@@ -60,7 +60,7 @@ void Checkbox::init(){
 }
 
 //! ---|> Component
-void  Checkbox::doLayout(){
+void Checkbox::doLayout(){
 	Geometry::Rect r=getLocalRect();
 
 	const float indentation = getGUI().getGlobalValue(PROPERTY_CHECKBOX_LABEL_INDENTATION);

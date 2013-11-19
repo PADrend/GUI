@@ -81,7 +81,7 @@ class Textarea: public Container,public MouseButtonListener,
 		void updateScrollPos();
 
 		std::vector<std::string> lines;
-		Util::Reference<AbstractFont>  fontReference; // this is updated by the actual font property on each call of display
+		Util::Reference<AbstractFont> fontReference; // this is updated by the actual font property on each call of display
 		uint32_t lineHeight;
 		cursor_t cursor;
 		cursor_t selectionStart;
@@ -121,7 +121,7 @@ class Textarea: public Container,public MouseButtonListener,
 			Textarea::range_t r1,r2;
 		public:
 			bool extendable; //!< can this command be extended with further data?
-			TextUpdate(Textarea::range_t _r1,std::string  text ) : 
+			TextUpdate(Textarea::range_t _r1,std::string text ) : 
 					newText(std::move(text)),r1(std::move(_r1)),extendable(true){	}
 			TextUpdate() : extendable(false){}
 			void execute(Textarea &);

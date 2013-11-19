@@ -26,7 +26,7 @@ class ColorProperty : public AbstractProperty {
 
 		Util::Color4ub color;
 	public:
-		ColorProperty(propertyId_t _propertyId,Util::Color4ub  c) : AbstractProperty(_propertyId),color(std::move(c)) {}
+		ColorProperty(propertyId_t _propertyId,Util::Color4ub c) : AbstractProperty(_propertyId),color(std::move(c)) {}
 		virtual ~ColorProperty() {}
 
 		const Util::Color4ub & getColor()const		{	return color;	}

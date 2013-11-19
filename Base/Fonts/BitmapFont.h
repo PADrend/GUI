@@ -54,15 +54,15 @@ class BitmapFont : public AbstractFont{
 			Geometry::Rect_i screenRect;
 			int xAdvance;
 
-			Glyph() :  xAdvance(-1) {}
+			Glyph() : xAdvance(-1) {}
 			Glyph(int _xAdvance) : xAdvance(_xAdvance) {}
-			Glyph(Geometry::Rect  _imageRect, Geometry::Rect_i  _screenRect, int _xAdvance) :
+			Glyph(Geometry::Rect _imageRect, Geometry::Rect_i _screenRect, int _xAdvance) :
 					uvRect(std::move(_imageRect)), screenRect(std::move(_screenRect)),xAdvance(_xAdvance) {}
 			Glyph(const Glyph & o) :
 					uvRect(o.uvRect), screenRect(o.screenRect), xAdvance(o.xAdvance) {}
 
 			bool isValid()const					{   return xAdvance>0;  }
-			Glyph& operator=(const Glyph& o)  = default;
+			Glyph& operator=(const Glyph& o) = default;
 		};
 		
 		typedef std::unordered_map<uint32_t, Glyph> typefaceMap_t; // unicode -> Glyph

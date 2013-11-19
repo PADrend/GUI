@@ -101,9 +101,9 @@ void ExtLayouter::layout(Util::WeakPointer<Component> component){
 
 		if( flags&REFERENCE_X_CENTER ){
 			x -= rect.getWidth()*0.5;
-		}else if( flags&REFERENCE_X_RIGHT  && !(flags&ALIGN_X_RIGHT) ){
+		}else if( flags&REFERENCE_X_RIGHT && !(flags&ALIGN_X_RIGHT) ){
 			x -= rect.getWidth();
-		} else if( flags&REFERENCE_X_LEFT  && !(flags&ALIGN_X_LEFT) ){
+		} else if( flags&REFERENCE_X_LEFT && !(flags&ALIGN_X_LEFT) ){
 			x -= rect.getWidth();
 		}
 

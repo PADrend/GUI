@@ -46,7 +46,7 @@ Menu::~Menu() {
 }
 
 //! ---|> Component
-void  Menu::doLayout() {
+void Menu::doLayout() {
 	float y=3;
 	float x=0;
 	for(Component * c=getFirstChild();c!=nullptr;c=c->getNext()){

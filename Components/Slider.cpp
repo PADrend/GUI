@@ -73,7 +73,7 @@ class SliderMarker:public Component,public MouseMotionListener,public MouseButto
 // ----------------------------------------------------
 
 //! (ctor)
-Slider::Slider(GUI_Manager & _gui,const Geometry::Rect & _r,float left,float right,int steps,Util::StringIdentifier  _dataName,flag_t _flags/*=0*/):
+Slider::Slider(GUI_Manager & _gui,const Geometry::Rect & _r,float left,float right,int steps,Util::StringIdentifier _dataName,flag_t _flags/*=0*/):
 		Container(_gui,_r,_flags),ActionListener(), MouseButtonListener(),KeyListener(),
 		markerSize(6),value(0),floatValueRef(nullptr),dataName(std::move(_dataName)) {
 	setRange(left,right,steps);
@@ -221,15 +221,15 @@ bool Slider::onKeyEvent(Component * /*component*/, const Util::UI::KeyboardEvent
 		if (keyEvent.pressed)
 			updateData(getValue()-stepWidth);
 		return true;
-	} else  if (keyEvent.key==Util::UI::KEY_RIGHT) {
+	} else if (keyEvent.key==Util::UI::KEY_RIGHT) {
 		if (keyEvent.pressed)
 			updateData(getValue()+stepWidth);
 		return true;
-	} else  if (keyEvent.key==Util::UI::KEY_HOME) {
+	} else if (keyEvent.key==Util::UI::KEY_HOME) {
 		if (keyEvent.pressed)
 			updateData(rangeLeft);
 		return true;
-	} else  if (keyEvent.key==Util::UI::KEY_END) {
+	} else if (keyEvent.key==Util::UI::KEY_END) {
 		if (keyEvent.pressed)
 			updateData(rangeRight);
 		return true;
@@ -268,7 +268,7 @@ void Slider::setRange(float _left,float _right,int _steps) {
 //! ---o
 float Slider::getPosFromValue(float _value)const {
 	const float buttonSize = getGUI().getGlobalValue( PROPERTY_SLIDER_BUTTON_SIZE );
-	const float w=getWidth() -  (getFlag(SLIDER_BUTTONS)? 2*buttonSize : 0) - getMarkerSize();
+	const float w=getWidth() - (getFlag(SLIDER_BUTTONS)? 2*buttonSize : 0) - getMarkerSize();
 	if (stepWidth==0 || numSteps==0 ) return 0.0;
 
 	float v=(_value-rangeLeft) / stepWidth;

@@ -53,7 +53,7 @@ const uint8_t * ImageData::getLocalData() const {
 }
 
 bool ImageData::enable() {
-	if( (textureId == 0 || dataHasChanged) && !uploadGLTexture()  )
+	if( (textureId == 0 || dataHasChanged) && !uploadGLTexture() )
 		return false;
 
 	Draw::enableTexture(textureId);

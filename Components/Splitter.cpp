@@ -121,7 +121,7 @@ listenerResult_t Splitter::onMouseButton(Component * /*component*/, const Util::
 
 //! ---|> MouseMotionListener
 listenerResult_t Splitter::onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent){
-	if( !hasParent() || getPrev()==nullptr  || getNext()==nullptr || !(motionEvent.buttonMask & Util::UI::MASK_MOUSE_BUTTON_LEFT)) {
+	if( !hasParent() || getPrev()==nullptr || getNext()==nullptr || !(motionEvent.buttonMask & Util::UI::MASK_MOUSE_BUTTON_LEFT)) {
 		unselect();
 		return LISTENER_EVENT_CONSUMED_AND_REMOVE_LISTENER;
 	}

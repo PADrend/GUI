@@ -28,7 +28,7 @@ void Connector::findConnectors(Container * container,const Component * endpoint,
 
 		virtual ~MyVisitor(){}
 
-		// ---|>  Component::Visitor
+		// ---|> Component::Visitor
 		visitorResult_t visit(Component & c) override {
 			Connector * connector=dynamic_cast<Connector*>(&c);
 			if(connector && ( connector->getFirstComponent()==endpoint || connector->getSecondComponent()==endpoint ))

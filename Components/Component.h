@@ -73,12 +73,12 @@ class Component: public Util::AttributeProvider, public Util::ReferenceCounter<C
 		Ref prev;
 		Ref next;
 	protected:
-		void setNext(const Ref  & newNext)	{	next=newNext;	}
-		void setPrev(const Ref  & newPrev)	{	prev=newPrev;	}
+		void setNext(const Ref & newNext)	{	next=newNext;	}
+		void setPrev(const Ref & newPrev)	{	prev=newPrev;	}
 
 	public:
 		void _setParent(const Util::WeakPointer<Container> & c) 	{	parent = c;	invalidateLayout(); };
-		void _updateNeighbors(const Ref  & newPrev,const Ref  & newNext);
+		void _updateNeighbors(const Ref & newPrev,const Ref & newNext);
 
 		void bringToFront();
 

@@ -74,7 +74,7 @@ void Component::destroy(Component * component){
 }
 
 //! (internal)
-void Component::_updateNeighbors(const Ref  & newPrev,const Ref  & newNext){
+void Component::_updateNeighbors(const Ref & newPrev,const Ref & newNext){
 	const Ref oldPrev=getPrev();
 	const Ref oldNext=getNext();
 
@@ -143,7 +143,7 @@ void Component::disable() {
 void Component::invalidateAbsPosition() {
 	if(isAbsPosValid()){
 		struct MyVisitor : public Component::Visitor {
-			// ---|>  Component::Visitor
+			// ---|> Component::Visitor
 			visitorResult_t visit(Component & c) override {
 				if (!c.isAbsPosValid()) {
 					return Component::BREAK_TRAVERSAL;
@@ -267,12 +267,12 @@ void Component::unselectSubtree() {
 		V():Visitor() {}
 		virtual ~V() {}
 
-		// ---|>  Component::Visitor
+		// ---|> Component::Visitor
 		visitorResult_t visit(Component & c) override {
 			if(!c.isSelected()) 
 				return Component::BREAK_TRAVERSAL;
 			selectedComponents.push_back(&c);
-			return  Component::CONTINUE_TRAVERSAL;
+			return Component::CONTINUE_TRAVERSAL;
 		}
 	}collector;
 	for(traverseSubtree(collector); !collector.selectedComponents.empty() ; collector.selectedComponents.pop_back())
@@ -297,12 +297,12 @@ Component * Component::getComponentAtPos(const Geometry::Vec2 & pos) {
 		MyVisitor(const Geometry::Vec2 & _pos):Visitor(),pos(_pos),found(nullptr) {}
 		virtual ~MyVisitor() {}
 
-		// ---|>  Component::Visitor
+		// ---|> Component::Visitor
 		visitorResult_t visit(Component & c) override {
 			if (c.isEnabled() && c.coversAbsPosition(pos)) {
 				if (!c.getFlag(Component::TRANSPARENT_COMPONENT))
 					found=&c;
-				return  Component::CONTINUE_TRAVERSAL;
+				return Component::CONTINUE_TRAVERSAL;
 			}
 			return Component::BREAK_TRAVERSAL;
 		}
@@ -320,7 +320,7 @@ Component * Component::findSelectedComponent() {
 		MyVisitor() : Visitor(),found(nullptr){}
 		virtual ~MyVisitor() {}
 
-		// ---|>  Component::Visitor
+		// ---|> Component::Visitor
 		visitorResult_t visit(Component & c) override {
 			if( c.isEnabled() && c.isSelected() ) {
 				found=&c;
@@ -376,7 +376,7 @@ static const Util::StringIdentifier attrName_tooltip("_TOOLTIP");
 
 std::string Component::_getTooltip()const{
 	Util::GenericAttribute * t=getAttribute(attrName_tooltip);
-	return  t!=nullptr ? t->toString() : std::string();
+	return t!=nullptr ? t->toString() : std::string();
 }
 
 void Component::_setTooltip(const std::string & s){
@@ -443,7 +443,7 @@ void Component::invalidateLayout(){
 
 void Component::invalidateSubtreeLayout(){
 	struct MyVisitor:public Component::Visitor {
-		// ---|>  Component::Visitor
+		// ---|> Component::Visitor
 		visitorResult_t visit(Component & c) override {
 			c.setFlag(LAYOUT_VALID,false);
 			c.setFlag(SUBTREE_LAYOUT_VALID,false);
@@ -459,9 +459,9 @@ uint32_t Component::layoutChildren(){
 		uint32_t count;
 		MyVisitor():Visitor(),count(0){}
 		
-		// ---|>  Component::Visitor
+		// ---|> Component::Visitor
 		visitorResult_t visit(Component & c) override {
-			if( c.isEnabled()  ){
+			if( c.isEnabled() ){
 				count += c.layout();
 			}
 			return Component::CONTINUE_TRAVERSAL;
