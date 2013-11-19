@@ -24,8 +24,8 @@ namespace GUI {
 class Textfield: public Component,public MouseButtonListener,public MouseMotionListener,public KeyListener {
 		PROVIDES_TYPE_NAME(Textfield)
 	public:
-		Textfield(GUI_Manager & gui,const Geometry::Rect & r,const std::string &text="",const std::string &dataName="",flag_t flags=0);
-		Textfield(GUI_Manager & gui,const std::string &text="",const std::string &dataName="",flag_t flags=0);
+		Textfield(GUI_Manager & gui,const Geometry::Rect & r,const std::string &text="",std::string dataName="",flag_t flags=0);
+		Textfield(GUI_Manager & gui,const std::string &text="",std::string dataName="",flag_t flags=0);
 		virtual ~Textfield();
 
 		void setTextRef(std::string * newTextRef) 		{	textRef=newTextRef;	}
@@ -34,18 +34,18 @@ class Textfield: public Component,public MouseButtonListener,public MouseMotionL
 //		void setFont(AbstractFont * newFont);
 
 		// ---|> MouseButtonListener
-		virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
+		virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
 		// ---|> KeyListener
-		virtual bool onKeyEvent(Component * component, const Util::UI::KeyboardEvent & keyEvent);
+		virtual bool onKeyEvent(Component * component, const Util::UI::KeyboardEvent & keyEvent) override;
 		// ---|> MouseMotionListener
-		virtual listenerResult_t onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent);
+		virtual listenerResult_t onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent) override;
 
 		// ---|> Component
-		virtual bool onSelect();
-		virtual bool onUnselect();
+		virtual bool onSelect() override;
+		virtual bool onUnselect() override;
 	private:
 		// ---|> Component
-		virtual void doDisplay(const Geometry::Rect & region);
+		virtual void doDisplay(const Geometry::Rect & region) override;
 
 	private:
 		void init();

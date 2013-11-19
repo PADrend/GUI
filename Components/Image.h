@@ -58,7 +58,7 @@ class Image: public Component {
 
 	private:
 		// ---|> Component
-		virtual void doDisplay(const Geometry::Rect & region);
+		virtual void doDisplay(const Geometry::Rect & region) override;
 
 		Util::Reference<ImageData> data;
 

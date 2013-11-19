@@ -33,23 +33,23 @@ class EditorPanel: public Container,public MouseButtonListener,public MouseMotio
 		virtual ~EditorPanel();
 
 		// ---|> MouseMotionListener
-		virtual listenerResult_t onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent);
+		virtual listenerResult_t onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent) override;
 		// ---|> MouseButtonListener
-		virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
+		virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
 
 		// ---|> Container
-		virtual void removeContent(const Ref & child)	{
+		virtual void removeContent(const Ref & child) override	{
 			unmarkChild(child.get());
 			Container::removeContent(child);
 		}
-		virtual void clearContents() 	{
+		virtual void clearContents() override 	{
 			unmarkAll();
 			Container::clearContents();
 		}
 		
 	private:
 		// ---|> Component
-		virtual void doDisplay(const Geometry::Rect & region);
+		virtual void doDisplay(const Geometry::Rect & region) override;
 		
 		void init();
 		

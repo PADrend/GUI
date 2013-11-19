@@ -48,21 +48,21 @@ class TabbedPanel : public Container   {
 				Container *getTitlePanel() 					{	return titlePanel;	}
 
 				// ---|> Container
-				virtual void addContent(const Ref & child)		{	clientAreaPanel->addContent(child);	}
-				virtual void removeContent(const Ref & child)	{	clientAreaPanel->removeContent(child);	}
-				virtual size_t getContentsCount()const			{	return clientAreaPanel->getContentsCount();	}
+				virtual void addContent(const Ref & child) override		{	clientAreaPanel->addContent(child);	}
+				virtual void removeContent(const Ref & child) override	{	clientAreaPanel->removeContent(child);	}
+				virtual size_t getContentsCount()const override			{	return clientAreaPanel->getContentsCount();	}
 
 				// ---|> Component
-				virtual Geometry::Rect getInnerRect()const 		{	return clientAreaPanel->getLocalRect();	}
-				virtual void doLayout();
+				virtual Geometry::Rect getInnerRect()const override 		{	return clientAreaPanel->getLocalRect();	}
+				virtual void doLayout() override;
 
-				virtual bool hasTooltip()const                  {   return titlePanel->hasTooltip();  }
-				virtual std::string getTooltip()const           {   return titlePanel->getTooltip();  }
-				virtual void setTooltip(const std::string & s)  {   titlePanel->setTooltip(s); }
-				virtual void removeTooltip()                    {   titlePanel->removeTooltip();   }
+				virtual bool hasTooltip()const override                  {   return titlePanel->hasTooltip();  }
+				virtual std::string getTooltip()const override           {   return titlePanel->getTooltip();  }
+				virtual void setTooltip(const std::string & s) override  {   titlePanel->setTooltip(s); }
+				virtual void removeTooltip() override                    {   titlePanel->removeTooltip();   }
 			private:
 				// ---|> Component
-				virtual void doDisplay(const Geometry::Rect & region);
+				virtual void doDisplay(const Geometry::Rect & region) override;
 
 			protected:
 				void init();
@@ -87,12 +87,12 @@ class TabbedPanel : public Container   {
 		void recalculateTabTitlePositions();
 
 		// ---|> Container
-		virtual void addContent(const Ref & child);
-		virtual void removeContent(const Ref & child);
-		virtual void bringChildToFront(Component * c);
+		virtual void addContent(const Ref & child) override;
+		virtual void removeContent(const Ref & child) override;
+		virtual void bringChildToFront(Component * c) override;
 
 		// ---|> Component
-		virtual void doLayout();
+		virtual void doLayout() override;
 	private:
 		Tab * activeTab;
 };

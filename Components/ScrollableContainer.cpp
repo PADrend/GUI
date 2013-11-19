@@ -149,8 +149,8 @@ class ScrollableContainer_ScrollAnimation:public AnimationHandler{
 	public:
 		Geometry::Vec2 targetPos;
 
-		ScrollableContainer_ScrollAnimation(ScrollableContainer * p,const Geometry::Vec2 & _targetPos, float _duration) :
-			AnimationHandler(p,_duration),targetPos(_targetPos){
+		ScrollableContainer_ScrollAnimation(ScrollableContainer * p,Geometry::Vec2  _targetPos, float _duration) :
+			AnimationHandler(p,_duration),targetPos(std::move(_targetPos)){
 		}
 		virtual ~ScrollableContainer_ScrollAnimation()	{}
 

@@ -64,34 +64,34 @@ class Window : public Container,public ActionListener,public MouseButtonListener
 
 
 		// ---|> MouseButtonListener
-		virtual listenerResult_t onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent);
+		virtual listenerResult_t onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) override;
 		// ---|> ActionListener
-		virtual listenerResult_t handleAction(Component *,const Util::StringIdentifier & actionName);
+		virtual listenerResult_t handleAction(Component *,const Util::StringIdentifier & actionName) override;
 		// ---|> KeyListener
-		virtual bool onKeyEvent(Component * component, const Util::UI::KeyboardEvent & keyEvent);
+		virtual bool onKeyEvent(Component * component, const Util::UI::KeyboardEvent & keyEvent) override;
 		// ---|> Container
-		virtual void addContent(const Ref & child) 						{	clientAreaPanel->addContent(child);	}
-		virtual void removeContent(const Ref & child) 					{	clientAreaPanel->removeContent(child);	}
-		virtual size_t getContentsCount()const							{	return clientAreaPanel->getContentsCount();	}
-		virtual std::vector<Component*> getContents()					{	return clientAreaPanel->getContents();	}
-		virtual void clearContents() 									{	clientAreaPanel->clearContents();	}
-		virtual void insertAfter(const Ref & child,const Ref & after)	{
+		virtual void addContent(const Ref & child) override 						{	clientAreaPanel->addContent(child);	}
+		virtual void removeContent(const Ref & child) override 					{	clientAreaPanel->removeContent(child);	}
+		virtual size_t getContentsCount()const override							{	return clientAreaPanel->getContentsCount();	}
+		virtual std::vector<Component*> getContents() override					{	return clientAreaPanel->getContents();	}
+		virtual void clearContents() override 									{	clientAreaPanel->clearContents();	}
+		virtual void insertAfter(const Ref & child,const Ref & after) override	{
 			clientAreaPanel->insertAfter(child,after);
 		}
-		virtual void insertBefore(const Ref & child,const Ref & after){
+		virtual void insertBefore(const Ref & child,const Ref & after) override{
 			clientAreaPanel->insertBefore(child,after);
 		}
 
 		// ---|> Component
-		virtual Geometry::Rect getInnerRect()const 						{	return clientAreaPanel->getLocalRect();	}
-		virtual void invalidateRegion();
-		virtual void doLayout();
-		virtual bool onSelect();
-		virtual bool onUnselect();
+		virtual Geometry::Rect getInnerRect()const override 						{	return clientAreaPanel->getLocalRect();	}
+		virtual void invalidateRegion() override;
+		virtual void doLayout() override;
+		virtual bool onSelect() override;
+		virtual bool onUnselect() override;
 
 	private:
 		// ---|> Component
-		virtual void doDisplay(const Geometry::Rect & region);
+		virtual void doDisplay(const Geometry::Rect & region) override;
 		Util::WeakPointer<Container> clientAreaPanel;
 		Util::WeakPointer<Container> titlePanel;
 		Util::WeakPointer<Label> titleTextLabel;

@@ -46,18 +46,18 @@ class Checkbox : public Container,public MouseButtonListener,public MouseClickLi
 		virtual void action();
 
 		// ---|> MouseButtonListener
-		virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
+		virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
 		// ---|> MouseClickListener
-		virtual bool onMouseClick(Component * component,unsigned int button,const Geometry::Vec2 &pos);
+		virtual bool onMouseClick(Component * component,unsigned int button,const Geometry::Vec2 &pos) override;
 		// ---|> KeyListener
-		virtual bool onKeyEvent(Component * component, const Util::UI::KeyboardEvent & keyEvent);
+		virtual bool onKeyEvent(Component * component, const Util::UI::KeyboardEvent & keyEvent) override;
 
 		// ---|> Component
-		virtual void doLayout();
+		virtual void doLayout() override;
 
 	private:
 		// ---|> Component
-		virtual void doDisplay(const Geometry::Rect & region);
+		virtual void doDisplay(const Geometry::Rect & region) override;
 
 	protected:
 		void init();

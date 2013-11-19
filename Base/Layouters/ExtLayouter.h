@@ -96,7 +96,7 @@ class ExtLayouter : public AbstractLayouter{
 		void setFlags(extLayoutFlags_t f)			{	flags = f;	}
 
 		//! ---|> AbstractLayouter
-		virtual void layout(Util::WeakPointer<Component> component);
+		virtual void layout(Util::WeakPointer<Component> component) override;
 	private:
 		Geometry::Vec2 extPos;
 		Geometry::Vec2 extSize;

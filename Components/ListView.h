@@ -42,7 +42,7 @@ public:
 		float getEntryHeight()const							{	return entryHeight;	}
 
 		// ---|> Component
-		virtual void doLayout();
+		virtual void doLayout() override;
 
 		void setEntryHeight(float h) {
 			entryHeight=h;
@@ -63,16 +63,16 @@ public:
 				virtual ~ListViewClientArea() {}
 
 				// ---|> Component
-				virtual void doLayout();
+				virtual void doLayout() override;
 
 			private:
 				// ---|> Component
-				virtual void doDisplay(const Geometry::Rect & region);
+				virtual void doDisplay(const Geometry::Rect & region) override;
 
 		};
 
 		// ---|> Component
-		virtual void doDisplay(const Geometry::Rect & region);
+		virtual void doDisplay(const Geometry::Rect & region) override;
 
 		void init();
 
@@ -86,23 +86,23 @@ public:
 	//	@{
 	public:
 		// ---|> Container
-		virtual void addContent(const Ref & child);
+		virtual void addContent(const Ref & child) override;
 		// ---|> Container
-		virtual void clearContents();
+		virtual void clearContents() override;
 		// ---|> Container
-		virtual std::vector<Component*> getContents() 				{	return clientArea->getContents();		}
+		virtual std::vector<Component*> getContents() override 				{	return clientArea->getContents();		}
 
 		//! Return entry with given index or nullptr if there is no such entry.
 		Component * getEntry(size_t i)const							{	return i<entryRegistry.size() ? entryRegistry[i] : nullptr;}
 
 		// ---|> Container
-		virtual void insertAfter(const Ref & child,const Ref & after);
+		virtual void insertAfter(const Ref & child,const Ref & after) override;
 		// ---|> Container
-		virtual void insertBefore(const Ref & child,const Ref & after);
+		virtual void insertBefore(const Ref & child,const Ref & after) override;
 		// ---|> Container
-		virtual size_t getContentsCount()const						{   return clientArea->getContentsCount();	}
+		virtual size_t getContentsCount()const override						{   return clientArea->getContentsCount();	}
 		// ---|> Container
-		virtual void removeContent(const Ref & child);
+		virtual void removeContent(const Ref & child) override;
 
 
 	private:
@@ -137,13 +137,13 @@ public:
 	//	@{
 	public:
 		// ---|> DataChangeListener
-		virtual void handleDataChange(Component *,const Util::StringIdentifier & actionName);
+		virtual void handleDataChange(Component *,const Util::StringIdentifier & actionName) override;
 		// ---|> MouseMotionListener
-		virtual listenerResult_t onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent);
+		virtual listenerResult_t onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent) override;
 		// ---|> MouseButtonListener
-		virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
+		virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
 		// ---|> KeyListener
-		virtual bool onKeyEvent(Component * component, const Util::UI::KeyboardEvent & keyEvent);
+		virtual bool onKeyEvent(Component * component, const Util::UI::KeyboardEvent & keyEvent) override;
 	//	@}
 
 	// ------------------

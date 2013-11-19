@@ -51,7 +51,7 @@ class AbstractLineShape : public AbstractShape {
 		virtual ~AbstractLineShape() {}
 
 		// ---|> AbstractShape
-		virtual void display(const Geometry::Rect &, flag_t){}
+		virtual void display(const Geometry::Rect &, flag_t) override{}
 		// ---o
 		virtual void displayLine(const std::vector<Geometry::Vec2> & points,flag_t flag=0)=0;
 };
@@ -72,8 +72,8 @@ class NullShape : public AbstractShape{
 		virtual ~NullShape()						{}
 
 		// ---|> AbstractShape
-		virtual void display(const Geometry::Rect &,flag_t)	{}
-		virtual AbstractShape * clone()				{	return this;	}
+		virtual void display(const Geometry::Rect &,flag_t) override	{}
+		virtual AbstractShape * clone() override				{	return this;	}
 };
 
 }

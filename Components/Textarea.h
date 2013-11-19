@@ -36,16 +36,16 @@ class Textarea: public Container,public MouseButtonListener,
 		std::string getText()const;
 
 		// ---|> MouseButtonListener
-		virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
+		virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
 		// ---|> KeyListener
-		virtual bool onKeyEvent(Component * component, const Util::UI::KeyboardEvent & keyEvent);
+		virtual bool onKeyEvent(Component * component, const Util::UI::KeyboardEvent & keyEvent) override;
 		// ---|> MouseMotionListener
-		virtual listenerResult_t onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent);
+		virtual listenerResult_t onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent) override;
 
 		// ---|> Component
-		virtual bool onSelect();
-		virtual bool onUnselect();
-		virtual void doLayout()											{	updateScrollPos();	}
+		virtual bool onSelect() override;
+		virtual bool onUnselect() override;
+		virtual void doLayout() override											{	updateScrollPos();	}
 
 		typedef std::pair<uint32_t,size_t> cursor_t; // line,pos
 		typedef std::pair<cursor_t,cursor_t> range_t; // min,max
@@ -66,7 +66,7 @@ class Textarea: public Container,public MouseButtonListener,
 		void consolidate();
 		cursor_t _deleteText(const range_t &);
 		// ---|> Component
-		virtual void doDisplay(const Geometry::Rect & region);
+		virtual void doDisplay(const Geometry::Rect & region) override;
 		void init();
 		range_t _insertText(const cursor_t & pos,const std::string & s);
 		void markForConsolidation(size_t line1,size_t line2){
@@ -99,7 +99,7 @@ class Textarea: public Container,public MouseButtonListener,
 		
 	public:
 		// ---|> DataChangeListener
-		virtual void handleDataChange(Component *,const Util::StringIdentifier & actionName);
+		virtual void handleDataChange(Component *,const Util::StringIdentifier & actionName) override;
 
 		const Geometry::Vec2 & getScrollPos()const	{	return scrollPos;	}
 		void scrollTo(const Geometry::Vec2 &);
@@ -121,8 +121,8 @@ class Textarea: public Container,public MouseButtonListener,
 			Textarea::range_t r1,r2;
 		public:
 			bool extendable; //!< can this command be extended with further data?
-			TextUpdate(Textarea::range_t _r1,const std::string & text ) : 
-					newText(text),r1(_r1),extendable(true){	}
+			TextUpdate(Textarea::range_t _r1,std::string  text ) : 
+					newText(std::move(text)),r1(std::move(_r1)),extendable(true){	}
 			TextUpdate() : extendable(false){}
 			void execute(Textarea &);
 			void extend(Textarea& ta,const std::string & s);

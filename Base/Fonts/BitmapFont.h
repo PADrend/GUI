@@ -56,8 +56,8 @@ class BitmapFont : public AbstractFont{
 
 			Glyph() :  xAdvance(-1) {}
 			Glyph(int _xAdvance) : xAdvance(_xAdvance) {}
-			Glyph(const Geometry::Rect & _imageRect, const Geometry::Rect_i & _screenRect, int _xAdvance) :
-					uvRect(_imageRect), screenRect(_screenRect),xAdvance(_xAdvance) {}
+			Glyph(Geometry::Rect  _imageRect, Geometry::Rect_i  _screenRect, int _xAdvance) :
+					uvRect(std::move(_imageRect)), screenRect(std::move(_screenRect)),xAdvance(_xAdvance) {}
 			Glyph(const Glyph & o) :
 					uvRect(o.uvRect), screenRect(o.screenRect), xAdvance(o.xAdvance) {}
 
@@ -82,10 +82,10 @@ class BitmapFont : public AbstractFont{
 		}
 
 		// ---|> AbstractFont
-		virtual void enable();
-		virtual void disable();
-		virtual void renderText(const Geometry::Vec2 & pos, const std::string & text, const Util::Color4ub & color);
-		virtual Geometry::Vec2 getRenderedTextSize( const std::string & text);
+		virtual void enable() override;
+		virtual void disable() override;
+		virtual void renderText(const Geometry::Vec2 & pos, const std::string & text, const Util::Color4ub & color) override;
+		virtual Geometry::Vec2 getRenderedTextSize( const std::string & text) override;
 
 	private:
 

@@ -39,8 +39,8 @@ class Label: public Component	{
 
 	private:
 		// ---|> Component
-		virtual void doDisplay(const Geometry::Rect & region);
-		virtual void doLayout();
+		virtual void doDisplay(const Geometry::Rect & region) override;
+		virtual void doLayout() override;
 
 		std::string text;
 		unsigned int textStyle;

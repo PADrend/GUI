@@ -18,10 +18,10 @@
 namespace GUI {
 
 //! (ctor)
-Textfield::Textfield(GUI_Manager & _gui,const std::string & _text,const std::string &_dataName,flag_t _flags/*=0*/):
+Textfield::Textfield(GUI_Manager & _gui,const std::string & _text,std::string _dataName,flag_t _flags/*=0*/):
 		Component(_gui,_flags),MouseButtonListener(),MouseMotionListener(),KeyListener(),
 		textRef(nullptr),
-		selectionStart(0),selectionEnd(0),backupText(""),cursorPos(0),scrollPos(0),dataName(_dataName),
+		selectionStart(0),selectionEnd(0),backupText(""),cursorPos(0),scrollPos(0),dataName(std::move(_dataName)),
 		currentOptionIndex(-1) {
 	fontReference = getGUI().getActiveFont(PROPERTY_DEFAULT_FONT);
 	setText(_text);
@@ -30,10 +30,10 @@ Textfield::Textfield(GUI_Manager & _gui,const std::string & _text,const std::str
 }
 
 //! (ctor)
-Textfield::Textfield(GUI_Manager & _gui,const Geometry::Rect & _r,const std::string & _text,const std::string &_dataName,flag_t _flags/*=0*/):
+Textfield::Textfield(GUI_Manager & _gui,const Geometry::Rect & _r,const std::string & _text,std::string _dataName,flag_t _flags/*=0*/):
 		Component(_gui,_r,_flags),MouseButtonListener(),MouseMotionListener(),KeyListener(),
 		textRef(nullptr),
-		selectionStart(0),selectionEnd(0),backupText(""),cursorPos(0),scrollPos(0),dataName(_dataName),
+		selectionStart(0),selectionEnd(0),backupText(""),cursorPos(0),scrollPos(0),dataName(std::move(_dataName)),
 		currentOptionIndex(-1) {
 	fontReference = getGUI().getActiveFont(PROPERTY_DEFAULT_FONT);
 	setText(_text);

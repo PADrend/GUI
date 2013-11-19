@@ -73,9 +73,9 @@ class SliderMarker:public Component,public MouseMotionListener,public MouseButto
 // ----------------------------------------------------
 
 //! (ctor)
-Slider::Slider(GUI_Manager & _gui,const Geometry::Rect & _r,float left,float right,int steps,const Util::StringIdentifier & _dataName,flag_t _flags/*=0*/):
+Slider::Slider(GUI_Manager & _gui,const Geometry::Rect & _r,float left,float right,int steps,Util::StringIdentifier  _dataName,flag_t _flags/*=0*/):
 		Container(_gui,_r,_flags),ActionListener(), MouseButtonListener(),KeyListener(),
-		markerSize(6),value(0),floatValueRef(nullptr),dataName(_dataName) {
+		markerSize(6),value(0),floatValueRef(nullptr),dataName(std::move(_dataName)) {
 	setRange(left,right,steps);
 	init();
 }

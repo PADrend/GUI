@@ -42,7 +42,7 @@ class TreeView: public Container,public DataChangeListener,public MouseButtonLis
 				virtual ~TreeViewEntry();
 
 				//! ---|> Component
-				virtual void doLayout();
+				virtual void doLayout() override;
 
 				//! (internal) should only be called from within the owning TreeView
 				void _setMarked(bool b)			{	marked=b;	}
@@ -57,19 +57,19 @@ class TreeView: public Container,public DataChangeListener,public MouseButtonLis
 				void setComponent(const Ref & c);
 
 				// ---|> MouseButtonListener
-				virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
+				virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
 
 				// ---|> Container
-				virtual void addContent(const Ref & child);
-				virtual void clearContents();
-				virtual void removeContent(const Ref & child);
-				virtual std::vector<Component*> getContents();
-				virtual void insertAfter(const Ref & child,const Ref & after);
-				virtual void insertBefore(const Ref & child,const Ref & after);
+				virtual void addContent(const Ref & child) override;
+				virtual void clearContents() override;
+				virtual void removeContent(const Ref & child) override;
+				virtual std::vector<Component*> getContents() override;
+				virtual void insertAfter(const Ref & child,const Ref & after) override;
+				virtual void insertBefore(const Ref & child,const Ref & after) override;
 
 			private:
 				// ---|> Component
-				virtual void doDisplay(const Geometry::Rect & region);
+				virtual void doDisplay(const Geometry::Rect & region) override;
 
 				void setTreeView( TreeView * myTreeView);
 				TreeView * myTreeView;
@@ -102,26 +102,26 @@ class TreeView: public Container,public DataChangeListener,public MouseButtonLis
 
 
 		// ---|> DataChangeListener
-		virtual void handleDataChange(Component *,const Util::StringIdentifier & actionName);
+		virtual void handleDataChange(Component *,const Util::StringIdentifier & actionName) override;
 		// ---|> MouseButtonListener
-		virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
+		virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
 		// ---|> MouseMotionListener
-		virtual listenerResult_t onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent);
+		virtual listenerResult_t onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) override;
 		// ---|> KeyListener
-		virtual bool onKeyEvent(Component * component, const Util::UI::KeyboardEvent & keyEvent);
+		virtual bool onKeyEvent(Component * component, const Util::UI::KeyboardEvent & keyEvent) override;
 
 		// ---|> Container
-		virtual void addContent(const Ref & child);
-		virtual void clearContents();
-		virtual void removeContent(const Ref & child);
-		virtual std::vector<Component*> getContents();
+		virtual void addContent(const Ref & child) override;
+		virtual void clearContents() override;
+		virtual void removeContent(const Ref & child) override;
+		virtual std::vector<Component*> getContents() override;
 
 		// ---|> Component
-		virtual void doLayout();
+		virtual void doLayout() override;
 
 	private:
 		// ---|> Component
-		virtual void doDisplay(const Geometry::Rect & region);
+		virtual void doDisplay(const Geometry::Rect & region) override;
 
 		Geometry::Vec2 currentMousePos;
 

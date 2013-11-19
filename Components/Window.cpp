@@ -150,8 +150,8 @@ class WindowRectAnimation:public AnimationHandler{
 		Geometry::Rect sourceRect;
 		Geometry::Rect targetRect;
 		bool enableClientRect;
-		WindowRectAnimation(Window * w,const Geometry::Rect & _targetRect, float _duration,bool _enableClientRect) :
-			AnimationHandler(w,_duration),sourceRect(w->getRect()),targetRect(_targetRect),enableClientRect(_enableClientRect){
+		WindowRectAnimation(Window * w,Geometry::Rect  _targetRect, float _duration,bool _enableClientRect) :
+			AnimationHandler(w,_duration),sourceRect(w->getRect()),targetRect(std::move(_targetRect)),enableClientRect(_enableClientRect){
 		}
 		virtual ~WindowRectAnimation()	{}
 

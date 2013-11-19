@@ -45,7 +45,7 @@ class FlowLayouter : public AbstractLayouter{
 		void setPadding(int i)		{	padding = i;	}
 			
 		//! ---|> AbstractLayouter
-		virtual void layout(Util::WeakPointer<Component> component);
+		virtual void layout(Util::WeakPointer<Component> component) override;
 
 };
 

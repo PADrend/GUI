@@ -26,7 +26,7 @@ class Scrollbar : public Container, public MouseButtonListener {
 		// flags
 		static const flag_t VERTICAL=1<<24;
 
-		Scrollbar(GUI_Manager & gui,const Util::StringIdentifier & dataName,flag_t flags=0);
+		Scrollbar(GUI_Manager & gui,Util::StringIdentifier  dataName,flag_t flags=0);
 		virtual ~Scrollbar(){}
 
 		int getMarkerSize()const;
@@ -40,14 +40,14 @@ class Scrollbar : public Container, public MouseButtonListener {
 		void updateScrollPos(const int32_t f);
 
 		// ---|> MouseButtonListener
-		virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
+		virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
 
 		// ---|> Component
-		virtual void doLayout();
+		virtual void doLayout() override;
 
 	private:
 		// ---|> Component
-		virtual void doDisplay(const Geometry::Rect & region);
+		virtual void doDisplay(const Geometry::Rect & region) override;
 
 		float getMarkerPosFromScrollPos(float value)const;
 

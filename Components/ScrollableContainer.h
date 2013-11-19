@@ -36,24 +36,24 @@ class ScrollableContainer: public Container,public DataChangeListener,public Mou
 		Container * getContentContainer()const							{	return contentContainer.get();	}
 
 		// ---|> MouseMotionListener
-		virtual listenerResult_t onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent);
+		virtual listenerResult_t onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent) override;
 		// ---|> MouseButtonListener
-		virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
+		virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
 		// ---|> DataChangeListener
-		virtual void handleDataChange(Component *,const Util::StringIdentifier & actionName);
+		virtual void handleDataChange(Component *,const Util::StringIdentifier & actionName) override;
 
 		// ---|> Container
-		virtual void addContent(const Ref & child)						{	contentContainer->addContent(child);	}
-		virtual void clearContents()									{	contentContainer->clearContents();	}
-		virtual std::vector<Component*> getContents() 					{	return contentContainer->getContents();		}
-		virtual void removeContent(const Ref & child)					{	contentContainer->removeContent(child);	}
-		virtual void insertAfter(const Ref & child,const Ref & after)	{	contentContainer->insertAfter(child,after);	}
-		virtual void insertBefore(const Ref & child,const Ref & after)	{	contentContainer->insertBefore(child,after);	}
-		virtual size_t getContentsCount()const							{   return contentContainer->getContentsCount();	}
+		virtual void addContent(const Ref & child) override						{	contentContainer->addContent(child);	}
+		virtual void clearContents() override									{	contentContainer->clearContents();	}
+		virtual std::vector<Component*> getContents() override 					{	return contentContainer->getContents();		}
+		virtual void removeContent(const Ref & child) override					{	contentContainer->removeContent(child);	}
+		virtual void insertAfter(const Ref & child,const Ref & after) override	{	contentContainer->insertAfter(child,after);	}
+		virtual void insertBefore(const Ref & child,const Ref & after) override	{	contentContainer->insertBefore(child,after);	}
+		virtual size_t getContentsCount()const override							{   return contentContainer->getContentsCount();	}
 
 		// ---|> Component
-		virtual void doDisplay(const Geometry::Rect & region);
-		virtual void doLayout();
+		virtual void doDisplay(const Geometry::Rect & region) override;
+		virtual void doLayout() override;
 		
 	private:
 		void init();

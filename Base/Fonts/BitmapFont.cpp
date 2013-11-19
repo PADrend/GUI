@@ -56,7 +56,7 @@ BitmapFont * BitmapFont::createFont(const Util::FileName & fontFile,uint32_t fon
 
 //!	(ctor)
 BitmapFont::BitmapFont(Util::Reference<ImageData> _bitmap,int _lineHeight):
-		AbstractFont(_lineHeight),bitmap(_bitmap){
+		AbstractFont(_lineHeight),bitmap(std::move(_bitmap)){
 	//ctor
 }
 

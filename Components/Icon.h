@@ -36,7 +36,7 @@ class Icon: public Component	{
 
 	private:
 		// ---|> Component
-		virtual void doDisplay(const Geometry::Rect & region);
+		virtual void doDisplay(const Geometry::Rect & region) override;
 
 	private:
 		Util::Reference<ImageData> imageData;

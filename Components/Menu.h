@@ -30,24 +30,24 @@ class Menu: public Container,public KeyListener,public MouseButtonListener,publi
 		virtual ~Menu();
 
 		// ---|> FrameListener
-		virtual void onFrame(float timeSecs);
+		virtual void onFrame(float timeSecs) override;
 		
 		// ---|> KeyListener
-		virtual bool onKeyEvent(Component * component, const Util::UI::KeyboardEvent & keyEvent);
+		virtual bool onKeyEvent(Component * component, const Util::UI::KeyboardEvent & keyEvent) override;
 
 		// ---|> MouseButtonListener
-		virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
+		virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
 
 		// ---|> Container
 
 		// ---|> Component
-		virtual void doLayout();
+		virtual void doLayout() override;
 
-		virtual bool onSelect();
-		virtual bool onUnselect();
+		virtual bool onSelect() override;
+		virtual bool onUnselect() override;
 	private:
 		// ---|> Component
-		virtual void doDisplay(const Geometry::Rect & region);
+		virtual void doDisplay(const Geometry::Rect & region) override;
 
 	public:
 		// ---o

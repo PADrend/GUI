@@ -71,12 +71,12 @@ class Container : public Component    {
 		}
 
 		// ---|> Component
-		virtual std::string toString()const;
-		virtual visitorResult_t traverseChildren(Visitor & v);
-		virtual visitorResult_t traverseSubtree(Visitor & v);
+		virtual std::string toString()const override;
+		virtual visitorResult_t traverseChildren(Visitor & v) override;
+		virtual visitorResult_t traverseSubtree(Visitor & v) override;
 
 	private:
-		virtual void doDisplay(const Geometry::Rect & region);
+		virtual void doDisplay(const Geometry::Rect & region) override;
 
 	protected:
 		void displayChildren(const Geometry::Rect & region,bool useScissor=false);

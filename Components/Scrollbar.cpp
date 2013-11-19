@@ -87,9 +87,9 @@ class ScrollMarker:public Component,public MouseMotionListener,public MouseButto
 // ----------------------------------------------------
 
 //! (ctor)
-Scrollbar::Scrollbar(GUI_Manager & _gui,const Util::StringIdentifier & _dataName,flag_t _flags/*=0*/):
+Scrollbar::Scrollbar(GUI_Manager & _gui,Util::StringIdentifier  _dataName,flag_t _flags/*=0*/):
 		Container(_gui,Geometry::Rect(),_flags),MouseButtonListener(),
-		maxScrollPos(1),scrollPos(0),dataName(_dataName) {
+		maxScrollPos(1),scrollPos(0),dataName(std::move(_dataName)) {
 	init();
 }
 

@@ -26,15 +26,15 @@ class ColorProperty : public AbstractProperty {
 
 		Util::Color4ub color;
 	public:
-		ColorProperty(propertyId_t _propertyId,const Util::Color4ub & c) : AbstractProperty(_propertyId),color(c) {}
+		ColorProperty(propertyId_t _propertyId,Util::Color4ub  c) : AbstractProperty(_propertyId),color(std::move(c)) {}
 		virtual ~ColorProperty() {}
 
 		const Util::Color4ub & getColor()const		{	return color;	}
 		void setColor(const Util::Color4ub& c)		{	color=c;	}
 
 		//! ---|> AbstractProperty
-		virtual void doEnable(StyleManager & s);
-		virtual void doDisable(StyleManager & s);
+		virtual void doEnable(StyleManager & s) override;
+		virtual void doDisable(StyleManager & s) override;
 };
 
 //! FontProperty ---|> AbstractProperty
@@ -50,8 +50,8 @@ class FontProperty : public AbstractProperty {
 		void setFont(AbstractFont * f)				{	font=f;	}
 
 		//! ---|> AbstractProperty
-		virtual void doEnable(StyleManager & s);
-		virtual void doDisable(StyleManager & s);
+		virtual void doEnable(StyleManager & s) override;
+		virtual void doDisable(StyleManager & s) override;
 };
 
 /*! UseColorProperty ---|> AbstractProperty
@@ -65,8 +65,8 @@ class UseColorProperty : public AbstractProperty {
 		virtual ~UseColorProperty() {}
 
 		//! ---|> AbstractProperty
-		virtual void doEnable(StyleManager & s);
-		virtual void doDisable(StyleManager & s);
+		virtual void doEnable(StyleManager & s) override;
+		virtual void doDisable(StyleManager & s) override;
 };
 
 /*! UseFontProperty ---|> AbstractProperty
@@ -80,8 +80,8 @@ class UseFontProperty : public AbstractProperty {
 		virtual ~UseFontProperty() {}
 
 		//! ---|> AbstractProperty
-		virtual void doEnable(StyleManager & s);
-		virtual void doDisable(StyleManager & s);
+		virtual void doEnable(StyleManager & s) override;
+		virtual void doDisable(StyleManager & s) override;
 };
 
 /*! UseShapeProperty ---|> AbstractProperty
@@ -95,8 +95,8 @@ class UseShapeProperty : public AbstractProperty {
 		virtual ~UseShapeProperty() {}
 
 		//! ---|> AbstractProperty
-		virtual void doEnable(StyleManager & s);
-		virtual void doDisable(StyleManager & s);
+		virtual void doEnable(StyleManager & s) override;
+		virtual void doDisable(StyleManager & s) override;
 };
 
 //! ShapeProperty ---|> AbstractProperty
@@ -112,8 +112,8 @@ class ShapeProperty : public AbstractProperty {
 		void setShape(AbstractShape * s)			{	shape=s;	}
 
 		//! ---|> AbstractProperty
-		virtual void doEnable(StyleManager & s);
-		virtual void doDisable(StyleManager & s);
+		virtual void doEnable(StyleManager & s) override;
+		virtual void doDisable(StyleManager & s) override;
 };
 
 }

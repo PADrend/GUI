@@ -30,11 +30,11 @@ class Connector: public Container{
 		virtual ~Connector();
 
 		// ---|> Component
-		virtual void doLayout();
-		virtual bool coversLocalPos(const Geometry::Vec2 & pos);
+		virtual void doLayout() override;
+		virtual bool coversLocalPos(const Geometry::Vec2 & pos) override;
 	private:
 		// ---|> Component
-		virtual void doDisplay(const Geometry::Rect & region);
+		virtual void doDisplay(const Geometry::Rect & region) override;
 
 
 	public:

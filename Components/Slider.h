@@ -27,7 +27,7 @@ class Slider : public Container, public ActionListener, public MouseButtonListen
 		static const flag_t SHOW_VALUE=1<<25;
 		static const flag_t SLIDER_BUTTONS=1<<26;
 
-		Slider(GUI_Manager & gui,const Geometry::Rect & r,float left,float right,int steps,const Util::StringIdentifier & dataName,flag_t flags=0);
+		Slider(GUI_Manager & gui,const Geometry::Rect & r,float left,float right,int steps,Util::StringIdentifier  dataName,flag_t flags=0);
 		virtual ~Slider();
 
 		void setRange(float left,float right,int steps);
@@ -49,18 +49,18 @@ class Slider : public Container, public ActionListener, public MouseButtonListen
 		virtual void dataUpdated() ;
 
 		// ---|> MouseButtonListener
-		virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
+		virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
 		// ---|> ActionListener
-		virtual listenerResult_t handleAction(Component *,const Util::StringIdentifier & actionName);
+		virtual listenerResult_t handleAction(Component *,const Util::StringIdentifier & actionName) override;
 		// ---|> KeyListener
-		virtual bool onKeyEvent(Component * component, const Util::UI::KeyboardEvent & keyEvent);
+		virtual bool onKeyEvent(Component * component, const Util::UI::KeyboardEvent & keyEvent) override;
 
 		// ---|> Component
-		virtual void doLayout();
+		virtual void doLayout() override;
 
 	private:
 		// ---|> Component
-		virtual void doDisplay(const Geometry::Rect & region);
+		virtual void doDisplay(const Geometry::Rect & region) override;
 
 	protected:
 		// ---o
