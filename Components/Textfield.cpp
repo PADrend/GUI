@@ -377,6 +377,9 @@ bool Textfield::onUnselect() {
 	getGUI().removeMouseMotionListener(this);
 
 	if (backupText!=getText()) { // TODO: use changed flag
+		/* if componentDataChanged(...) issues a recursive call to onUnselect, 
+			componentDataChanged(...) should be called only once: */
+		backupText = getText(); 
 		getGUI().componentDataChanged(this,dataName);
 	}
 

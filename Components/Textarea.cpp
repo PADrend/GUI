@@ -529,8 +529,8 @@ bool Textarea::onSelect() {
 bool Textarea::onUnselect() {
 	getGUI().removeMouseMotionListener(this);
 	if(dataChanged) { 
-		getGUI().componentDataChanged(this,dataName);
 		dataChanged = false;
+		getGUI().componentDataChanged(this,dataName);
 	}
 
 	return true;
