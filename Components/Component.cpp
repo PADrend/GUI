@@ -24,12 +24,12 @@ namespace GUI{
 
 //! (ctor)
 Component::Component(GUI_Manager & _gui,flag_t _flags/*=0*/)
-		: Util::AttributeProvider(), Util::ReferenceCounter<Component>(), gui(&_gui),prev(nullptr),next(nullptr),flags(_flags) { 
+		: Util::AttributeProvider(), Util::ReferenceCounter<Component>(), gui(_gui),prev(nullptr),next(nullptr),flags(_flags) { 
 }
 
 //! (ctor)
 Component::Component(GUI_Manager & _gui,const Geometry::Rect & _relRect,flag_t _flags/*=0*/)
-		: Util::AttributeProvider(), Util::ReferenceCounter<Component>(), gui(&_gui),prev(nullptr),next(nullptr),flags(_flags) {
+		: Util::AttributeProvider(), Util::ReferenceCounter<Component>(), gui(_gui),prev(nullptr),next(nullptr),flags(_flags) {
 	setRect(_relRect);
 	//ctor
 }

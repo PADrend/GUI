@@ -44,16 +44,16 @@ int main(int /*argc*/, char */*argv*/[]) {
 	Util::UI::EventContext eventContext;
 	eventContext.getEventQueue().registerEventGenerator(std::bind(&Util::UI::Window::fetchEvents, window.get()));
 	
-	Util::Reference<GUI::GUI_Manager> guiManager = new GUI::GUI_Manager(eventContext);
-	guiManager->setWindow(window.get());
+	GUI::GUI_Manager guiManager(eventContext);
+	guiManager.setWindow(window.get());
 
-	Util::Reference<GUI::Window> guiWin = guiManager->createWindow(Geometry::Rect_f(10, 10, 200, 200), "Window");
+	Util::Reference<GUI::Window> guiWin = guiManager.createWindow(Geometry::Rect_f(10, 10, 200, 200), "Window");
 
-	Util::Reference<GUI::Textfield> guiText = guiManager->createTextfield(Geometry::Rect_f(0, 0, 40, 20), "Text");
+	Util::Reference<GUI::Textfield> guiText = guiManager.createTextfield(Geometry::Rect_f(0, 0, 40, 20), "Text");
 	guiWin->addContent(guiText.get());
 
 	Util::StringIdentifier clearActionId("clear_text");
-	Util::Reference<GUI::Button> guiButton = guiManager->createButton(Geometry::Rect_f(0, 25, 40, 20), "Clear", clearActionId);
+	Util::Reference<GUI::Button> guiButton = guiManager.createButton(Geometry::Rect_f(0, 25, 40, 20), "Clear", clearActionId);
 	guiWin->addContent(guiButton.get());
 	
 	struct ClearTextAction : public GUI::ActionListener {
@@ -77,7 +77,7 @@ int main(int /*argc*/, char */*argv*/[]) {
 		}
 	};
 	ClearTextAction action(clearActionId, guiText);
-	guiManager->registerActionListener(&action);
+	guiManager.registerActionListener(&action);
 
 	bool done = false;
 	while(!done) {
@@ -90,10 +90,10 @@ int main(int /*argc*/, char */*argv*/[]) {
 						 event.keyboard.key == Util::UI::KEY_ESCAPE)) {
 				done = true;
 			} else {
-				guiManager->handleEvent(event);
+				guiManager.handleEvent(event);
 			}
 		}
-		guiManager->display();
+		guiManager.display();
 		window->swapBuffers();
 	}
 	return EXIT_SUCCESS;

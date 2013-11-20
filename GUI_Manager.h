@@ -70,7 +70,7 @@ class MouseCursor;
 /***
  ** GUI_Manager
  **/
-class GUI_Manager : public Util::ReferenceCounter<GUI_Manager>{
+class GUI_Manager {
 	public:
 
 	// ----------

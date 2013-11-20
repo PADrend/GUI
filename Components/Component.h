@@ -47,7 +47,7 @@ class Component: public Util::AttributeProvider, public Util::ReferenceCounter<C
 	/*!	@name Main	*/
 	// @{
 	private:
-		Util::Reference<GUI_Manager> gui;
+		GUI_Manager & gui;
 	public:
 		typedef uint32_t flag_t;
 		typedef Util::Reference<Component> Ref;
@@ -56,7 +56,9 @@ class Component: public Util::AttributeProvider, public Util::ReferenceCounter<C
 		Component(GUI_Manager & gui,const Geometry::Rect & relRect,flag_t flags=0);
 		virtual ~Component();
 
-		inline GUI_Manager & getGUI()const		{	return *gui.get();	}
+		GUI_Manager & getGUI() const {
+			return gui;
+		}
 
 		static void destroy(Component * c);
 

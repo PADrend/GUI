@@ -96,25 +96,25 @@ std::string GUI_Manager::getStringFromClipboard() const {
  */
 class MouseCursorHandler : public MouseMotionListener, public MouseButtonListener {
 	private:
-		Util::Reference<GUI_Manager> gui;
+		GUI_Manager & gui;
 		bool cursorLockedByButton;
 	public:
 		
-		MouseCursorHandler(GUI_Manager & _gui) : MouseMotionListener(), MouseButtonListener(), gui(&_gui),cursorLockedByButton(false){
+		MouseCursorHandler(GUI_Manager & _gui) : MouseMotionListener(), MouseButtonListener(), gui(_gui),cursorLockedByButton(false){
 			activateCursor(nullptr);
 		}
 		
 		std::shared_ptr<Util::UI::Cursor> queryHoverComponentMouseCursor(const Vec2 & absPos)const{
-			for(Component * c=gui->getComponentAtPos(absPos);c!=nullptr;c=c->getParent()){
+			for(Component * c=gui.getComponentAtPos(absPos);c!=nullptr;c=c->getParent()){
 				if(c->hasMouseCursorProperty())
-					return std::move(gui->getStyleManager().getMouseCursor(c->getMouseCursorProperty()));
+					return std::move(gui.getStyleManager().getMouseCursor(c->getMouseCursorProperty()));
 			}
 			return nullptr;
 		}
 		// if no cursor is given, the systems's default cursor is used (internally represented by nullptr)
 		void activateCursor(std::shared_ptr<Util::UI::Cursor> cursor){
-			if(gui->getWindow()!=nullptr && gui->getWindow()->getCursor() != cursor)
-				gui->getWindow()->setCursor(std::move(cursor));
+			if(gui.getWindow()!=nullptr && gui.getWindow()->getCursor() != cursor)
+				gui.getWindow()->setCursor(std::move(cursor));
 		}
 		
 		// ---|> MouseButtonListener
