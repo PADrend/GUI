@@ -38,4 +38,49 @@ namespace GUI{
 
 #include "GUI_Manager.h"
 
+/**
+ * @mainpage
+ * 
+ * The <a href="https://github.com/PADrend/GUI">GUI</a> library provides an API
+ * to create a graphical user interface that is displayed using OpenGL. It is
+ * written in C++11 and is licensed under the Mozilla Public License
+ * version 2.0.
+ * 
+ * @section building Building your application with GUI
+ * The easiest way to use GUI in your own application is using
+ * <a href="http://www.cmake.org/">CMake</a> (at least version 2.8.11 is
+ * required). CMake sets the include directories and linker options for your
+ * build. If you want to build a target called @c MyApp, add the following to
+ * your @c CMakeLists.txt to build against the required libraries:
+ * @code
+	find_package(Geometry 0.1.3 REQUIRED NO_MODULE)
+	target_link_libraries(MyApp LINK_PRIVATE Geometry)
+
+	find_package(Util 0.1.3 REQUIRED NO_MODULE)
+	target_link_libraries(MyApp LINK_PRIVATE Util)
+
+	find_package(GUI 0.1.2 REQUIRED NO_MODULE)
+	target_link_libraries(MyApp LINK_PRIVATE GUI)
+   @endcode
+ * 
+ * @section usage Using GUI in your code
+ * A simple example application can be found in
+ * TextfieldAndButtonMain.cpp . It shows how to create a
+ * GUI::Window, then adds a GUI::Textfield and GUI::Button to it and listens
+ * for a click onto the button to clear the text 
+ * field.
+ *
+ * @section lib_dependencies Library Dependencies
+ * - <a href="https://github.com/PADrend/Geometry">Geometry</a>
+ * - <a href="https://github.com/PADrend/Util">Util</a>
+ *
+ * @section third_party_deps Third party dependencies
+ * - <a href="http://www.opengl.org/">OpenGL</a>
+ * - <a href="http://glew.sourceforge.net/">GLEW</a>
+ * 
+ * See also the
+ * <a href="https://github.com/PADrend/ThirdParty">third party repository</a>
+ * that can be used to build external dependencies.
+ */
+
 #endif // GUI_H
