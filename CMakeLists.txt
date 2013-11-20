@@ -55,6 +55,7 @@ add_library(GUI
 	Style/Style.cpp
 	GUI_Manager.cpp
 )
+add_subdirectory(examples)
 
 # Dependency to Geometry
 if(NOT TARGET Geometry)
