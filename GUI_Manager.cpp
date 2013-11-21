@@ -273,7 +273,7 @@ GUI_Manager::GUI_Manager(Util::UI::EventContext & context) :
 
 
 //! (dtor)
-GUI_Manager:: ~GUI_Manager(){
+GUI_Manager::~GUI_Manager() {
 	cleanup();
 	setActiveComponent(nullptr);
 	globalContainer=nullptr;
