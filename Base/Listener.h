@@ -99,7 +99,6 @@ enum listenerResult_t : uint32_t {
 // -------------------------------------------------
 
 struct ActionListener {
-	static RegisteredListenerRegistry<ActionListener> & getListenerRegistry();
 	virtual listenerResult_t handleAction(Component *,const Util::StringIdentifier & actionName)=0;
 	virtual ~ActionListener() {}
 };

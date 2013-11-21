@@ -40,7 +40,6 @@ Component::~Component() {
 	removeExternalLayout();
 	removeAttributes();
 //    setShape(nullptr);
-	ActionListener::getListenerRegistry().removeListeners(this);
 	DataChangeListener::getListenerRegistry().removeListeners(this);
 	MouseMotionListener::getListenerRegistry().removeListeners(this);
 	MouseButtonListener::getListenerRegistry().removeListeners(this);

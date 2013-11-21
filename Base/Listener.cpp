@@ -13,12 +13,6 @@
 namespace GUI {
 
 /*! (static, singleton) */
-RegisteredListenerRegistry<ActionListener> & ActionListener::getListenerRegistry(){
-	static RegisteredListenerRegistry<ActionListener> l;
-	return l;
-}
-
-/*! (static, singleton) */
 RegisteredListenerRegistry<DataChangeListener> & DataChangeListener::getListenerRegistry(){
 	static RegisteredListenerRegistry<DataChangeListener> l;
 	return l;
