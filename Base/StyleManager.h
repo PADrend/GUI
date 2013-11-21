@@ -38,7 +38,6 @@ typedef std::string propertyName_t;
 class StyleManager{
 	public:
 		~StyleManager();
-		void init();
 
 	// ----------------------------------------------------------------
 

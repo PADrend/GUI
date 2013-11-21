@@ -25,36 +25,19 @@ Textfield::Textfield(GUI_Manager & _gui,const std::string & _text,std::string _d
 		currentOptionIndex(-1) {
 	fontReference = getGUI().getActiveFont(PROPERTY_DEFAULT_FONT);
 	setText(_text);
-	init();
-	//ctor
-}
 
-//! (ctor)
-Textfield::Textfield(GUI_Manager & _gui,const Geometry::Rect & _r,const std::string & _text,std::string _dataName,flag_t _flags/*=0*/):
-		Component(_gui,_r,_flags),MouseButtonListener(),MouseMotionListener(),KeyListener(),
-		textRef(nullptr),
-		selectionStart(0),selectionEnd(0),backupText(""),cursorPos(0),scrollPos(0),dataName(std::move(_dataName)),
-		currentOptionIndex(-1) {
-	fontReference = getGUI().getActiveFont(PROPERTY_DEFAULT_FONT);
-	setText(_text);
-	init();
-	//ctor
+	addMouseButtonListener(this);
+	addKeyListener(this);
+	setFlag(SELECTABLE,true);
+	setFlag(USE_SCISSOR,true);
+    
+	setMouseCursorProperty(PROPERTY_MOUSECURSOR_TEXTFIELD);
 }
 
 //! (dtor)
 Textfield::~Textfield() {
 	getGUI().removeMouseMotionListener(this);
 	//dtor
-}
-
-//! (internal)
-void Textfield::init(){
-	addMouseButtonListener(this);
-	addKeyListener(this);
-	setFlag(SELECTABLE,true);
-	setFlag(USE_SCISSOR,true);
-    
-    setMouseCursorProperty(PROPERTY_MOUSECURSOR_TEXTFIELD);
 }
 
 //! ---|> Component

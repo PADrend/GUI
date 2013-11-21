@@ -31,7 +31,6 @@ class TabbedPanel : public Container {
 				PROVIDES_TYPE_NAME(Tab)
 			public:
 				Tab(GUI_Manager & gui,const std::string & title="",Container * clientArea=nullptr);
-				Tab(GUI_Manager & gui,const Geometry::Rect & r,const std::string & title="",Container * clientArea=nullptr);
 				virtual ~Tab();
 
 				Container * clientArea()const 				{	return clientAreaPanel;	}
@@ -64,9 +63,7 @@ class TabbedPanel : public Container {
 				// ---|> Component
 				virtual void doDisplay(const Geometry::Rect & region) override;
 
-			protected:
-				void init();
-
+		protected:
 				Container * clientAreaPanel;
 				Container * titlePanel;
 				Label * titleTextLabel;

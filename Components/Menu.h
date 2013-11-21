@@ -26,7 +26,6 @@ class Menu: public Container,public KeyListener,public MouseButtonListener,publi
 		static const flag_t ONE_TIME_MENU=1<<24;
 
 		Menu(GUI_Manager & gui,flag_t flags=0);
-		Menu(GUI_Manager & gui,const Geometry::Rect & r,flag_t flags=0);
 		virtual ~Menu();
 
 		// ---|> FrameListener
@@ -53,9 +52,6 @@ class Menu: public Container,public KeyListener,public MouseButtonListener,publi
 		// ---o
 		virtual void open(const Geometry::Vec2 &pos);
 		virtual void close();
-
-	protected:
-		void init();
 };
 }
 #endif // GUI_MENU_H

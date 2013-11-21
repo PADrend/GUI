@@ -20,7 +20,16 @@ namespace GUI {
 //! (ctor)
 Checkbox::Checkbox(GUI_Manager & _gui,bool _checked,const std::string & _text,flag_t _flags/*=0*/)
 		:Container(_gui,Geometry::Rect(0,0,16,16),_flags),boolValueRef(nullptr),intValueRef(nullptr),intBitMask(0),value(_checked),dataName(""){
-	init();
+	setFlag(SELECTABLE,true);
+
+	// create Label
+	textLabel=new Label(getGUI());
+	textLabel->setTextStyle(Draw::TEXT_ALIGN_LEFT|Draw::TEXT_ALIGN_MIDDLE);
+	addContent(textLabel.get());
+
+	addMouseButtonListener(this);
+	addMouseClickListener(this);
+	addKeyListener(this);
 	if(!_text.empty()){
 		setText(_text);
 
@@ -31,33 +40,8 @@ Checkbox::Checkbox(GUI_Manager & _gui,bool _checked,const std::string & _text,fl
 	//ctor
 }
 
-//! (ctor)
-Checkbox::Checkbox(GUI_Manager & _gui,const Geometry::Rect & _r,bool _checked,const std::string & _text,flag_t _flags/*=0*/)
-		:Container(_gui,_r,_flags),MouseButtonListener(),MouseClickListener(),KeyListener(),
-		boolValueRef(nullptr),intValueRef(nullptr),intBitMask(0),value(_checked),dataName(""){
-	init();
-	setText(_text);
-	//ctor
-}
-
 //! (dtor)
-Checkbox::~Checkbox(){
-	//dtor
-}
-
-//! (dtor)
-void Checkbox::init(){
-	setFlag(SELECTABLE,true);
-
- // create Label
-	textLabel=new Label(getGUI());
-	textLabel->setTextStyle(Draw::TEXT_ALIGN_LEFT|Draw::TEXT_ALIGN_MIDDLE);
-	addContent(textLabel.get());
-
-	addMouseButtonListener(this);
-	addMouseClickListener(this);
-	addKeyListener(this);
-}
+Checkbox::~Checkbox() = default;
 
 //! ---|> Component
 void Checkbox::doLayout(){

@@ -38,8 +38,6 @@ class Window : public Container,public ActionListener,public MouseButtonListener
 		Window(GUI_Manager & gui,const Geometry::Rect & r,const std::string & title="",flag_t flags=0);
 		virtual ~Window();
 
-		void init();
-
 		Container * getHeader()const 	{	return titlePanel.get();	}
 		Container * clientArea()const 	{	return clientAreaPanel.get();	}
 		bool isMinimized()const 		{	return minimized;	}

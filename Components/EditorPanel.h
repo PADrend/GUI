@@ -50,9 +50,7 @@ class EditorPanel: public Container,public MouseButtonListener,public MouseMotio
 	private:
 		// ---|> Component
 		virtual void doDisplay(const Geometry::Rect & region) override;
-		
-		void init();
-		
+
 		Geometry::Vec2 dragStartPos;
 		Geometry::Vec2 dragPos;
 

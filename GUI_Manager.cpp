@@ -826,31 +826,9 @@ Button * GUI_Manager::createButton(const std::string & text/*=""*/,flag_t flags/
 	return button;
 }
 
-//! [factory] Button
-Button * GUI_Manager::createButton(const std::string & text/*=""*/,const Util::StringIdentifier & actionName/*=""*/,flag_t flags/*=0*/){
-	auto button = new Button(*this,flags);
-	button->setActionName(actionName);
-	button->setText(text);
-	return button;
-}
-
-//! [factory] Button
-Button * GUI_Manager::createButton(const Geometry::Rect & r,const std::string & text/*=""*/,const Util::StringIdentifier & actionName/*=""*/,flag_t flags/*=0*/){
-	auto button = new Button(*this,flags);
-	button->setActionName(actionName);
-	button->setText(text);
-	button->setRect(r);
-	return button;
-}
-
 //! [factory] Checkbox
 Checkbox * GUI_Manager::createCheckbox(const std::string & text/*=""*/,bool checked/*=false*/,flag_t flags/*=0*/){
 	return new Checkbox(*this,checked,text,flags);
-}
-
-//! [factory] Checkbox
-Checkbox * GUI_Manager::createCheckbox(const Geometry::Rect & r,const std::string & text/*=""*/,bool checked/*=false*/,flag_t flags/*=0*/){
-	return new Checkbox(*this,r,checked,text,flags);
 }
 
 //! [factory] Container
@@ -933,11 +911,6 @@ NextRow * GUI_Manager::createNextRow(float additionalSpacing){
 }
 
 //! [factory] Panel
-Panel * GUI_Manager::createPanel(const Geometry::Rect & r,flag_t flags/*=0*/){
-	return new Panel(*this,r,flags);
-}
-
-//! [factory] Panel
 Panel * GUI_Manager::createPanel(flag_t flags/*=0*/){
 	return new Panel(*this,flags);
 }
@@ -962,13 +935,6 @@ TabbedPanel * GUI_Manager::createTabbedPanel(flag_t flags/*=0*/){
 	return new TabbedPanel(*this,flags);
 }
 
-//! [factory] TabbedPanel
-TabbedPanel * GUI_Manager::createTabbedPanel(const Geometry::Rect & r,flag_t flags/*=0*/){
-	auto c = new TabbedPanel(*this,flags);
-	c->setRect(r);
-	return c;
-}
-
 //! [factory] Textarea
 Textarea * GUI_Manager::createTextarea(const std::string &text/*=""*/,flag_t flags/*=0*/){
 	auto c = new Textarea(*this,flags);
@@ -978,11 +944,6 @@ Textarea * GUI_Manager::createTextarea(const std::string &text/*=""*/,flag_t fla
 //! [factory] TextField
 Textfield * GUI_Manager::createTextfield(const std::string &text/*=""*/,flag_t flags/*=0*/){
 	return new Textfield(*this,text,"",flags);
-}
-
-//! [factory] TextField
-Textfield * GUI_Manager::createTextfield(const Geometry::Rect & r,const std::string &text/*=""*/,flag_t flags/*=0*/){
-	return new Textfield(*this,r,text,"",flags);
 }
 
 //! [factory] TreeView

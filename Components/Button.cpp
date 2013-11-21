@@ -22,20 +22,6 @@ namespace GUI {
 	
 const Util::StringIdentifier Button::ACTION_Button_click("Button_click");
 
-//! (ctor)
-Button::Button(GUI_Manager & _gui,flag_t _flags/*=0*/)
-		:Container(_gui,_flags),MouseMotionListener(),MouseButtonListener(),MouseClickListener(),KeyListener(),
-		actionName(ACTION_Button_click),switchedOn(false),hover(false),actionListener(nullptr){
-	init();
-	//ctor
-}
-
-//! (dtor)
-Button::~Button(){
-	getGUI().removeMouseMotionListener(this);
-	//dtor
-}
-
 static ExtLayouter * getDefaultLabelLayouter(){
 	static Util::Reference<ExtLayouter> l;
 	if(l.isNull()){
@@ -46,7 +32,10 @@ static ExtLayouter * getDefaultLabelLayouter(){
 	return l.get();
 }
 
-void Button::init(){
+//! (ctor)
+Button::Button(GUI_Manager & _gui,flag_t _flags/*=0*/)
+		:Container(_gui,_flags),MouseMotionListener(),MouseButtonListener(),MouseClickListener(),KeyListener(),
+		actionName(ACTION_Button_click),switchedOn(false),hover(false),actionListener(nullptr){
 	setFlag(SELECTABLE,true);
 
 	// create Label
@@ -58,6 +47,12 @@ void Button::init(){
 	addMouseButtonListener(this);
 	addMouseClickListener(this);
 	addKeyListener(this);
+}
+
+//! (dtor)
+Button::~Button(){
+	getGUI().removeMouseMotionListener(this);
+	//dtor
 }
 
 //! ---|> Component

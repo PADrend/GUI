@@ -46,8 +46,10 @@ void Connector::findConnectors(Container * container,const Component * endpoint,
 //! (ctor)
 Connector::Connector(GUI_Manager & _gui,flag_t _flags/*=0*/)
 		:Container(_gui,_flags){
-	init();
-	//ctor
+	if(getContentsCount()==0){
+		addConnectorPoint();
+		addConnectorPoint();
+	}
 }
 
 //! (dtor)
@@ -55,13 +57,6 @@ Connector::~Connector(){
 	firstComponent=nullptr;
 	secondComponent=nullptr;
 	//dtor
-}
-
-void Connector::init(){
-	if(getContentsCount()==0){
-		addConnectorPoint();
-		addConnectorPoint();
-	}
 }
 
 //! ---|> Component

@@ -263,26 +263,7 @@ Window::Window(GUI_Manager & _gui,const Geometry::Rect & _r,const std::string & 
 
 	clientAreaPanel=new Container(_gui);
 	_addChild(clientAreaPanel.get());
-	init();
 
-	setTitle(_title);
-
-	//ctor
-}
-
-//! (dtor)
-Window::~Window(){
-	//dtor
-}
-
-void Window::close(){
-	restore();
-	getGUI().finishAnimations(this);
-	getGUI().addAnimationHandler(new WindowCloseAnimation(this));
-}
-
-
-void Window::init(){
 	setMouseCursorProperty(PROPERTY_MOUSECURSOR_COMPONENTS);
 	    
 	const int borderSize=getGUI().getGlobalValue(PROPERTY_WINDOW_BORDER_SIZE);
@@ -353,6 +334,19 @@ void Window::init(){
 
 	addMouseButtonListener(this);
 	addKeyListener(this);
+
+	setTitle(_title);
+
+	//ctor
+}
+
+//! (dtor)
+Window::~Window() = default;
+
+void Window::close(){
+	restore();
+	getGUI().finishAnimations(this);
+	getGUI().addAnimationHandler(new WindowCloseAnimation(this));
 }
 
 //! ---|> Component

@@ -61,7 +61,6 @@ class Connector: public Container{
 		};
 
 	protected:
-		void init();
 		Util::Reference<Component> firstComponent;
 		Util::Reference<Component> secondComponent;
 

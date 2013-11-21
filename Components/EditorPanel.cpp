@@ -60,8 +60,11 @@ static FillLayouter * getDefaultLayouter(){
 //! (ctor)
 EditorPanel::EditorPanel(GUI_Manager & _gui,flag_t _flags/*=0*/) :
 		Container(_gui,_flags),MouseButtonListener(),MouseMotionListener(),state(CLICK_SELECTING){
-	init();
-	//ctor
+	addMouseButtonListener(this);
+	setFlag(USE_SCISSOR,true);
+	setFlag(SELECTABLE,true);
+	setFlag(BORDER,true);
+	addLayouter(getDefaultLayouter());
 }
 
 
@@ -69,14 +72,6 @@ EditorPanel::EditorPanel(GUI_Manager & _gui,flag_t _flags/*=0*/) :
 EditorPanel::~EditorPanel() {
 	getGUI().removeMouseMotionListener(this);
 	//dtor
-}
-
-void EditorPanel::init(){
-	addMouseButtonListener(this);
-	setFlag(USE_SCISSOR,true);
-	setFlag(SELECTABLE,true);
-	setFlag(BORDER,true);
-	addLayouter(getDefaultLayouter());
 }
 
 //! ---|> Component

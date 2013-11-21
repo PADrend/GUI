@@ -256,15 +256,11 @@ class GUI_Manager {
 	//	@{
 	public:
 		Button * createButton(const std::string & text,flag_t flags=0);
-		Button * createButton(const std::string & text,const Util::StringIdentifier & actionName,flag_t flags=0);
-		Button * createButton(const Geometry::Rect & r,const std::string & text,const Util::StringIdentifier & actionName,flag_t flags=0);
 		Container * createContainer(const Geometry::Rect & r,flag_t flags=0);
 		Connector * createConnector(flag_t flags=0);
 		EditorPanel * createEditorPanel(flag_t flags=0);
 		Panel * createPanel(flag_t flags=0);
-		Panel * createPanel(const Geometry::Rect & r,flag_t flags=0);
 		Checkbox * createCheckbox(const std::string & text="",bool checked=false,flag_t flags=0);
-		Checkbox * createCheckbox(const Geometry::Rect & r,const std::string & text="",bool checked=false,flag_t flags=0);
 		Icon * createIcon(const Geometry::Vec2 & pos, Util::WeakPointer<ImageData> imageData,const Geometry::Rect & imageRect,flag_t flags=0);
 		Icon * createIcon(const Geometry::Rect & r,flag_t flags=0);
 		Image * createImage(const Geometry::Rect & r,flag_t flags=0);
@@ -280,10 +276,8 @@ class GUI_Manager {
 		Splitter * createVSplitter(flag_t flags=0);
 		Splitter * createHSplitter(flag_t flags=0);
 		TabbedPanel * createTabbedPanel(flag_t flags=0);
-		TabbedPanel * createTabbedPanel(const Geometry::Rect & r,flag_t flags=0);
 		Textarea * createTextarea(const std::string &text="",flag_t flags=0);
 		Textfield * createTextfield(const std::string &text="",flag_t flags=0);
-		Textfield * createTextfield(const Geometry::Rect & r,const std::string &text="",flag_t flags=0);
 		TreeView * createTreeView(const Geometry::Rect & r,flag_t flags=0);
 		Container * createTreeViewEntry(Component * c);
 		Window * createWindow(const Geometry::Rect & r,const std::string & title="",flag_t flags=0);

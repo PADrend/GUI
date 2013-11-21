@@ -24,7 +24,6 @@ class Checkbox : public Container,public MouseButtonListener,public MouseClickLi
 		PROVIDES_TYPE_NAME(Checkbox)
 	public:
 		Checkbox(GUI_Manager & gui,bool checked=false,const std::string & text="",flag_t flags=0);
-		Checkbox(GUI_Manager & gui,const Geometry::Rect & r,bool checked=false,const std::string & text="",flag_t flags=0);
 		virtual ~Checkbox();
 
 		void setChecked(bool b);
@@ -60,8 +59,6 @@ class Checkbox : public Container,public MouseButtonListener,public MouseClickLi
 		virtual void doDisplay(const Geometry::Rect & region) override;
 
 	protected:
-		void init();
-
 		Util::WeakPointer<Label> textLabel;
 		bool * boolValueRef;
 		unsigned int * intValueRef;

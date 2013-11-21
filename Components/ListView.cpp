@@ -74,24 +74,15 @@ ListView::ListView(GUI_Manager & _gui, flag_t _flags/*=0*/) :
 
 	clientArea->setFlag(IS_CLIENT_AREA, true);
 	_addChild(clientArea.get());
-	init();
-	//ctor
+	clientArea->addMouseButtonListener(this);
+	addKeyListener(this);
+	setFlag(USE_SCISSOR, true);
+	setFlag(SELECTABLE, true);
 }
 
 void ListView::assertIsChild(Component * c)const {
 	if(c == nullptr || clientArea.get() != c->getParent())
 		throw std::invalid_argument("Given component is no child of this ListView.");
-}
-
-
-void ListView::init() {
-	clientArea->addMouseButtonListener(this);
-	addKeyListener(this);
-	setFlag(USE_SCISSOR, true);
-	setFlag(SELECTABLE, true);
-
-//	setFlag(AT_LEAST_ONE_MARKING, true);
-//	setFlag(AT_MOST_ONE_MARKING,true);
 }
 
 //! (dtor)

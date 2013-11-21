@@ -77,15 +77,6 @@ Slider::Slider(GUI_Manager & _gui,const Geometry::Rect & _r,float left,float rig
 		Container(_gui,_r,_flags),ActionListener(), MouseButtonListener(),KeyListener(),
 		markerSize(6),value(0),floatValueRef(nullptr),dataName(std::move(_dataName)) {
 	setRange(left,right,steps);
-	init();
-}
-
-//! (dtor)
-Slider::~Slider() {
-}
-
-//! (internal)
-void Slider::init() {
 	setFlag(SELECTABLE,true);
 
 	sliderMarker=new SliderMarker(getGUI(),*this);
@@ -107,6 +98,9 @@ void Slider::init() {
 	addMouseButtonListener(this);
 	addKeyListener(this);
 }
+
+//! (dtor)
+Slider::~Slider() = default;
 
 //! ---|> Component
 void Slider::doLayout(){

@@ -24,7 +24,6 @@ namespace GUI {
 class Textfield: public Component,public MouseButtonListener,public MouseMotionListener,public KeyListener {
 		PROVIDES_TYPE_NAME(Textfield)
 	public:
-		Textfield(GUI_Manager & gui,const Geometry::Rect & r,const std::string &text="",std::string dataName="",flag_t flags=0);
 		Textfield(GUI_Manager & gui,const std::string &text="",std::string dataName="",flag_t flags=0);
 		virtual ~Textfield();
 
@@ -48,8 +47,6 @@ class Textfield: public Component,public MouseButtonListener,public MouseMotionL
 		virtual void doDisplay(const Geometry::Rect & region) override;
 
 	private:
-		void init();
-
 		std::string text;
 		std::string * textRef;
 		Util::Reference<AbstractFont> fontReference; // this is updated by the actual font property on each call of display

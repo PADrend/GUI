@@ -74,8 +74,6 @@ public:
 		// ---|> Component
 		virtual void doDisplay(const Geometry::Rect & region) override;
 
-		void init();
-
 		float entryHeight;
 		Util::WeakPointer<ListViewClientArea> clientArea;
 	//	@}

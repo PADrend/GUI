@@ -32,18 +32,9 @@ static FlowLayouter * getDefaultLayouter(){
 	return defaultLayouter.get();
 }
 
-
 //! (ctor)
 Panel::Panel(GUI_Manager & _gui,flag_t _flags/*=0*/) : ScrollableContainer(_gui,_flags){
-	init();
-	//ctor
-}
-
-//! (ctor)
-Panel::Panel(GUI_Manager & _gui,const Geometry::Rect & _r,flag_t _flags/*=0*/) : ScrollableContainer(_gui,_flags){
-	setRect(_r);
-	init();
-	//ctor
+	getContentContainer()->addLayouter(getDefaultLayouter());
 }
 
 //! (dtor)
@@ -58,10 +49,6 @@ void Panel::disableAutoBreak(){
 
 void Panel::enableAutoBreak(){
 	accessLayouter().setAutoBreak(true);
-}
-
-void Panel::init(){
-	getContentContainer()->addLayouter(getDefaultLayouter());
 }
 
 //! (internal) Replaces the layouter on each access.

@@ -182,27 +182,6 @@ struct TabTitlePanel:public Container,public MouseMotionListener ,public MouseBu
 //! (Tab] [ctor)
 TabbedPanel::Tab::Tab(GUI_Manager & _gui,const std::string & _title,Container * _clientArea/*=0*/)
 		:Container(_gui),clientAreaPanel(_clientArea),titlePanel(nullptr),titleTextLabel(nullptr) {
-	init();
-	setTitle(_title);
-	//ctor
-}
-
-//! (Tab] [ctor)
-TabbedPanel::Tab::Tab(GUI_Manager & _gui,const Geometry::Rect & _r,const std::string & _title,Container * _clientArea/*=0*/)
-		:Container(_gui,_r),clientAreaPanel(_clientArea),titlePanel(nullptr),titleTextLabel(nullptr) {
-	init();
-	setTitle(_title);
-	//ctor
-}
-
-//! (Tab] [dtor)
-TabbedPanel::Tab::~Tab() {
-	//dtor
-}
-
-//! (Tab)
-void TabbedPanel::Tab::init() {
-//	setFlag(CONSUME_MOUSE_BUTTON,false);
 	setFlag(TRANSPARENT_COMPONENT,true);
 
 	setFlag(AUTO_MAXIMIZE,true);
@@ -221,7 +200,12 @@ void TabbedPanel::Tab::init() {
 	clientAreaPanel->setFlag(USE_SCISSOR,true);
 	
 	clientAreaPanel->disable();
+
+	setTitle(_title);
 }
+
+//! (Tab] [dtor)
+TabbedPanel::Tab::~Tab() = default;
 
 //! [Tab] ---|> Component
 void TabbedPanel::Tab::doLayout() {
@@ -303,10 +287,13 @@ TabbedPanel::TabbedPanel(GUI_Manager & _gui,flag_t _flags/*=0*/) :
 
 
 TabbedPanel::Tab * TabbedPanel::createTab(const std::string & name,Container * clientArea/*=0*/) {
-	auto t=new Tab(getGUI(),Geometry::Rect(0,0,getWidth(),getHeight()),name,clientArea);
-	addContent(t);
-	if(!getActiveTab()) setActiveTab(t);
-	return t;
+	auto tab = new Tab(getGUI(), name, clientArea);
+	tab->setRect(Geometry::Rect(0, 0, getWidth(), getHeight()));
+	addContent(tab);
+	if(!getActiveTab()) {
+		setActiveTab(tab);
+	}
+	return tab;
 }
 
 void TabbedPanel::setActiveTab(Tab * tab) {

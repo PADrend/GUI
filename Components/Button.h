@@ -59,8 +59,6 @@ class Button: public Container,public MouseMotionListener,public MouseButtonList
 		virtual void doDisplay(const Geometry::Rect & region) override;
 
 	protected:
-		void init();
-
 		Util::WeakPointer<Label> textLabel;
 		Util::StringIdentifier actionName;
 		bool switchedOn;

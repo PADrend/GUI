@@ -67,7 +67,6 @@ class Textarea: public Container,public MouseButtonListener,
 		cursor_t _deleteText(const range_t &);
 		// ---|> Component
 		virtual void doDisplay(const Geometry::Rect & region) override;
-		void init();
 		range_t _insertText(const cursor_t & pos,const std::string & s);
 		void markForConsolidation(size_t line1,size_t line2){
 			linesToConsolidate.first = std::min(linesToConsolidate.first,std::min(line1,line2));

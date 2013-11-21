@@ -19,18 +19,6 @@ namespace GUI {
 //! (ctor)
 Menu::Menu(GUI_Manager & _gui,flag_t _flags/*=0*/)
 	:Container(_gui,_flags),KeyListener(),MouseButtonListener(){
-	init();
-	//ctor
-}
-
-//! (ctor)
-Menu::Menu(GUI_Manager & _gui,const Geometry::Rect & _r,flag_t _flags/*=0*/)
-		:Container(_gui,_r,_flags),KeyListener(),MouseButtonListener(){
-	init();
-	//ctor
-}
-
-void Menu::init(){
 	disable();
 	addKeyListener(this);
 	addMouseButtonListener(this);

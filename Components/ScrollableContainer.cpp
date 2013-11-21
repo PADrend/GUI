@@ -30,11 +30,6 @@ ScrollableContainer::ScrollableContainer(GUI_Manager & _gui,flag_t _flags/*=0*/)
 		: Container(_gui,_flags),DataChangeListener(),MouseButtonListener(),MouseMotionListener(),contentContainer(new Container(_gui)){
 
 	_addChild(contentContainer.get());
-	init();
-	//ctor
-}
-
-void ScrollableContainer::init(){
 	contentContainer->setFlag(IS_CLIENT_AREA,true);
 	addMouseButtonListener(this);
 	setFlag(USE_SCISSOR,true);

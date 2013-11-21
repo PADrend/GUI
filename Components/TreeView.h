@@ -78,8 +78,6 @@ class TreeView: public Container,public DataChangeListener,public MouseButtonLis
 				void unmarkSubtree(Component * root)const;
 		};
 
-
-		TreeView(GUI_Manager & gui,const std::string & actionName="",flag_t flags=0);
 		TreeView(GUI_Manager & gui,const Geometry::Rect & r,const std::string & actionName="",flag_t flags=0);
 		virtual ~TreeView();
 
@@ -126,8 +124,6 @@ class TreeView: public Container,public DataChangeListener,public MouseButtonLis
 		Geometry::Vec2 currentMousePos;
 
 	protected:
-		void init();
-
 		std::vector<Util::Reference<TreeViewEntry>> markedEntries;
 		Util::StringIdentifier actionName;
 		Util::WeakPointer<TreeViewEntry> root;

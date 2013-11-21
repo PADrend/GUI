@@ -56,8 +56,6 @@ class ScrollableContainer: public Container,public DataChangeListener,public Mou
 		virtual void doLayout() override;
 		
 	private:
-		void init();
-
 		Util::WeakPointer<Container> contentContainer;
 		Util::WeakPointer<Scrollbar> vScrollBar;
 		Geometry::Vec2 scrollPos;

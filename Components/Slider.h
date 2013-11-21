@@ -67,8 +67,6 @@ class Slider : public Container, public ActionListener, public MouseButtonListen
 		virtual float getPosFromValue(float value)const;
 		virtual float getValueFromPos(float pos)const;
 
-		void init();
-
 		float rangeLeft;
 		float rangeRight;
 		int numSteps;

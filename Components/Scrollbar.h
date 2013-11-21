@@ -51,8 +51,6 @@ class Scrollbar : public Container, public MouseButtonListener {
 
 		float getMarkerPosFromScrollPos(float value)const;
 
-		void init();
-
 		uint32_t maxScrollPos;
 		uint32_t scrollPos;
 

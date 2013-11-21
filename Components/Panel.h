@@ -30,7 +30,6 @@ class Panel: public ScrollableContainer {
 		static const flag_t AUTO_LAYOUT=1<<24; //! unused!
 
 		Panel(GUI_Manager & gui,flag_t flags=0);
-		Panel(GUI_Manager & gui,const Geometry::Rect & r,flag_t flags=0);
 		virtual ~Panel();
 
 		void nextRow(float additionalSpacing=0);
@@ -44,8 +43,6 @@ class Panel: public ScrollableContainer {
 
 	private:
 		FlowLayouter & accessLayouter();
-		
-		void init();
 };
 }
 #endif // GUI_Panel_H

@@ -90,12 +90,6 @@ class ScrollMarker:public Component,public MouseMotionListener,public MouseButto
 Scrollbar::Scrollbar(GUI_Manager & _gui,Util::StringIdentifier _dataName,flag_t _flags/*=0*/):
 		Container(_gui,Geometry::Rect(),_flags),MouseButtonListener(),
 		maxScrollPos(1),scrollPos(0),dataName(std::move(_dataName)) {
-	init();
-}
-
-
-//! (internal)
-void Scrollbar::init() {
 	setFlag(SELECTABLE,true);
 
 	marker=new ScrollMarker(getGUI(),*this);

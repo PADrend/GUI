@@ -319,30 +319,9 @@ void TreeView::TreeViewEntry::unmarkSubtree(Component * subroot)const{
 //// ------------------------------------------------------------------------------
 
 //! (ctor)
-TreeView::TreeView(GUI_Manager & _gui,const std::string & _actionName,flag_t _flags/*=0*/):
-		Container(_gui,_flags),DataChangeListener(),MouseButtonListener(),MouseMotionListener(),KeyListener(),
-		actionName(_actionName),root(new TreeViewEntry(_gui,this)),scrollPos(0),multiSelect(true),scrollBar(nullptr) {
-	init();
-	//ctor
-}
-
-//! (ctor)
 TreeView::TreeView(GUI_Manager & _gui,const Geometry::Rect & _r,const std::string & _actionName,flag_t _flags/*=0*/):
 		Container(_gui,_r,_flags),DataChangeListener(),MouseButtonListener(),MouseMotionListener(),KeyListener(),
 		actionName(_actionName),root(new TreeViewEntry(_gui,this)),scrollPos(0),multiSelect(true),scrollBar(nullptr) {
-	init();
-	//ctor
-}
-
-//! (dtor)
-TreeView::~TreeView() {
-	// destroy root
-	getGUI().removeMouseMotionListener(this);
-	root=nullptr;
-	//dtor
-}
-
-void TreeView::init() {
 	setFlag(SELECTABLE,true);
 
 	_addChild(root.get());
@@ -351,7 +330,14 @@ void TreeView::init() {
 
 	setFlag(USE_SCISSOR,true);
 	setFlag(LOWERED_BORDER,true);
-//	setFlag(BACKGROUND,true);
+}
+
+//! (dtor)
+TreeView::~TreeView() {
+	// destroy root
+	getGUI().removeMouseMotionListener(this);
+	root=nullptr;
+	//dtor
 }
 
 //! ---|> Component
