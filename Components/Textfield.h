@@ -14,6 +14,7 @@
 #include "Component.h"
 #include "../Base/Listener.h"
 #include "../Base/Fonts/AbstractFont.h"
+#include "../GUI_Manager.h"
 #include <array>
 
 namespace GUI {
@@ -21,7 +22,7 @@ namespace GUI {
 /***
  **  Textfield ---|> Component
  **/
-class Textfield: public Component,public MouseButtonListener,public MouseMotionListener,public KeyListener {
+class Textfield: public Component,public MouseButtonListener,public MouseMotionListener {
 		PROVIDES_TYPE_NAME(Textfield)
 	public:
 		Textfield(GUI_Manager & gui,const std::string &text="",std::string dataName="",flag_t flags=0);
@@ -34,8 +35,6 @@ class Textfield: public Component,public MouseButtonListener,public MouseMotionL
 
 		// ---|> MouseButtonListener
 		virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
-		// ---|> KeyListener
-		virtual bool onKeyEvent(Component * component, const Util::UI::KeyboardEvent & keyEvent) override;
 		// ---|> MouseMotionListener
 		virtual listenerResult_t onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent) override;
 
@@ -45,6 +44,8 @@ class Textfield: public Component,public MouseButtonListener,public MouseMotionL
 	private:
 		// ---|> Component
 		virtual void doDisplay(const Geometry::Rect & region) override;
+
+		bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
 
 	private:
 		std::string text;
@@ -57,6 +58,8 @@ class Textfield: public Component,public MouseButtonListener,public MouseMotionL
 		int cursorPos;
 		int scrollPos;
 		std::string dataName;
+
+		GUI_Manager::KeyListenerHandle keyListenerHandle;
 
 		Geometry::Vec2 getCursorCoordinate(int cursorPos);
 		int getCursorPositionFromCoordinate(const Geometry::Vec2 & pos);

@@ -258,8 +258,11 @@ class WindowSpielereiAnimation:public AnimationHandler{
 
 //! (ctor)
 Window::Window(GUI_Manager & _gui,const Geometry::Rect & _r,const std::string & _title,flag_t _flags/*=0*/):
-		Container(_gui,_r,_flags),ActionListener(),MouseButtonListener(),KeyListener(),
-		minimized(false),opacity(1.0),autoMinimizer(){
+		Container(_gui,_r,_flags),ActionListener(),MouseButtonListener(),
+		minimized(false),opacity(1.0),autoMinimizer(),
+		keyListenerHandle(_gui.addKeyListener(this, std::bind(&Window::onKeyEvent,  
+															  this, 
+															  std::placeholders::_1))) {
 
 	clientAreaPanel=new Container(_gui);
 	_addChild(clientAreaPanel.get());
@@ -333,15 +336,14 @@ Window::Window(GUI_Manager & _gui,const Geometry::Rect & _r,const std::string & 
 
 
 	addMouseButtonListener(this);
-	addKeyListener(this);
 
 	setTitle(_title);
-
-	//ctor
 }
 
 //! (dtor)
-Window::~Window() = default;
+Window::~Window() {
+	getGUI().removeKeyListener(this, std::move(keyListenerHandle));
+}
 
 void Window::close(){
 	restore();
@@ -498,8 +500,7 @@ std::string Window::getTitle()const{
 	return titleTextLabel->getText();
 }
 
-//! ---|> KeyListener
-bool Window::onKeyEvent(Component * /*component*/, const Util::UI::KeyboardEvent & keyEvent){
+bool Window::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent){
 	if (keyEvent.pressed && keyEvent.key == Util::UI::KEY_ESCAPE) {
 		unselect();
 		return true;

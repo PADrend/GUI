@@ -14,13 +14,14 @@
 #include "Container.h"
 #include "Label.h"
 #include "../Base/Listener.h"
+#include "../GUI_Manager.h"
 
 namespace GUI {
 /***
  **     Button ---|> Container ---|> Component
  **                   0..1 ------------> *
  **/
-class Button: public Container,public MouseMotionListener,public MouseButtonListener,public MouseClickListener,public KeyListener{
+class Button : public Container, public MouseMotionListener, public MouseButtonListener, public MouseClickListener {
 		PROVIDES_TYPE_NAME(Button)
 	public:
 		static const flag_t FLAT_BUTTON=1<<24;
@@ -51,12 +52,12 @@ class Button: public Container,public MouseMotionListener,public MouseButtonList
 		virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
 		// ---|> MouseClickListener
 		virtual bool onMouseClick(Component * component, unsigned int button,const Geometry::Vec2 &pos) override;
-		// ---|> KeyListener
-		virtual bool onKeyEvent(Component * component, const Util::UI::KeyboardEvent & keyEvent) override;
 
 	private:
 		// ---|> Component
 		virtual void doDisplay(const Geometry::Rect & region) override;
+
+		bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
 
 	protected:
 		Util::WeakPointer<Label> textLabel;
@@ -64,6 +65,7 @@ class Button: public Container,public MouseMotionListener,public MouseButtonList
 		bool switchedOn;
 		bool hover;
 		ActionListener * actionListener;
+		GUI_Manager::KeyListenerHandle keyListenerHandle;
 };
 }
 #endif // GUI_Button_H

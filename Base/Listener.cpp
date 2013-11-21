@@ -36,10 +36,4 @@ RegisteredListenerRegistry<MouseClickListener> & MouseClickListener::getListener
 	return l;
 }
 
-/*! (static, singleton) */
-RegisteredListenerRegistry<KeyListener> & KeyListener::getListenerRegistry(){
-	static RegisteredListenerRegistry<KeyListener> l;
-	return l;
-}
-
 }

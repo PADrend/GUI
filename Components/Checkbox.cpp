@@ -19,7 +19,10 @@ namespace GUI {
 
 //! (ctor)
 Checkbox::Checkbox(GUI_Manager & _gui,bool _checked,const std::string & _text,flag_t _flags/*=0*/)
-		:Container(_gui,Geometry::Rect(0,0,16,16),_flags),boolValueRef(nullptr),intValueRef(nullptr),intBitMask(0),value(_checked),dataName(""){
+		:Container(_gui,Geometry::Rect(0,0,16,16),_flags),boolValueRef(nullptr),intValueRef(nullptr),intBitMask(0),value(_checked),dataName(""),
+		keyListenerHandle(_gui.addKeyListener(this, std::bind(&Checkbox::onKeyEvent, 
+															  this, 
+															  std::placeholders::_1))) {
 	setFlag(SELECTABLE,true);
 
 	// create Label
@@ -29,7 +32,6 @@ Checkbox::Checkbox(GUI_Manager & _gui,bool _checked,const std::string & _text,fl
 
 	addMouseButtonListener(this);
 	addMouseClickListener(this);
-	addKeyListener(this);
 	if(!_text.empty()){
 		setText(_text);
 
@@ -41,7 +43,9 @@ Checkbox::Checkbox(GUI_Manager & _gui,bool _checked,const std::string & _text,fl
 }
 
 //! (dtor)
-Checkbox::~Checkbox() = default;
+Checkbox::~Checkbox() {
+	getGUI().removeKeyListener(this, std::move(keyListenerHandle));
+}
 
 //! ---|> Component
 void Checkbox::doLayout(){
@@ -100,8 +104,7 @@ bool Checkbox::onMouseClick(Component * /*component*/,unsigned int /*button*/,co
 	return true;
 }
 
-//! ---|> KeyListener
-bool Checkbox::onKeyEvent(Component * /*component*/, const Util::UI::KeyboardEvent & keyEvent){
+bool Checkbox::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {
 	if(!isLocked() && (keyEvent.key == Util::UI::KEY_RETURN || keyEvent.key == Util::UI::KEY_SPACE)){
 		select();
 		if(keyEvent.pressed){

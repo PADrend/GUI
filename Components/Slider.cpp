@@ -74,8 +74,11 @@ class SliderMarker:public Component,public MouseMotionListener,public MouseButto
 
 //! (ctor)
 Slider::Slider(GUI_Manager & _gui,const Geometry::Rect & _r,float left,float right,int steps,Util::StringIdentifier _dataName,flag_t _flags/*=0*/):
-		Container(_gui,_r,_flags),ActionListener(), MouseButtonListener(),KeyListener(),
-		markerSize(6),value(0),floatValueRef(nullptr),dataName(std::move(_dataName)) {
+		Container(_gui,_r,_flags),ActionListener(), MouseButtonListener(),
+		markerSize(6),value(0),floatValueRef(nullptr),dataName(std::move(_dataName)),
+		keyListenerHandle(_gui.addKeyListener(this, std::bind(&Slider::onKeyEvent, 
+															  this, 
+															  std::placeholders::_1))) {
 	setRange(left,right,steps);
 	setFlag(SELECTABLE,true);
 
@@ -96,11 +99,12 @@ Slider::Slider(GUI_Manager & _gui,const Geometry::Rect & _r,float left,float rig
 		_addChild(button2.get());
 	}
 	addMouseButtonListener(this);
-	addKeyListener(this);
 }
 
 //! (dtor)
-Slider::~Slider() = default;
+Slider::~Slider() {
+	getGUI().removeKeyListener(this, std::move(keyListenerHandle));
+}
 
 //! ---|> Component
 void Slider::doLayout(){
@@ -207,8 +211,7 @@ listenerResult_t Slider::onMouseButton(Component * /*component*/, const Util::UI
 
 }
 
-//! ---|> KeyListener
-bool Slider::onKeyEvent(Component * /*component*/, const Util::UI::KeyboardEvent & keyEvent) {
+bool Slider::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {
 	if(isLocked())
 		return false;
 	if (keyEvent.key==Util::UI::KEY_LEFT) {

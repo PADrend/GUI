@@ -14,6 +14,7 @@
 #include "Container.h"
 #include "Label.h"
 #include "../Base/Listener.h"
+#include "../GUI_Manager.h"
 
 namespace GUI {
 class Scrollbar;
@@ -22,7 +23,7 @@ class Scrollbar;
  **     TreeView ---|> Container ---|> Component
  **                   0..1 ------------> *
  **/
-class TreeView: public Container,public DataChangeListener,public MouseButtonListener,public MouseMotionListener, public KeyListener{
+class TreeView: public Container,public DataChangeListener,public MouseButtonListener,public MouseMotionListener {
 		PROVIDES_TYPE_NAME(TreeView)
 	public:
 		/***
@@ -105,8 +106,6 @@ class TreeView: public Container,public DataChangeListener,public MouseButtonLis
 		virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
 		// ---|> MouseMotionListener
 		virtual listenerResult_t onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) override;
-		// ---|> KeyListener
-		virtual bool onKeyEvent(Component * component, const Util::UI::KeyboardEvent & keyEvent) override;
 
 		// ---|> Container
 		virtual void addContent(const Ref & child) override;
@@ -121,6 +120,8 @@ class TreeView: public Container,public DataChangeListener,public MouseButtonLis
 		// ---|> Component
 		virtual void doDisplay(const Geometry::Rect & region) override;
 
+		bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
+
 		Geometry::Vec2 currentMousePos;
 
 	protected:
@@ -130,6 +131,8 @@ class TreeView: public Container,public DataChangeListener,public MouseButtonLis
 		float scrollPos;
 		bool multiSelect;
 		Util::WeakPointer<Scrollbar> scrollBar;
+
+		GUI_Manager::KeyListenerHandle keyListenerHandle;
 };
 }
 #endif // GUI_TreeView_H

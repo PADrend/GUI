@@ -24,23 +24,26 @@ namespace GUI {
 /***
  **  TabTitlePanel ---|> Container ---|> Component
  **/
-struct TabTitlePanel:public Container,public MouseMotionListener ,public MouseButtonListener, public KeyListener {
+struct TabTitlePanel : public Container, public MouseMotionListener, public MouseButtonListener {
 	TabbedPanel::Tab & myTab;
-	TabTitlePanel(GUI_Manager & _gui,TabbedPanel::Tab & tab)
-			:Container(_gui),MouseMotionListener(),MouseButtonListener(),KeyListener(),myTab(tab) {
+	GUI_Manager::KeyListenerHandle keyListenerHandle;
+	TabTitlePanel(GUI_Manager & _gui,TabbedPanel::Tab & tab) :
+			Container(_gui),MouseMotionListener(),MouseButtonListener(),myTab(tab),
+			keyListenerHandle(_gui.addKeyListener(this, std::bind(&TabTitlePanel::onKeyEvent, 
+																  this, 
+																  std::placeholders::_1))) {
 		setFlag(SELECTABLE,true);
 		addMouseButtonListener(this);
-		addKeyListener(this);
 	}
 	virtual ~TabTitlePanel() {
 		getGUI().removeMouseMotionListener(this);
+		getGUI().removeKeyListener(this, std::move(keyListenerHandle));
 	}
 	TabbedPanel::Tab * getTab()const {
 		return &myTab;
 	}
 
-	//! ---|> KeyListener
-	bool onKeyEvent(Component * /*component*/, const Util::UI::KeyboardEvent & keyEvent) override {
+	bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {
 		if(!keyEvent.pressed)
 			return false;
 		if(keyEvent.key == Util::UI::KEY_TAB) {

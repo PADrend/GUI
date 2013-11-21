@@ -70,12 +70,15 @@ void ListView::ListViewClientArea::doDisplay(const Geometry::Rect & region) {
 ListView::ListView(GUI_Manager & _gui, flag_t _flags/*=0*/) :
 	Container(_gui, _flags), DataChangeListener(), MouseButtonListener(), MouseMotionListener(),
 	entryHeight(getGUI().getGlobalValue(PROPERTY_LISTVIEW_DEFAULT_ENTRY_HEIGHT)),
-	clientArea(new ListViewClientArea(_gui, *this)), cursor(0), initialMarkingIndex(0) {
+	clientArea(new ListViewClientArea(_gui, *this)), cursor(0),
+	keyListenerHandle(_gui.addKeyListener(this, std::bind(&ListView::onKeyEvent, 
+														  this, 
+														  std::placeholders::_1))),
+	initialMarkingIndex(0) {
 
 	clientArea->setFlag(IS_CLIENT_AREA, true);
 	_addChild(clientArea.get());
 	clientArea->addMouseButtonListener(this);
-	addKeyListener(this);
 	setFlag(USE_SCISSOR, true);
 	setFlag(SELECTABLE, true);
 }
@@ -88,7 +91,7 @@ void ListView::assertIsChild(Component * c)const {
 //! (dtor)
 ListView::~ListView() {
 	getGUI().removeMouseMotionListener(this);
-	//dtor
+	getGUI().removeKeyListener(this, std::move(keyListenerHandle));
 }
 
 //! ---|> Component
@@ -294,8 +297,7 @@ listenerResult_t ListView::onMouseMove(Component * /*component*/, const Util::UI
 	return LISTENER_EVENT_CONSUMED;
 }
 
-//! ---|> KeyListener
-bool ListView::onKeyEvent(Component * /*component*/, const Util::UI::KeyboardEvent & keyEvent) {
+bool ListView::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {
 	if(keyEvent.pressed) {
 		select();
 		if(keyEvent.key == Util::UI::KEY_UP) {

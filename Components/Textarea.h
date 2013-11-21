@@ -14,6 +14,7 @@
 #include "Container.h"
 #include "../Base/Listener.h"
 #include "../Base/Fonts/AbstractFont.h"
+#include "../GUI_Manager.h"
 #include <array>
 #include <memory>
 
@@ -26,7 +27,7 @@ class TextareaTextProcessor;
  **  Textarea ---|> Container
  **/
 class Textarea: public Container,public MouseButtonListener,
-				public MouseMotionListener,public KeyListener,public DataChangeListener {
+				public MouseMotionListener,public DataChangeListener {
 		PROVIDES_TYPE_NAME(Textarea)
 	public:
 		Textarea(GUI_Manager & gui,flag_t flags);
@@ -37,8 +38,6 @@ class Textarea: public Container,public MouseButtonListener,
 
 		// ---|> MouseButtonListener
 		virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
-		// ---|> KeyListener
-		virtual bool onKeyEvent(Component * component, const Util::UI::KeyboardEvent & keyEvent) override;
 		// ---|> MouseMotionListener
 		virtual listenerResult_t onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent) override;
 
@@ -67,6 +66,9 @@ class Textarea: public Container,public MouseButtonListener,
 		cursor_t _deleteText(const range_t &);
 		// ---|> Component
 		virtual void doDisplay(const Geometry::Rect & region) override;
+
+		bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
+
 		range_t _insertText(const cursor_t & pos,const std::string & s);
 		void markForConsolidation(size_t line1,size_t line2){
 			linesToConsolidate.first = std::min(linesToConsolidate.first,std::min(line1,line2));
@@ -130,6 +132,8 @@ class Textarea: public Container,public MouseButtonListener,
 		};
 		std::vector<TextUpdate> commands;
 		size_t activeTextUpdateIndex;
+		
+		GUI_Manager::KeyListenerHandle keyListenerHandle;
 	//	\}
 };
 //! (internal)

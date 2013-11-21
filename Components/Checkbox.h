@@ -14,13 +14,14 @@
 #include "Container.h"
 #include "Label.h"
 #include "../Base/Listener.h"
+#include "../GUI_Manager.h"
 
 namespace GUI {
 /***
  **     Checkbox ---|> Component
  **
  **/
-class Checkbox : public Container,public MouseButtonListener,public MouseClickListener,public KeyListener {
+class Checkbox : public Container, public MouseButtonListener, public MouseClickListener {
 		PROVIDES_TYPE_NAME(Checkbox)
 	public:
 		Checkbox(GUI_Manager & gui,bool checked=false,const std::string & text="",flag_t flags=0);
@@ -48,8 +49,6 @@ class Checkbox : public Container,public MouseButtonListener,public MouseClickLi
 		virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
 		// ---|> MouseClickListener
 		virtual bool onMouseClick(Component * component,unsigned int button,const Geometry::Vec2 &pos) override;
-		// ---|> KeyListener
-		virtual bool onKeyEvent(Component * component, const Util::UI::KeyboardEvent & keyEvent) override;
 
 		// ---|> Component
 		virtual void doLayout() override;
@@ -58,6 +57,8 @@ class Checkbox : public Container,public MouseButtonListener,public MouseClickLi
 		// ---|> Component
 		virtual void doDisplay(const Geometry::Rect & region) override;
 
+		bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
+
 	protected:
 		Util::WeakPointer<Label> textLabel;
 		bool * boolValueRef;
@@ -65,6 +66,7 @@ class Checkbox : public Container,public MouseButtonListener,public MouseClickLi
 		unsigned int intBitMask;
 		bool value;
 		Util::StringIdentifier dataName;
+		GUI_Manager::KeyListenerHandle keyListenerHandle;
 };
 }
 #endif // GUI_Checkbox_H

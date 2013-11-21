@@ -320,13 +320,15 @@ void TreeView::TreeViewEntry::unmarkSubtree(Component * subroot)const{
 
 //! (ctor)
 TreeView::TreeView(GUI_Manager & _gui,const Geometry::Rect & _r,const std::string & _actionName,flag_t _flags/*=0*/):
-		Container(_gui,_r,_flags),DataChangeListener(),MouseButtonListener(),MouseMotionListener(),KeyListener(),
-		actionName(_actionName),root(new TreeViewEntry(_gui,this)),scrollPos(0),multiSelect(true),scrollBar(nullptr) {
+		Container(_gui,_r,_flags),DataChangeListener(),MouseButtonListener(),MouseMotionListener(),
+		actionName(_actionName),root(new TreeViewEntry(_gui,this)),scrollPos(0),multiSelect(true),scrollBar(nullptr),
+		keyListenerHandle(_gui.addKeyListener(this, std::bind(&TreeView::onKeyEvent, 
+															  this, 
+															  std::placeholders::_1))) {
 	setFlag(SELECTABLE,true);
 
 	_addChild(root.get());
 	addMouseButtonListener(this);
-	addKeyListener(this);
 
 	setFlag(USE_SCISSOR,true);
 	setFlag(LOWERED_BORDER,true);
@@ -334,10 +336,10 @@ TreeView::TreeView(GUI_Manager & _gui,const Geometry::Rect & _r,const std::strin
 
 //! (dtor)
 TreeView::~TreeView() {
-	// destroy root
 	getGUI().removeMouseMotionListener(this);
-	root=nullptr;
-	//dtor
+	getGUI().removeKeyListener(this, std::move(keyListenerHandle));
+	// destroy root
+	root = nullptr;
 }
 
 //! ---|> Component
@@ -388,7 +390,7 @@ void TreeView::doDisplay(const Geometry::Rect & region) {
  * ---|> KeyListener
  * TODO: Handle collapsed entries, allow collapsing of entries, scroll to marked entry, allow multiple selection with keyboard...
  */
-bool TreeView::onKeyEvent(Component * /*component*/, const Util::UI::KeyboardEvent & keyEvent) {
+bool TreeView::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {
 	if(!keyEvent.pressed)
 		return true;
 	else if(keyEvent.key == Util::UI::KEY_TAB){

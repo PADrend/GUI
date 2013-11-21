@@ -161,11 +161,13 @@ static const Util::StringIdentifier dataId_scrollPos("scroll");
 
 //! (ctor)
 Textarea::Textarea(GUI_Manager & _gui,flag_t _flags):
-		Container(_gui,_flags),MouseButtonListener(),MouseMotionListener(),KeyListener(),lineHeight(15),
-		selectionStart(std::make_pair(0,std::string::npos)), dataName("text"),dataChanged(false),activeTextUpdateIndex(0){
+		Container(_gui,_flags),MouseButtonListener(),MouseMotionListener(),lineHeight(15),
+		selectionStart(std::make_pair(0,std::string::npos)), dataName("text"),dataChanged(false),activeTextUpdateIndex(0),
+		keyListenerHandle(_gui.addKeyListener(this, std::bind(&Textarea::onKeyEvent, 
+															  this, 
+															 std::placeholders::_1))) {
 	fontReference = getGUI().getActiveFont(PROPERTY_DEFAULT_FONT);
 	addMouseButtonListener(this);
-	addKeyListener(this);
 	setFlag(SELECTABLE,true);
 	setFlag(USE_SCISSOR,true);
     
@@ -177,7 +179,7 @@ Textarea::Textarea(GUI_Manager & _gui,flag_t _flags):
 //! (dtor)
 Textarea::~Textarea() {
 	getGUI().removeMouseMotionListener(this);
-	//dtor
+	getGUI().removeKeyListener(this, std::move(keyListenerHandle));
 }
 
 //! ---|> Component
@@ -371,7 +373,7 @@ Textarea::range_t Textarea::_insertText(const cursor_t & pos,const std::string &
 }
 
 //! ---|> KeyListener
-bool Textarea::onKeyEvent(Component * /*component*/, const Util::UI::KeyboardEvent & keyEvent) {
+bool Textarea::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {
 	if(!keyEvent.pressed)
 		return true;
 

@@ -125,11 +125,6 @@ struct MouseClickListener {
 	virtual bool onMouseClick(Component * component, unsigned int button,const Geometry::Vec2 &pos)=0;
 	virtual ~MouseClickListener() {}
 };
-struct KeyListener {
-	static RegisteredListenerRegistry<KeyListener> & getListenerRegistry();
-	virtual bool onKeyEvent(Component * component, const Util::UI::KeyboardEvent & keyEvent) = 0;
-	virtual ~KeyListener() {}
-};
 
 }
 #endif // GUI_LISTENER_H

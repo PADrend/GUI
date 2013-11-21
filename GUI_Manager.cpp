@@ -398,10 +398,10 @@ bool GUI_Manager::handleKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {
 		keyRepeatInfo.reset(nullptr);
 	}
 	for(Component::Ref c=globalContainer->findSelectedComponent();c!=nullptr && c->isEnabled(); c=c->getParent() ){
-		std::list<KeyListener*> * l=KeyListener::getListenerRegistry().getListeners(c.get());//c->getKeyListener();
-		if(l!=nullptr){
-			for(const auto & keyListener : *l) {
-				const bool consumed = keyListener->onKeyEvent(c.get(), keyEvent);
+		const auto it = keyListener.find(c.get());
+		if(it != keyListener.cend()) {
+			for(const auto & fun : it->second.getElements()) {
+				const bool consumed = fun(keyEvent);
 				if(consumed) {
 					return true;
 				}

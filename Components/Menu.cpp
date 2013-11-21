@@ -17,10 +17,13 @@
 namespace GUI {
 
 //! (ctor)
-Menu::Menu(GUI_Manager & _gui,flag_t _flags/*=0*/)
-	:Container(_gui,_flags),KeyListener(),MouseButtonListener(){
+Menu::Menu(GUI_Manager & _gui, flag_t _flags) :
+	Container(_gui, _flags),
+	MouseButtonListener(),
+	keyListenerHandle(_gui.addKeyListener(this, std::bind(&Menu::onKeyEvent, 
+														  this, 
+														  std::placeholders::_1))) {
 	disable();
-	addKeyListener(this);
 	addMouseButtonListener(this);
 	setFlag(ALWAYS_ON_TOP,true);
 	addProperty(new UseColorProperty(PROPERTY_TEXT_COLOR,PROPERTY_MENU_TEXT_COLOR));
@@ -29,11 +32,11 @@ Menu::Menu(GUI_Manager & _gui,flag_t _flags/*=0*/)
 
 //! (dtor)
 Menu::~Menu() {
+	getGUI().removeKeyListener(this, std::move(keyListenerHandle));
 	if(optionalFrameListener) {
 		getGUI().removeFrameListener(std::move(*optionalFrameListener.get()));
 		optionalFrameListener.reset();
 	}
-	//dtor
 }
 
 //! ---|> Component
@@ -120,8 +123,7 @@ listenerResult_t Menu::onMouseButton(Component * /*component*/, const Util::UI::
 	return LISTENER_EVENT_CONSUMED;
 }
 
-//! ---|> KeyListener
-bool Menu::onKeyEvent(Component * /*component*/, const Util::UI::KeyboardEvent & keyEvent) {
+bool Menu::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {
 	if (keyEvent.pressed && keyEvent.key == Util::UI::KEY_ESCAPE) {
 		unselect();
 		return true;

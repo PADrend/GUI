@@ -13,6 +13,7 @@
 
 #include "Container.h"
 #include "../Base/Listener.h"
+#include "../GUI_Manager.h"
 #include <memory>
 
 namespace GUI {
@@ -23,7 +24,7 @@ class Button;
  **     Window ---|> Container ---|> Component
  **                   0..1 ------------> *
  **/
-class Window : public Container,public ActionListener,public MouseButtonListener,public KeyListener {
+class Window : public Container,public ActionListener,public MouseButtonListener {
 		PROVIDES_TYPE_NAME(Window)
 	public:
 		static const Util::StringIdentifier ACTION_onWindowClosed;
@@ -65,8 +66,6 @@ class Window : public Container,public ActionListener,public MouseButtonListener
 		virtual listenerResult_t onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) override;
 		// ---|> ActionListener
 		virtual listenerResult_t handleAction(Component *,const Util::StringIdentifier & actionName) override;
-		// ---|> KeyListener
-		virtual bool onKeyEvent(Component * component, const Util::UI::KeyboardEvent & keyEvent) override;
 		// ---|> Container
 		virtual void addContent(const Ref & child) override 						{	clientAreaPanel->addContent(child);	}
 		virtual void removeContent(const Ref & child) override 					{	clientAreaPanel->removeContent(child);	}
@@ -90,6 +89,9 @@ class Window : public Container,public ActionListener,public MouseButtonListener
 	private:
 		// ---|> Component
 		virtual void doDisplay(const Geometry::Rect & region) override;
+
+		bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
+
 		Util::WeakPointer<Container> clientAreaPanel;
 		Util::WeakPointer<Container> titlePanel;
 		Util::WeakPointer<Label> titleTextLabel;
@@ -103,6 +105,8 @@ class Window : public Container,public ActionListener,public MouseButtonListener
 		float opacity;
 
 		std::unique_ptr<MouseMotionListener> autoMinimizer;
+
+		GUI_Manager::KeyListenerHandle keyListenerHandle;
 };
 }
 #endif // GUI_WINDOW_H

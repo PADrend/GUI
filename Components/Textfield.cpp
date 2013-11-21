@@ -19,15 +19,17 @@ namespace GUI {
 
 //! (ctor)
 Textfield::Textfield(GUI_Manager & _gui,const std::string & _text,std::string _dataName,flag_t _flags/*=0*/):
-		Component(_gui,_flags),MouseButtonListener(),MouseMotionListener(),KeyListener(),
+		Component(_gui,_flags),MouseButtonListener(),MouseMotionListener(),
 		textRef(nullptr),
 		selectionStart(0),selectionEnd(0),backupText(""),cursorPos(0),scrollPos(0),dataName(std::move(_dataName)),
+		keyListenerHandle(_gui.addKeyListener(this, std::bind(&Textfield::onKeyEvent, 
+															  this, 
+															  std::placeholders::_1))),
 		currentOptionIndex(-1) {
 	fontReference = getGUI().getActiveFont(PROPERTY_DEFAULT_FONT);
 	setText(_text);
 
 	addMouseButtonListener(this);
-	addKeyListener(this);
 	setFlag(SELECTABLE,true);
 	setFlag(USE_SCISSOR,true);
     
@@ -37,7 +39,7 @@ Textfield::Textfield(GUI_Manager & _gui,const std::string & _text,std::string _d
 //! (dtor)
 Textfield::~Textfield() {
 	getGUI().removeMouseMotionListener(this);
-	//dtor
+	getGUI().removeKeyListener(this, std::move(keyListenerHandle));
 }
 
 //! ---|> Component
@@ -165,8 +167,7 @@ void Textfield::setCursorPos(int _cursorPos,bool _shift) {
 //	scrollPos(0.0f),
 }
 
-//! ---|> KeyListener
-bool Textfield::onKeyEvent(Component * /*component*/, const Util::UI::KeyboardEvent & keyEvent) {
+bool Textfield::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {
 	if(!keyEvent.pressed)
 		return true;
 

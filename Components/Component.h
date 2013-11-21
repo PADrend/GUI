@@ -36,7 +36,6 @@ struct MouseMotionListener;
 struct MouseButtonListener;
 struct MouseClickListener;
 struct DataChangeListener;
-struct KeyListener;
 
 /***
  **  Component
@@ -307,9 +306,6 @@ class Component: public Util::AttributeProvider, public Util::ReferenceCounter<C
 
 		void addMouseClickListener(MouseClickListener * a);
 		void removeMouseClickListener(MouseClickListener * a);
-
-		void addKeyListener(KeyListener * a);
-		void removeKeyListener(KeyListener * a);
 	 // @}
 
 	// -----------------------------------

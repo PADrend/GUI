@@ -13,6 +13,7 @@
 
 #include "Container.h"
 #include "../Base/Listener.h"
+#include "../GUI_Manager.h"
 
 namespace GUI {
 class Button;
@@ -20,7 +21,7 @@ class Button;
 /***
  **     Slider ---|> Container
  **/
-class Slider : public Container, public ActionListener, public MouseButtonListener, public KeyListener {
+class Slider : public Container, public ActionListener, public MouseButtonListener {
 		PROVIDES_TYPE_NAME(Slider)
 	public:
 		// flags
@@ -52,8 +53,6 @@ class Slider : public Container, public ActionListener, public MouseButtonListen
 		virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
 		// ---|> ActionListener
 		virtual listenerResult_t handleAction(Component *,const Util::StringIdentifier & actionName) override;
-		// ---|> KeyListener
-		virtual bool onKeyEvent(Component * component, const Util::UI::KeyboardEvent & keyEvent) override;
 
 		// ---|> Component
 		virtual void doLayout() override;
@@ -61,6 +60,8 @@ class Slider : public Container, public ActionListener, public MouseButtonListen
 	private:
 		// ---|> Component
 		virtual void doDisplay(const Geometry::Rect & region) override;
+
+		bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
 
 	protected:
 		// ---o
@@ -81,6 +82,8 @@ class Slider : public Container, public ActionListener, public MouseButtonListen
 		Util::WeakPointer<Button> button2;
 
 		Util::StringIdentifier dataName;
+
+		GUI_Manager::KeyListenerHandle keyListenerHandle;
 };
 }
 #endif // GUI_Slider_H

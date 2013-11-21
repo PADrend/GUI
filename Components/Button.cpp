@@ -34,8 +34,11 @@ static ExtLayouter * getDefaultLabelLayouter(){
 
 //! (ctor)
 Button::Button(GUI_Manager & _gui,flag_t _flags/*=0*/)
-		:Container(_gui,_flags),MouseMotionListener(),MouseButtonListener(),MouseClickListener(),KeyListener(),
-		actionName(ACTION_Button_click),switchedOn(false),hover(false),actionListener(nullptr){
+		:Container(_gui,_flags),MouseMotionListener(),MouseButtonListener(),MouseClickListener(),
+		actionName(ACTION_Button_click),switchedOn(false),hover(false),actionListener(),
+		keyListenerHandle(_gui.addKeyListener(this, std::bind(&Button::onKeyEvent, 
+															  this, 
+															  std::placeholders::_1))) {
 	setFlag(SELECTABLE,true);
 
 	// create Label
@@ -46,13 +49,12 @@ Button::Button(GUI_Manager & _gui,flag_t _flags/*=0*/)
 	addMouseMotionListener(this);
 	addMouseButtonListener(this);
 	addMouseClickListener(this);
-	addKeyListener(this);
 }
 
 //! (dtor)
 Button::~Button(){
 	getGUI().removeMouseMotionListener(this);
-	//dtor
+	getGUI().removeKeyListener(this, std::move(keyListenerHandle));
 }
 
 //! ---|> Component
@@ -122,8 +124,7 @@ bool Button::onMouseClick(Component * /*component*/,unsigned int /*button*/,cons
 	return true;
 }
 
-//! ---|> KeyListener
-bool Button::onKeyEvent(Component * /*component*/, const Util::UI::KeyboardEvent & keyEvent) {
+bool Button::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {
 	if(!isLocked() && keyEvent.key == Util::UI::KEY_RETURN){
 		select();
 		if(keyEvent.pressed){

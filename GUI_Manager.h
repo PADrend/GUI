@@ -11,6 +11,7 @@
 #ifndef GUI_MANAGER_H
 #define GUI_MANAGER_H
 
+#include "Base/Listener.h"
 #include "Components/Component.h"
 #include <Util/Graphics/Color.h>
 #include <Util/IO/FileName.h>
@@ -223,6 +224,25 @@ class GUI_Manager {
 				mouseMoveListener.push_back(a);
 		}
 		void removeMouseMotionListener(MouseMotionListener * a)		{	mouseMoveListener.remove(a);	}
+
+		//----
+
+	private:
+		typedef std::function<bool (const Util::UI::KeyboardEvent &)> KeyListenerFun;
+		typedef Util::Registry<std::list<KeyListenerFun>> KeyListenerRegistry;
+		typedef std::unordered_map<Component *, KeyListenerRegistry> KeyListenerMap;
+		KeyListenerMap keyListener;
+	public:
+		typedef KeyListenerRegistry::handle_t KeyListenerHandle;
+		KeyListenerHandle addKeyListener(Component * component, KeyListenerFun fun) {
+			return std::move(keyListener[component].registerElement(std::move(fun)));
+		}
+		void removeKeyListener(Component * component, KeyListenerHandle handle) {
+			const auto it = keyListener.find(component);
+			if(it != keyListener.cend()) {
+				it->second.unregisterElement(std::move(handle));
+			}
+		}
 
 		//----
 

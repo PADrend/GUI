@@ -13,6 +13,7 @@
 
 #include "Container.h"
 #include "../Base/Listener.h"
+#include "../GUI_Manager.h"
 #include <set>
 #include <vector>
 
@@ -22,7 +23,7 @@ class Scrollbar;
  **     ListView ---|> Container ---|> Component
  **                   0..1 ------------> *
  **/
-class ListView: public Container,public DataChangeListener,public MouseButtonListener,public MouseMotionListener,public KeyListener {
+class ListView : public Container, public DataChangeListener, public MouseButtonListener, public MouseMotionListener {
 		PROVIDES_TYPE_NAME(ListView)
 
 	// ------------------
@@ -140,8 +141,10 @@ public:
 		virtual listenerResult_t onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent) override;
 		// ---|> MouseButtonListener
 		virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
-		// ---|> KeyListener
-		virtual bool onKeyEvent(Component * component, const Util::UI::KeyboardEvent & keyEvent) override;
+	private:
+		GUI_Manager::KeyListenerHandle keyListenerHandle;
+
+		bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
 	//	@}
 
 	// ------------------
