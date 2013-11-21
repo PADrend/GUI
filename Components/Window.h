@@ -24,7 +24,7 @@ class Button;
  **     Window ---|> Container ---|> Component
  **                   0..1 ------------> *
  **/
-class Window : public Container,public ActionListener,public MouseButtonListener {
+class Window : public Container, public MouseButtonListener {
 		PROVIDES_TYPE_NAME(Window)
 	public:
 		static const Util::StringIdentifier ACTION_onWindowClosed;
@@ -64,8 +64,6 @@ class Window : public Container,public ActionListener,public MouseButtonListener
 
 		// ---|> MouseButtonListener
 		virtual listenerResult_t onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) override;
-		// ---|> ActionListener
-		virtual listenerResult_t handleAction(Component *,const Util::StringIdentifier & actionName) override;
 		// ---|> Container
 		virtual void addContent(const Ref & child) override 						{	clientAreaPanel->addContent(child);	}
 		virtual void removeContent(const Ref & child) override 					{	clientAreaPanel->removeContent(child);	}

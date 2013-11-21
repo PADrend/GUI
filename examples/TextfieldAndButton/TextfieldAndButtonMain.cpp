@@ -53,34 +53,13 @@ int main(int /*argc*/, char */*argv*/[]) {
 	guiText->setRect(Geometry::Rect_f(0, 0, 40, 20));
 	guiWin->addContent(guiText.get());
 
-	const Util::StringIdentifier clearActionId("clear_text");
 	Util::Reference<GUI::Button> guiButton = guiManager.createButton("Clear");
-	guiButton->setActionName(clearActionId);
+	guiButton->setActionListener(	[&guiText](GUI::Component *, const Util::StringIdentifier &) {
+										guiText->setText("");
+										return true;
+									});
 	guiButton->setRect(Geometry::Rect_f(0, 25, 40, 20));
 	guiWin->addContent(guiButton.get());
-	
-	struct ClearTextAction : public GUI::ActionListener {
-		const Util::StringIdentifier listenAction;
-		Util::Reference<GUI::Textfield> textField;
-
-		ClearTextAction(Util::StringIdentifier whenToClear,
-						Util::Reference<GUI::Textfield> whatToClear) :
-			listenAction(std::move(whenToClear)),
-			textField(std::move(whatToClear)) {
-		}
-
-		virtual ~ClearTextAction() = default;
-
-		GUI::listenerResult_t handleAction(GUI::Component * /*component*/, const Util::StringIdentifier & actionName) override {
-			if(actionName == listenAction) {
-				textField->setText("");
-				return GUI::LISTENER_EVENT_CONSUMED;
-			}
-			return GUI::LISTENER_EVENT_NOT_CONSUMED;
-		}
-	};
-	ClearTextAction action(clearActionId, guiText);
-	guiManager.registerActionListener(&action);
 
 	bool done = false;
 	while(!done) {

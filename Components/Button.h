@@ -39,7 +39,9 @@ class Button : public Container, public MouseMotionListener, public MouseButtonL
 		void setActionName(const Util::StringIdentifier & n) 	{	actionName = n;	}
 		void setSwitch(bool b) 							{	switchedOn=b;	}
 		void setFont(AbstractFont * newFont)			{   textLabel->setFont(newFont);	}
-		void setActionListener(ActionListener * l)		{   actionListener=l;	}
+		void setActionListener(HandleActionFun fun) {
+			actionListener = std::move(fun);
+		}
 		void setTextStyle(unsigned int style)			{   textLabel->setTextStyle(style);	}
 		void setColor(const Util::Color4ub & newColor);//	{   textColor=newColor;	}
 
@@ -64,7 +66,7 @@ class Button : public Container, public MouseMotionListener, public MouseButtonL
 		Util::StringIdentifier actionName;
 		bool switchedOn;
 		bool hover;
-		ActionListener * actionListener;
+		HandleActionFun actionListener;
 		GUI_Manager::KeyListenerHandle keyListenerHandle;
 };
 }

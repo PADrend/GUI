@@ -21,7 +21,7 @@ class Button;
 /***
  **     Slider ---|> Container
  **/
-class Slider : public Container, public ActionListener, public MouseButtonListener {
+class Slider : public Container, public MouseButtonListener {
 		PROVIDES_TYPE_NAME(Slider)
 	public:
 		// flags
@@ -51,8 +51,6 @@ class Slider : public Container, public ActionListener, public MouseButtonListen
 
 		// ---|> MouseButtonListener
 		virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
-		// ---|> ActionListener
-		virtual listenerResult_t handleAction(Component *,const Util::StringIdentifier & actionName) override;
 
 		// ---|> Component
 		virtual void doLayout() override;

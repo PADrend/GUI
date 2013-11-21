@@ -153,8 +153,9 @@ std::string Button::getText()const{
 //! ---o
 void Button::action(){
 	//  try own action listener
-	if(actionListener!=nullptr && (actionListener->handleAction(this,actionName) & LISTENER_EVENT_CONSUMED ))
+	if(actionListener && actionListener(this, actionName)) {
 		return;
+	}
 
 	// then use the global listener
 	getGUI().componentActionPerformed(this,actionName);

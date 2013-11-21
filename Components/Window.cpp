@@ -24,11 +24,6 @@ namespace GUI{
 
 const Util::StringIdentifier Window::ACTION_onWindowClosed("onWindowClosed");
 
-static const Util::StringIdentifier actionId_minimize("minimize");
-static const Util::StringIdentifier actionId_close("close");
-static const Util::StringIdentifier actionId_hide("hide");
-
-
 //! TitlePanel ---|> Container, MouseMotionListener, MouseButtonListener
 struct TitlePanel:public Container,public MouseMotionListener,public MouseButtonListener{
 	Window & window;
@@ -258,7 +253,7 @@ class WindowSpielereiAnimation:public AnimationHandler{
 
 //! (ctor)
 Window::Window(GUI_Manager & _gui,const Geometry::Rect & _r,const std::string & _title,flag_t _flags/*=0*/):
-		Container(_gui,_r,_flags),ActionListener(),MouseButtonListener(),
+		Container(_gui,_r,_flags), MouseButtonListener(),
 		minimized(false),opacity(1.0),autoMinimizer(),
 		keyListenerHandle(_gui.addKeyListener(this, std::bind(&Window::onKeyEvent,  
 															  this, 
@@ -294,26 +289,40 @@ Window::Window(GUI_Manager & _gui,const Geometry::Rect & _r,const std::string & 
 	hiddenButton->setText("h");
 	hiddenButton->addProperty(p);
 	hiddenButton->setTooltip("Hide window components when not selected");
-	hiddenButton->setActionName(actionId_hide);
-	hiddenButton->setActionListener(this);
+	hiddenButton->setActionListener(	[this](Component *, const Util::StringIdentifier &) {
+											setFlag(HIDDEN_WINDOW,!getFlag(HIDDEN_WINDOW));
+											return true;
+										});
 	_addChild(hiddenButton.get());
 
 	minimizeButton=new Button(getGUI());
 	minimizeButton->setText(".");
 	minimizeButton->addProperty(p);
 	minimizeButton->setTooltip("Toggle auto-minimization");
-	minimizeButton->setActionName(actionId_minimize);
-	minimizeButton->setActionListener(this);
+	minimizeButton->setActionListener(	[this](Component *, const Util::StringIdentifier &) {
+											if(autoMinimizer) {
+												restore();
+											} else {
+												minimize();
+											}
+											return true;
+										});
 	_addChild(minimizeButton.get());
 
 	disableButton=new Button(getGUI());
 	disableButton->setText("X");
 	disableButton->addProperty(p);
 	disableButton->setTooltip("Close window");
-	disableButton->setActionName(actionId_close);
-	disableButton->setActionListener(this);
+	disableButton->setActionListener(	[this](Component *, const Util::StringIdentifier &) {
+											if(getGUI().isShiftPressed()) {
+												getGUI().finishAnimations(this);
+												getGUI().addAnimationHandler(new WindowSpielereiAnimation(this));
+												return true;
+											}
+											close();
+											return true;
+										});
 	_addChild(disableButton.get());
-
 
 	titleTextLabel=new Label(getGUI());
 	titleTextLabel->addProperty( new UseColorProperty(PROPERTY_TEXT_COLOR, PROPERTY_WINDOW_TITLE_COLOR) );
@@ -555,29 +564,6 @@ void Window::setLogo(Component * newLogo){
 	logo=newLogo;
 	titlePanel->addContent(getLogo());
 	getLogo()->setPosition(Geometry::Vec2(0,0));
-}
-
-//! ---|> ActionListener
-listenerResult_t Window::handleAction(Component *,const Util::StringIdentifier & actionName){
-	if(actionName==actionId_minimize){
-		if (autoMinimizer)
-			restore();
-		else
-			minimize();
-		return LISTENER_EVENT_CONSUMED;
-	}else if(actionName==actionId_hide){
-		setFlag(HIDDEN_WINDOW,!getFlag(HIDDEN_WINDOW));
-		return LISTENER_EVENT_CONSUMED;
-	}else if(actionName==actionId_close){
-		if(getGUI().isShiftPressed()) {
-			getGUI().finishAnimations(this);
-			getGUI().addAnimationHandler(
-				new WindowSpielereiAnimation(this));
-			return LISTENER_EVENT_CONSUMED;
-		}
-		close();
-		return LISTENER_EVENT_CONSUMED;
-	}else return LISTENER_EVENT_NOT_CONSUMED;
 }
 
 }

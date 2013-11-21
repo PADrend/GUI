@@ -18,9 +18,6 @@
 #include <Util/UI/Event.h>
 
 namespace GUI{
-	
-static const Util::StringIdentifier actionId_decrease("decrease");
-static const Util::StringIdentifier actionId_increase("increase");
 
 /***
  **  Slider ---|> Component
@@ -74,7 +71,7 @@ class SliderMarker:public Component,public MouseMotionListener,public MouseButto
 
 //! (ctor)
 Slider::Slider(GUI_Manager & _gui,const Geometry::Rect & _r,float left,float right,int steps,Util::StringIdentifier _dataName,flag_t _flags/*=0*/):
-		Container(_gui,_r,_flags),ActionListener(), MouseButtonListener(),
+		Container(_gui,_r,_flags), MouseButtonListener(),
 		markerSize(6),value(0),floatValueRef(nullptr),dataName(std::move(_dataName)),
 		keyListenerHandle(_gui.addKeyListener(this, std::bind(&Slider::onKeyEvent, 
 															  this, 
@@ -88,14 +85,18 @@ Slider::Slider(GUI_Manager & _gui,const Geometry::Rect & _r,float left,float rig
 	if(getFlag(SLIDER_BUTTONS)){
 		button1=new Button(getGUI());
 		button1->setText("<");
-		button1->setActionName(actionId_decrease);
-		button1->setActionListener(this);
+		button1->setActionListener([this](Component *, const Util::StringIdentifier &) {
+										updateData(getValue() - stepWidth);
+										return true;
+									});
 		_addChild(button1.get());
 
 		button2=new Button(getGUI());
 		button2->setText(">");
-		button2->setActionName(actionId_increase);
-		button2->setActionListener(this);
+		button2->setActionListener([this](Component *, const Util::StringIdentifier &) {
+										updateData(getValue() + stepWidth);
+										return true;
+									});
 		_addChild(button2.get());
 	}
 	addMouseButtonListener(this);
@@ -323,14 +324,4 @@ void Slider::dataUpdated() {
 	getGUI().componentDataChanged(this,dataName);
 }
 
-//! ---|> ActionListener
-listenerResult_t Slider::handleAction(Component *,const Util::StringIdentifier & command){
-	if(command==actionId_decrease){
-		updateData(getValue()-stepWidth);
-		return LISTENER_EVENT_CONSUMED;
-	}else if(command==actionId_increase){
-		updateData(getValue()+stepWidth);
-		return LISTENER_EVENT_CONSUMED;
-	}else return LISTENER_EVENT_NOT_CONSUMED;
-}
 }

@@ -98,6 +98,15 @@ enum listenerResult_t : uint32_t {
 };
 // -------------------------------------------------
 
+/**
+ * Type of functions reacting on an action. The function receives the component
+ * that caused the action as parameter, and the associated action name. If it
+ * returns @c true, the callee signalizes that is processed the action and no
+ * other action handlers will be called. If it returns @c false, the callee
+ * signalizes that it did not process the action and the next action handler
+ * will be called.
+ */
+typedef std::function<bool (Component *, const Util::StringIdentifier &)> HandleActionFun;
 struct ActionListener {
 	virtual listenerResult_t handleAction(Component *,const Util::StringIdentifier & actionName)=0;
 	virtual ~ActionListener() {}
