@@ -11,13 +11,14 @@
 #ifndef GUI_MANAGER_H
 #define GUI_MANAGER_H
 
+#include "Components/Component.h"
 #include <Util/Graphics/Color.h>
 #include <Util/IO/FileName.h>
-#include "Components/Component.h"
+#include <Util/Registry.h>
 
 #include <list>
 #include <stack>
-#include <list>
+#include <utility>
 
 // Forward declarations
 namespace Util {
@@ -66,6 +67,7 @@ class AnimationHandler;
 class Style;
 class MouseCursorHandler;
 class MouseCursor;
+class TooltipHandler;
 
 /***
  ** GUI_Manager
@@ -185,6 +187,7 @@ class GUI_Manager {
 	public:
 		typedef std::list<ActionListener *> actionListenerList;
 		actionListenerList actionListener;
+		
 		void registerActionListener(ActionListener * a) {
 			if (a)
 				actionListener.push_back(a);
@@ -223,13 +226,18 @@ class GUI_Manager {
 
 		//----
 
-		typedef std::list<FrameListener *> frameListenerList;
-		frameListenerList frameListener;
-		void addFrameListener(FrameListener * a) {
-			if (a)
-				frameListener.push_back(a);
+	private:
+		typedef std::function<void (float)> FrameListenerFun;
+		typedef Util::Registry<std::list<FrameListenerFun>> FrameListenerRegistry;
+		FrameListenerRegistry frameListener;
+	public:
+		typedef FrameListenerRegistry::handle_t FrameListenerHandle;
+		FrameListenerHandle addFrameListener(FrameListenerFun fun) {
+			return std::move(frameListener.registerElement(std::move(fun)));
 		}
-		void removeFrameListener(FrameListener * a)					{	frameListener.remove(a);	}
+		void removeFrameListener(FrameListenerHandle handle) {
+			frameListener.unregisterElement(std::move(handle));
+		}
 
 		//----
 
@@ -335,7 +343,12 @@ class GUI_Manager {
 		void popScissor();
 	//	@}
 
-
+	//!	@name Internal state
+	//	@{
+	private:
+		std::unique_ptr<TooltipHandler> tooltipHandler;
+		FrameListenerHandle tooltipFrameListener;
+	//	@}
 
 };
 }

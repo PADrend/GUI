@@ -131,10 +131,6 @@ struct KeyListener {
 	virtual bool onKeyEvent(Component * component, const Util::UI::KeyboardEvent & keyEvent) = 0;
 	virtual ~KeyListener() {}
 };
-struct FrameListener {
-	static RegisteredListenerRegistry<FrameListener> & getListenerRegistry();
-	virtual void onFrame(float timeSecs)=0;
-	virtual ~FrameListener() {}
-};
+
 }
 #endif // GUI_LISTENER_H

@@ -13,6 +13,8 @@
 
 #include "Container.h"
 #include "../Base/Listener.h"
+#include "../GUI_Manager.h"
+#include <memory>
 
 namespace GUI {
 
@@ -20,7 +22,7 @@ namespace GUI {
  **     Menu ---|> Container ---|> Component
  **                   0..1 ------------> *
  **/
-class Menu: public Container,public KeyListener,public MouseButtonListener,public FrameListener {
+class Menu: public Container,public KeyListener,public MouseButtonListener {
 		PROVIDES_TYPE_NAME(Menu)
 	public:
 		static const flag_t ONE_TIME_MENU=1<<24;
@@ -28,9 +30,6 @@ class Menu: public Container,public KeyListener,public MouseButtonListener,publi
 		Menu(GUI_Manager & gui,flag_t flags=0);
 		virtual ~Menu();
 
-		// ---|> FrameListener
-		virtual void onFrame(float timeSecs) override;
-		
 		// ---|> KeyListener
 		virtual bool onKeyEvent(Component * component, const Util::UI::KeyboardEvent & keyEvent) override;
 
@@ -47,6 +46,8 @@ class Menu: public Container,public KeyListener,public MouseButtonListener,publi
 	private:
 		// ---|> Component
 		virtual void doDisplay(const Geometry::Rect & region) override;
+
+		std::unique_ptr<GUI_Manager::FrameListenerHandle> optionalFrameListener;
 
 	public:
 		// ---o

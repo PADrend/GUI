@@ -48,10 +48,4 @@ RegisteredListenerRegistry<KeyListener> & KeyListener::getListenerRegistry(){
 	return l;
 }
 
-/*! (static, singleton) */
-RegisteredListenerRegistry<FrameListener> & FrameListener::getListenerRegistry(){
-	static RegisteredListenerRegistry<FrameListener> l;
-	return l;
-}
-
 }

@@ -46,7 +46,6 @@ Component::~Component() {
 	MouseButtonListener::getListenerRegistry().removeListeners(this);
 	MouseClickListener::getListenerRegistry().removeListeners(this);
 	KeyListener::getListenerRegistry().removeListeners(this);
-	FrameListener::getListenerRegistry().removeListeners(this);
 //	setParent(nullptr,0);
 	//dtor
 }

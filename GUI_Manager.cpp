@@ -140,7 +140,7 @@ class MouseCursorHandler : public MouseMotionListener, public MouseButtonListene
  * TooltipHandler ---|> MouseMotionListener,FrameListener
  * \todo move TooltipHandler to Overlay
  */
-class TooltipHandler:public Component, public MouseMotionListener,public FrameListener{
+class TooltipHandler:public Component, public MouseMotionListener {
 		Util::Reference<Component> activeComponent;
 		float startingTime;
 		Vec2 lastMousePos;
@@ -150,7 +150,7 @@ class TooltipHandler:public Component, public MouseMotionListener,public FrameLi
 		} mode;
 	public:
 
-		TooltipHandler(GUI_Manager & _gui):Component(_gui),MouseMotionListener(),FrameListener(),startingTime(0),mode(SEARCHING)   {   }
+		TooltipHandler(GUI_Manager & _gui):Component(_gui),MouseMotionListener(),startingTime(0),mode(SEARCHING)   {   }
 		virtual ~TooltipHandler(){}
 
 		Component * findTooltitComponent(const Vec2 & pos)const{
@@ -196,7 +196,7 @@ class TooltipHandler:public Component, public MouseMotionListener,public FrameLi
 			return LISTENER_EVENT_NOT_CONSUMED;
 		}
 		// ---|> FrameListener
-		void onFrame(float timeSecs) override{
+		void onFrame(float timeSecs) {
 			if(mode==INACTIVE){
 				return;
 			}else if(mode==SEARCHING && timeSecs-startingTime > 0.250){
@@ -256,13 +256,13 @@ class TooltipHandler:public Component, public MouseMotionListener,public FrameLi
 //! (ctor)
 GUI_Manager::GUI_Manager(Util::UI::EventContext & context) : 
 	eventContext(context), window(nullptr), debugMode(0),
-	lazyRendering(false), style(new StyleManager) {
+	lazyRendering(false), style(new StyleManager),
+	tooltipHandler(new TooltipHandler(*this)),
+	tooltipFrameListener(addFrameListener(std::bind(&TooltipHandler::onFrame, tooltipHandler.get(), std::placeholders::_1))) {
 	globalContainer=new GlobalContainer(*this,Rect(0,0,1280,1024));
 	globalContainer->setMouseCursorProperty(PROPERTY_MOUSECURSOR_DEFAULT);
-	
-	auto th=new TooltipHandler(*this);
-	addMouseMotionListener(th);
-	addFrameListener(th);
+
+	addMouseMotionListener(tooltipHandler.get());
 
 	Style::initStyleManager(getStyleManager());
     
@@ -271,12 +271,12 @@ GUI_Manager::GUI_Manager(Util::UI::EventContext & context) :
     addMouseButtonListener(mh);
 }
 
-
 //! (dtor)
 GUI_Manager::~GUI_Manager() {
 	cleanup();
 	setActiveComponent(nullptr);
 	globalContainer=nullptr;
+	removeFrameListener(std::move(tooltipFrameListener));
 }
 
 Rect GUI_Manager::getScreenRect()const{
@@ -518,12 +518,14 @@ void GUI_Manager::display(){
 	
 	{ // execute frameListeners
 		// make a copy to allow insertions and deletions.
-		std::vector<FrameListener *> listenerListCopy(frameListener.begin(),frameListener.end()); 
-		
-		const float t=Util::Timer::now();
-		for(auto & l : listenerListCopy)
-			l->onFrame(t);
-		
+		const std::vector<FrameListenerFun> listenerListCopy(frameListener.getElements().cbegin(),
+															 frameListener.getElements().cend()); 
+
+		const float t = Util::Timer::now();
+		for(const auto & fun : listenerListCopy) {
+			fun(t);
+		}
+
 		//! key repetition \note !!! This is not the proper place to do this, as this may introduce side effects !!!!
 		if(keyRepeatInfo.get()!=nullptr && keyRepeatInfo->first<t){
 			keyRepeatInfo->first = t+getGlobalValue(PROPERTY_KEY_REPEAT_DELAY_2);

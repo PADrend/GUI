@@ -29,7 +29,10 @@ Menu::Menu(GUI_Manager & _gui,flag_t _flags/*=0*/)
 
 //! (dtor)
 Menu::~Menu() {
-	getGUI().removeFrameListener(this);
+	if(optionalFrameListener) {
+		getGUI().removeFrameListener(std::move(*optionalFrameListener.get()));
+		optionalFrameListener.reset();
+	}
 	//dtor
 }
 
@@ -55,31 +58,29 @@ void Menu::doDisplay(const Geometry::Rect & region) {
 	displayChildren(region,true);
 }
 
-//! ---|> FrameListener
-void Menu::onFrame(float /*timeSecs*/){
-	
+static void onFrame(Menu & menu, float /*timeSecs*/) {
 	// check if the menu should be closed
-	if( getGUI().getActiveComponent()!=this && hasParent()){
+	if(menu.getGUI().getActiveComponent() != &menu && menu.hasParent()) {
 		bool menuFound = false;
-
-		for(Component * c=getNext();c;c=c->getNext()){
-			if( ! c->isEnabled() || !c->getAbsRect().intersects(getAbsRect()))
+		for(Component * c = menu.getNext(); c; c = c->getNext()) {
+			if(!c->isEnabled() || !c->getAbsRect().intersects(menu.getAbsRect())) {
 				continue;
+			}
 			// something other than a menu in front of this menu? -> close this
-			if(dynamic_cast<Menu*>(c) == nullptr ){
-				close();
+			if(dynamic_cast<Menu*>(c) == nullptr) {
+				menu.close();
 				return;
 			}
-			menuFound=true;
+			menuFound = true;
 			break;
 		}
 		// this is the topmost menu, but it is not selected or active -> close this
-		if(!isSelected() && !menuFound){
-			close();
+		if(!menu.isSelected() && !menuFound) {
+			menu.close();
 		}
 	}
-
 }
+
 //! ---|> Component
 bool Menu::onSelect(){
 	getGUI().setActiveComponent(this);
@@ -98,14 +99,14 @@ void Menu::open(const Geometry::Vec2 &pos){
 	bringToFront();
 
 	getGUI().selectFirst(this);
-	getGUI().addFrameListener(this);
+	optionalFrameListener.reset(new GUI_Manager::FrameListenerHandle(getGUI().addFrameListener(std::bind(&onFrame, std::ref(*this), std::placeholders::_1))));
 }
 
-
-
-
 void Menu::close(){
-	getGUI().removeFrameListener(this);
+	if(optionalFrameListener) {
+		getGUI().removeFrameListener(std::move(*optionalFrameListener.get()));
+		optionalFrameListener.reset();
+	}
 	disable();
 //    getGUI().removeMouseMotionListener(this);
 	if( getFlag(ONE_TIME_MENU)){
