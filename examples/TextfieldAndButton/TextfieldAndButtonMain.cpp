@@ -49,11 +49,14 @@ int main(int /*argc*/, char */*argv*/[]) {
 
 	Util::Reference<GUI::Window> guiWin = guiManager.createWindow(Geometry::Rect_f(10, 10, 200, 200), "Window");
 
-	Util::Reference<GUI::Textfield> guiText = guiManager.createTextfield(Geometry::Rect_f(0, 0, 40, 20), "Text");
+	Util::Reference<GUI::Textfield> guiText = guiManager.createTextfield("Text");
+	guiText->setRect(Geometry::Rect_f(0, 0, 40, 20));
 	guiWin->addContent(guiText.get());
 
-	Util::StringIdentifier clearActionId("clear_text");
-	Util::Reference<GUI::Button> guiButton = guiManager.createButton(Geometry::Rect_f(0, 25, 40, 20), "Clear", clearActionId);
+	const Util::StringIdentifier clearActionId("clear_text");
+	Util::Reference<GUI::Button> guiButton = guiManager.createButton("Clear");
+	guiButton->setActionName(clearActionId);
+	guiButton->setRect(Geometry::Rect_f(0, 25, 40, 20));
 	guiWin->addContent(guiButton.get());
 	
 	struct ClearTextAction : public GUI::ActionListener {
