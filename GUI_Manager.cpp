@@ -276,13 +276,12 @@ class TooltipHandler : public Component {
 GUI_Manager::GUI_Manager(Util::UI::EventContext & context) : 
 	eventContext(context), window(nullptr), debugMode(0),
 	lazyRendering(false), style(new StyleManager),
+	mouseCursorHandler(new MouseCursorHandler(*this)),
 	tooltipHandler(new TooltipHandler(*this)) {
 	globalContainer=new GlobalContainer(*this,Rect(0,0,1280,1024));
 	globalContainer->setMouseCursorProperty(PROPERTY_MOUSECURSOR_DEFAULT);
 
 	Style::initStyleManager(getStyleManager());
-    
-    auto mh = new MouseCursorHandler(*this);
 }
 
 //! (dtor)

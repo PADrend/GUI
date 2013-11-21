@@ -421,6 +421,7 @@ class GUI_Manager {
 	//!	@name Internal state
 	//	@{
 	private:
+		std::unique_ptr<MouseCursorHandler> mouseCursorHandler;
 		std::unique_ptr<TooltipHandler> tooltipHandler;
 	//	@}
 
