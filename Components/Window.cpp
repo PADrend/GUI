@@ -25,17 +25,23 @@ namespace GUI{
 const Util::StringIdentifier Window::ACTION_onWindowClosed("onWindowClosed");
 
 //! TitlePanel ---|> Container, MouseMotionListener, MouseButtonListener
-struct TitlePanel:public Container,public MouseMotionListener,public MouseButtonListener{
+struct TitlePanel:public Container,public MouseMotionListener {
 	Window & window;
 	Geometry::Vec2 dragOffset;
-	TitlePanel(Window & win):Container(win.getGUI()),window(win){
-		addMouseButtonListener(this);
+	GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
+	TitlePanel(Window & win) :
+		Container(win.getGUI()),
+		window(win),
+		mouseButtonListenerHandle(win.getGUI().addMouseButtonListener(this, std::bind(&TitlePanel::onMouseButton, 
+																					  this, 
+																					  std::placeholders::_1,
+																					  std::placeholders::_2))) {
 	}
 	virtual ~TitlePanel(){
+		getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
 		getGUI().removeMouseMotionListener(this);
 	}
-	// ---|> MouseButtonListener
-	bool onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) override{
+	bool onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) {
 		if(!buttonEvent.pressed)
 			return false;
 		activate();
@@ -58,13 +64,20 @@ struct TitlePanel:public Container,public MouseMotionListener,public MouseButton
 };
 
 //! ResizePanel ---|> Component, MouseMotionListener, MouseButtonListener
-struct ResizePanel:public Component,public MouseMotionListener,public MouseButtonListener{
+struct ResizePanel:public Component,public MouseMotionListener {
 	Window & window;
 	int changeX, changeY;
-	ResizePanel(Window & win):Component(win.getGUI()),window(win){
-		addMouseButtonListener(this);
+	GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
+	ResizePanel(Window & win) :
+		Component(win.getGUI()),
+		window(win),
+		mouseButtonListenerHandle(win.getGUI().addMouseButtonListener(this, std::bind(&ResizePanel::onMouseButton, 
+																					  this, 
+																					  std::placeholders::_1,
+																					  std::placeholders::_2))) {
 	}
 	virtual ~ResizePanel(){
+		getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
 		getGUI().removeMouseMotionListener(this);
 	}
 
@@ -76,8 +89,7 @@ struct ResizePanel:public Component,public MouseMotionListener,public MouseButto
 			getGUI().displayShape(PROPERTY_SELECTION_RECT_SHAPE,getLocalRect());
 		}
 	}
-	// ---|> MouseMovementListner
-	bool onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) override{
+	bool onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) {
 		if(!buttonEvent.pressed)
 			return false;
 		startResizing(1,1);
@@ -253,11 +265,15 @@ class WindowSpielereiAnimation:public AnimationHandler{
 
 //! (ctor)
 Window::Window(GUI_Manager & _gui,const Geometry::Rect & _r,const std::string & _title,flag_t _flags/*=0*/):
-		Container(_gui,_r,_flags), MouseButtonListener(),
+		Container(_gui,_r,_flags),
 		minimized(false),opacity(1.0),autoMinimizer(),
 		keyListenerHandle(_gui.addKeyListener(this, std::bind(&Window::onKeyEvent,  
 															  this, 
-															  std::placeholders::_1))) {
+															  std::placeholders::_1))),
+		mouseButtonListenerHandle(_gui.addMouseButtonListener(this, std::bind(&Window::onMouseButton, 
+																			  this, 
+																			  std::placeholders::_1,
+																			  std::placeholders::_2))) {
 
 	clientAreaPanel=new Container(_gui);
 	_addChild(clientAreaPanel.get());
@@ -343,14 +359,12 @@ Window::Window(GUI_Manager & _gui,const Geometry::Rect & _r,const std::string & 
 										Geometry::Vec2(borderSize,titleHeight),
 										Geometry::Vec2(-2.0f * borderSize, -static_cast<float>(titleHeight)));
 
-
-	addMouseButtonListener(this);
-
 	setTitle(_title);
 }
 
 //! (dtor)
 Window::~Window() {
+	getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
 	getGUI().removeKeyListener(this, std::move(keyListenerHandle));
 }
 

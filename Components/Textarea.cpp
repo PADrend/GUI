@@ -161,13 +161,16 @@ static const Util::StringIdentifier dataId_scrollPos("scroll");
 
 //! (ctor)
 Textarea::Textarea(GUI_Manager & _gui,flag_t _flags):
-		Container(_gui,_flags),MouseButtonListener(),MouseMotionListener(),lineHeight(15),
+		Container(_gui,_flags), MouseMotionListener(),lineHeight(15),
 		selectionStart(std::make_pair(0,std::string::npos)), dataName("text"),dataChanged(false),activeTextUpdateIndex(0),
 		keyListenerHandle(_gui.addKeyListener(this, std::bind(&Textarea::onKeyEvent, 
 															  this, 
-															 std::placeholders::_1))) {
+															  std::placeholders::_1))),
+		 mouseButtonListenerHandle(_gui.addMouseButtonListener(this, std::bind(&Textarea::onMouseButton, 
+																			   this, 
+																			   std::placeholders::_1,
+																			   std::placeholders::_2))) {
 	fontReference = getGUI().getActiveFont(PROPERTY_DEFAULT_FONT);
-	addMouseButtonListener(this);
 	setFlag(SELECTABLE,true);
 	setFlag(USE_SCISSOR,true);
     
@@ -184,6 +187,7 @@ Textarea::~Textarea() {
 		optionalScrollBarListener.reset();
 	}
 	getGUI().removeMouseMotionListener(this);
+	getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
 	getGUI().removeKeyListener(this, std::move(keyListenerHandle));
 }
 

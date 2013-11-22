@@ -22,9 +22,11 @@ namespace GUI {
 
 //! (ctor)
 Splitter::Splitter(GUI_Manager & _gui,splittingDirection_t _direction,flag_t _flags/*=0*/):
-		Component(_gui,_flags),MouseMotionListener(),MouseButtonListener(),direction(_direction){
-	addMouseButtonListener(this);
-	
+		Component(_gui,_flags),MouseMotionListener(),direction(_direction),
+		mouseButtonListenerHandle(_gui.addMouseButtonListener(this, std::bind(&Splitter::onMouseButton, 
+																			  this, 
+																			  std::placeholders::_1,
+																			  std::placeholders::_2))) {
 	if( direction == HORIZONTAL){
 		setExtLayout(
 			ExtLayouter::WIDTH_REL|ExtLayouter::HEIGHT_ABS,
@@ -35,13 +37,12 @@ Splitter::Splitter(GUI_Manager & _gui,splittingDirection_t _direction,flag_t _fl
 			Geometry::Vec2(0,0),Geometry::Vec2(5,1.0));
 	
 	}
-	//ctor
 }
 
 //! (dtor)
 Splitter::~Splitter(){
+	getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
 	getGUI().removeMouseMotionListener(this);
-	//dtor
 }
 
 //! ---|> Component

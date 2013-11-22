@@ -68,17 +68,20 @@ void ListView::ListViewClientArea::doDisplay(const Geometry::Rect & region) {
 
 //! (ctor)
 ListView::ListView(GUI_Manager & _gui, flag_t _flags/*=0*/) :
-	Container(_gui, _flags), MouseButtonListener(), MouseMotionListener(),
+	Container(_gui, _flags), MouseMotionListener(),
 	entryHeight(getGUI().getGlobalValue(PROPERTY_LISTVIEW_DEFAULT_ENTRY_HEIGHT)),
 	clientArea(new ListViewClientArea(_gui, *this)), cursor(0),
 	keyListenerHandle(_gui.addKeyListener(this, std::bind(&ListView::onKeyEvent, 
 														  this, 
 														  std::placeholders::_1))),
+	mouseButtonListenerHandle(_gui.addMouseButtonListener(clientArea.get(), std::bind(&ListView::onMouseButton, 
+																					  this, 
+																					  std::placeholders::_1,
+																					  std::placeholders::_2))),
 	initialMarkingIndex(0) {
 
 	clientArea->setFlag(IS_CLIENT_AREA, true);
 	_addChild(clientArea.get());
-	clientArea->addMouseButtonListener(this);
 	setFlag(USE_SCISSOR, true);
 	setFlag(SELECTABLE, true);
 }
@@ -96,6 +99,7 @@ ListView::~ListView() {
 		optionalScrollBarListener.reset();
 	}
 	getGUI().removeMouseMotionListener(this);
+	getGUI().removeMouseButtonListener(clientArea.get(), std::move(mouseButtonListenerHandle));
 	getGUI().removeKeyListener(this, std::move(keyListenerHandle));
 }
 
@@ -254,7 +258,6 @@ void ListView::moveCursor(int delta) {
 // ------------------------------------------------------------------
 // Events
 
-//! ---|> MouseButtonListener
 bool ListView::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) {
 	const Geometry::Vec2 localPos = Geometry::Vec2(buttonEvent.x, buttonEvent.y) - getAbsPosition()+scrollPos;
 	if(buttonEvent.pressed)

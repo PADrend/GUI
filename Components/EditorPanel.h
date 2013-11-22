@@ -13,6 +13,7 @@
 
 #include "Container.h"
 #include "../Base/Listener.h"
+#include "../GUI_Manager.h"
 #include <set>
 
 namespace GUI {
@@ -20,7 +21,7 @@ namespace GUI {
 /***
  **     EditorPanel ---|> Container ---|> Component
  **/
-class EditorPanel: public Container,public MouseButtonListener,public MouseMotionListener {
+class EditorPanel: public Container, public MouseMotionListener {
 		PROVIDES_TYPE_NAME(EditorPanel)
 		
 		enum state_t{
@@ -34,8 +35,6 @@ class EditorPanel: public Container,public MouseButtonListener,public MouseMotio
 
 		// ---|> MouseMotionListener
 		virtual listenerResult_t onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent) override;
-		// ---|> MouseButtonListener
-		virtual bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
 
 		// ---|> Container
 		virtual void removeContent(const Ref & child) override	{
@@ -51,8 +50,12 @@ class EditorPanel: public Container,public MouseButtonListener,public MouseMotio
 		// ---|> Component
 		virtual void doDisplay(const Geometry::Rect & region) override;
 
+		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
+
 		Geometry::Vec2 dragStartPos;
 		Geometry::Vec2 dragPos;
+
+		GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
 
 		void rectSelect_start(const Geometry::Vec2 & pos);
 		void rectSelect_break();

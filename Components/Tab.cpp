@@ -24,19 +24,24 @@ namespace GUI {
 /***
  **  TabTitlePanel ---|> Container ---|> Component
  **/
-struct TabTitlePanel : public Container, public MouseMotionListener, public MouseButtonListener {
+struct TabTitlePanel : public Container, public MouseMotionListener {
 	TabbedPanel::Tab & myTab;
 	GUI_Manager::KeyListenerHandle keyListenerHandle;
+	GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
 	TabTitlePanel(GUI_Manager & _gui,TabbedPanel::Tab & tab) :
-			Container(_gui),MouseMotionListener(),MouseButtonListener(),myTab(tab),
+			Container(_gui),MouseMotionListener(),myTab(tab),
 			keyListenerHandle(_gui.addKeyListener(this, std::bind(&TabTitlePanel::onKeyEvent, 
 																  this, 
-																  std::placeholders::_1))) {
+																  std::placeholders::_1))),
+			mouseButtonListenerHandle(_gui.addMouseButtonListener(this, std::bind(&TabTitlePanel::onMouseButton, 
+																			  this, 
+																			  std::placeholders::_1,
+																			  std::placeholders::_2))) {
 		setFlag(SELECTABLE,true);
-		addMouseButtonListener(this);
 	}
 	virtual ~TabTitlePanel() {
 		getGUI().removeMouseMotionListener(this);
+		getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
 		getGUI().removeKeyListener(this, std::move(keyListenerHandle));
 	}
 	TabbedPanel::Tab * getTab()const {
@@ -84,8 +89,7 @@ struct TabTitlePanel : public Container, public MouseMotionListener, public Mous
 		return false;
 	}
 
-	//! ---|> MouseButtonListener
-	bool onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) override {
+	bool onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) {
 		if (buttonEvent.pressed) {
 			if(buttonEvent.button == Util::UI::MOUSE_BUTTON_RIGHT && getGUI().isCtrlPressed()){
 				TabbedPanel * oldTabbedPanel=getTab()->getTabbedPanel();

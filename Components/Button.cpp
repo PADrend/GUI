@@ -34,11 +34,15 @@ static ExtLayouter * getDefaultLabelLayouter(){
 
 //! (ctor)
 Button::Button(GUI_Manager & _gui,flag_t _flags/*=0*/)
-		:Container(_gui,_flags),MouseMotionListener(),MouseButtonListener(),
+		:Container(_gui,_flags),MouseMotionListener(),
 		actionName(ACTION_Button_click),switchedOn(false),hover(false),actionListener(),
 		keyListenerHandle(_gui.addKeyListener(this, std::bind(&Button::onKeyEvent, 
 															  this, 
 															  std::placeholders::_1))),
+		mouseButtonListenerHandle(_gui.addMouseButtonListener(this, std::bind(&Button::onMouseButton, 
+																			  this, 
+																			  std::placeholders::_1,
+																			  std::placeholders::_2))),
 		mouseClickListenerHandle(_gui.addMouseClickListener(	this,
 																[this](Component *, unsigned int, const Geometry::Vec2 &) {
 																	if(!isLocked()) {
@@ -54,13 +58,13 @@ Button::Button(GUI_Manager & _gui,flag_t _flags/*=0*/)
 	textLabel->setTextStyle(Draw::TEXT_ALIGN_CENTER|Draw::TEXT_ALIGN_MIDDLE);
 	addContent(textLabel.get());
 	addMouseMotionListener(this);
-	addMouseButtonListener(this);
 }
 
 //! (dtor)
-Button::~Button(){
+Button::~Button() {
 	getGUI().removeMouseMotionListener(this);
 	getGUI().removeMouseClickListener(this, std::move(mouseClickListenerHandle));
+	getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
 	getGUI().removeKeyListener(this, std::move(keyListenerHandle));
 }
 
@@ -111,8 +115,8 @@ void Button::doDisplay(const Geometry::Rect & region){
 	}
 }
 
-//! ---|> MouseButtonListener
-bool Button::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent){
+
+bool Button::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) {
 	if(buttonEvent.button == Util::UI::MOUSE_BUTTON_MIDDLE) {
 		return false;
 	}

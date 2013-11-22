@@ -18,10 +18,4 @@ RegisteredListenerRegistry<MouseMotionListener> & MouseMotionListener::getListen
 	return l;
 }
 
-/*! (static, singleton) */
-RegisteredListenerRegistry<MouseButtonListener> & MouseButtonListener::getListenerRegistry(){
-	static RegisteredListenerRegistry<MouseButtonListener> l;
-	return l;
-}
-
 }

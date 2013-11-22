@@ -13,6 +13,7 @@
 
 #include "Container.h"
 #include "../Base/Listener.h"
+#include "../GUI_Manager.h"
 
 namespace GUI {
 class Button;
@@ -20,14 +21,14 @@ class Button;
 /***
  **     Scrollbar ---|> Container
  **/
-class Scrollbar : public Container, public MouseButtonListener {
+class Scrollbar : public Container {
 		PROVIDES_TYPE_NAME(Scrollbar)
 	public:
 		// flags
 		static const flag_t VERTICAL=1<<24;
 
 		Scrollbar(GUI_Manager & gui,Util::StringIdentifier dataName,flag_t flags=0);
-		virtual ~Scrollbar(){}
+		virtual ~Scrollbar();
 
 		int getMarkerSize()const;
 		uint32_t getMaxScrollPos()const						{	return maxScrollPos;	}
@@ -39,15 +40,14 @@ class Scrollbar : public Container, public MouseButtonListener {
 		//! Sets the scrollPos and issues an dataChanged event to registered listeners
 		void updateScrollPos(const int32_t f);
 
-		// ---|> MouseButtonListener
-		virtual bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
-
 		// ---|> Component
 		virtual void doLayout() override;
 
 	private:
 		// ---|> Component
 		virtual void doDisplay(const Geometry::Rect & region) override;
+
+		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
 
 		float getMarkerPosFromScrollPos(float value)const;
 
@@ -56,6 +56,8 @@ class Scrollbar : public Container, public MouseButtonListener {
 
 		Util::WeakPointer<Component> marker;
 		Util::StringIdentifier dataName;
+
+		GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
 };
 }
 #endif // GUI_Scrollbar_H

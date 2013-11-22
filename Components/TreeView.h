@@ -24,14 +24,14 @@ class Scrollbar;
  **     TreeView ---|> Container ---|> Component
  **                   0..1 ------------> *
  **/
-class TreeView: public Container,public MouseButtonListener,public MouseMotionListener {
+class TreeView: public Container,public MouseMotionListener {
 		PROVIDES_TYPE_NAME(TreeView)
 	public:
 		/***
 		 **     TreeView::TreeViewEntry ---|> Container ---|> Component
 		 **                            0..1 ------------> *
 		 **/
-		class TreeViewEntry: public Container,public MouseButtonListener {
+		class TreeViewEntry: public Container {
 				PROVIDES_TYPE_NAME(TreeViewEntry)
 			public:
 
@@ -58,9 +58,6 @@ class TreeView: public Container,public MouseButtonListener,public MouseMotionLi
 				// change the first component of the entry (which is normally only set in the constructor and never changed.)
 				void setComponent(const Ref & c);
 
-				// ---|> MouseButtonListener
-				virtual bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
-
 				// ---|> Container
 				virtual void addContent(const Ref & child) override;
 				virtual void clearContents() override;
@@ -73,9 +70,12 @@ class TreeView: public Container,public MouseButtonListener,public MouseMotionLi
 				// ---|> Component
 				virtual void doDisplay(const Geometry::Rect & region) override;
 
+				bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
+
 				void setTreeView( TreeView * myTreeView);
 				TreeView * myTreeView;
 				bool marked;
+				GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
 
 				void unmarkSubtree(Component * root)const;
 		};
@@ -100,8 +100,6 @@ class TreeView: public Container,public MouseButtonListener,public MouseMotionLi
 		std::vector<Component*> getMarkedComponents();
 		void markingChanged();
 
-		// ---|> MouseButtonListener
-		virtual bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
 		// ---|> MouseMotionListener
 		virtual listenerResult_t onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) override;
 
@@ -119,6 +117,7 @@ class TreeView: public Container,public MouseButtonListener,public MouseMotionLi
 		virtual void doDisplay(const Geometry::Rect & region) override;
 
 		bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
+		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
 
 		Geometry::Vec2 currentMousePos;
 
@@ -132,6 +131,7 @@ class TreeView: public Container,public MouseButtonListener,public MouseMotionLi
 		std::unique_ptr<GUI_Manager::DataChangeListenerHandle> optionalScrollBarListener;
 
 		GUI_Manager::KeyListenerHandle keyListenerHandle;
+		GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
 };
 }
 #endif // GUI_TreeView_H

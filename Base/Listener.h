@@ -132,12 +132,6 @@ struct MouseMotionListener {
  */
 typedef std::function<bool (Component *, const Util::UI::ButtonEvent &)> HandleMouseButtonFun;
 
-struct MouseButtonListener {
-	static RegisteredListenerRegistry<MouseButtonListener> & getListenerRegistry();
-	virtual bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) = 0;
-	virtual ~MouseButtonListener() {}
-};
-
 /**
  * Type of functions reacting on a mouse click (mouse button down and mouse 
  * button up) onto a component. The function receives the component onto which

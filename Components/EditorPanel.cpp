@@ -59,8 +59,11 @@ static FillLayouter * getDefaultLayouter(){
 
 //! (ctor)
 EditorPanel::EditorPanel(GUI_Manager & _gui,flag_t _flags/*=0*/) :
-		Container(_gui,_flags),MouseButtonListener(),MouseMotionListener(),state(CLICK_SELECTING){
-	addMouseButtonListener(this);
+		Container(_gui,_flags), MouseMotionListener(), state(CLICK_SELECTING),
+		mouseButtonListenerHandle(_gui.addMouseButtonListener(this, std::bind(&EditorPanel::onMouseButton, 
+																			  this, 
+																			  std::placeholders::_1,
+																			  std::placeholders::_2))) {
 	setFlag(USE_SCISSOR,true);
 	setFlag(SELECTABLE,true);
 	setFlag(BORDER,true);
@@ -70,8 +73,8 @@ EditorPanel::EditorPanel(GUI_Manager & _gui,flag_t _flags/*=0*/) :
 
 //! (dtor)
 EditorPanel::~EditorPanel() {
+	getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
 	getGUI().removeMouseMotionListener(this);
-	//dtor
 }
 
 //! ---|> Component
@@ -124,8 +127,7 @@ listenerResult_t EditorPanel::onMouseMove(Component * /*component*/, const Util:
 
 static const Util::StringIdentifier dataId_marking("marking");
 
-//! ---|> MouseButtonListener
-bool EditorPanel::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent){
+bool EditorPanel::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) {
 	if(buttonEvent.pressed && getGUI().isCtrlPressed()) {
 		if(buttonEvent.button == Util::UI::MOUSE_WHEEL_UP) {
 			float scale=0.8;

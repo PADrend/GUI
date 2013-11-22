@@ -24,7 +24,7 @@ class Scrollbar;
 /***
  **     ScrollableContainer ---|> Container ---|> Component
  **/
-class ScrollableContainer: public Container,public MouseButtonListener,public MouseMotionListener {
+class ScrollableContainer: public Container, public MouseMotionListener {
 		PROVIDES_TYPE_NAME(ScrollableContainer)
 	public:
 
@@ -39,8 +39,6 @@ class ScrollableContainer: public Container,public MouseButtonListener,public Mo
 
 		// ---|> MouseMotionListener
 		virtual listenerResult_t onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent) override;
-		// ---|> MouseButtonListener
-		virtual bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
 
 		// ---|> Container
 		virtual void addContent(const Ref & child) override						{	contentContainer->addContent(child);	}
@@ -61,6 +59,9 @@ class ScrollableContainer: public Container,public MouseButtonListener,public Mo
 		std::unique_ptr<GUI_Manager::DataChangeListenerHandle> optionalScrollBarListener;
 		Geometry::Vec2 scrollPos;
 		Geometry::Vec2 maxScrollPos;
+		GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
+
+		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
 };
 }
 #endif // GUI_ScrollableContainer_H

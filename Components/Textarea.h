@@ -26,7 +26,7 @@ class TextareaTextProcessor;
 /***
  **  Textarea ---|> Container
  **/
-class Textarea: public Container,public MouseButtonListener,
+class Textarea: public Container,
 				public MouseMotionListener {
 		PROVIDES_TYPE_NAME(Textarea)
 	public:
@@ -36,8 +36,6 @@ class Textarea: public Container,public MouseButtonListener,
 		void setText(const std::string & newText);
 		std::string getText()const;
 
-		// ---|> MouseButtonListener
-		virtual bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
 		// ---|> MouseMotionListener
 		virtual listenerResult_t onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent) override;
 
@@ -68,6 +66,7 @@ class Textarea: public Container,public MouseButtonListener,
 		virtual void doDisplay(const Geometry::Rect & region) override;
 
 		bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
+		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
 
 		range_t _insertText(const cursor_t & pos,const std::string & s);
 		void markForConsolidation(size_t line1,size_t line2){
@@ -132,6 +131,7 @@ class Textarea: public Container,public MouseButtonListener,
 		size_t activeTextUpdateIndex;
 		
 		GUI_Manager::KeyListenerHandle keyListenerHandle;
+		GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
 	//	\}
 };
 //! (internal)

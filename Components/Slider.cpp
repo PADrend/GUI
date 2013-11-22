@@ -22,22 +22,26 @@ namespace GUI{
 /***
  **  Slider ---|> Component
  **/
-class SliderMarker:public Component,public MouseMotionListener,public MouseButtonListener {
+class SliderMarker:public Component, public MouseMotionListener {
 	Slider & slider;
+	GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
 
 	public:
 	//! (ctor)
 	SliderMarker(GUI_Manager & _gui,Slider & _slider):
-			Component(_gui),slider(_slider) {
-		addMouseButtonListener(this);
+			Component(_gui),slider(_slider),
+			mouseButtonListenerHandle(_gui.addMouseButtonListener(this, std::bind(&SliderMarker::onMouseButton, 
+																				  this, 
+																				  std::placeholders::_1,
+																				  std::placeholders::_2))) {
 	}
 	//! (ctor)
 	virtual ~SliderMarker() {
+		getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
 		getGUI().removeMouseMotionListener(this);
 	}
 
-	//! ---|> MouseButtonListener
-	bool onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) override {
+	bool onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) {
 		if(buttonEvent.button == Util::UI::MOUSE_WHEEL_UP || buttonEvent.button == Util::UI::MOUSE_WHEEL_DOWN) {
 			return false;
 		}
@@ -71,11 +75,15 @@ class SliderMarker:public Component,public MouseMotionListener,public MouseButto
 
 //! (ctor)
 Slider::Slider(GUI_Manager & _gui,const Geometry::Rect & _r,float left,float right,int steps,Util::StringIdentifier _dataName,flag_t _flags/*=0*/):
-		Container(_gui,_r,_flags), MouseButtonListener(),
+		Container(_gui,_r,_flags),
 		markerSize(6),value(0),floatValueRef(nullptr),dataName(std::move(_dataName)),
 		keyListenerHandle(_gui.addKeyListener(this, std::bind(&Slider::onKeyEvent, 
 															  this, 
-															  std::placeholders::_1))) {
+															  std::placeholders::_1))),
+		mouseButtonListenerHandle(_gui.addMouseButtonListener(this, std::bind(&Slider::onMouseButton, 
+																			  this, 
+																			  std::placeholders::_1,
+																			  std::placeholders::_2))) {
 	setRange(left,right,steps);
 	setFlag(SELECTABLE,true);
 
@@ -99,11 +107,11 @@ Slider::Slider(GUI_Manager & _gui,const Geometry::Rect & _r,float left,float rig
 									});
 		_addChild(button2.get());
 	}
-	addMouseButtonListener(this);
 }
 
 //! (dtor)
 Slider::~Slider() {
+	getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
 	getGUI().removeKeyListener(this, std::move(keyListenerHandle));
 }
 

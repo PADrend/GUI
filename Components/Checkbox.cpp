@@ -23,6 +23,10 @@ Checkbox::Checkbox(GUI_Manager & _gui,bool _checked,const std::string & _text,fl
 		keyListenerHandle(_gui.addKeyListener(this, std::bind(&Checkbox::onKeyEvent, 
 															  this, 
 															  std::placeholders::_1))),
+		mouseButtonListenerHandle(_gui.addMouseButtonListener(this, std::bind(&Checkbox::onMouseButton, 
+																			  this, 
+																			  std::placeholders::_1,
+																			  std::placeholders::_2))),
 		mouseClickListenerHandle(_gui.addMouseClickListener(	this,
 																[this](Component *, unsigned int, const Geometry::Vec2 &) {
 																	if(!isLocked()) {
@@ -37,7 +41,6 @@ Checkbox::Checkbox(GUI_Manager & _gui,bool _checked,const std::string & _text,fl
 	textLabel->setTextStyle(Draw::TEXT_ALIGN_LEFT|Draw::TEXT_ALIGN_MIDDLE);
 	addContent(textLabel.get());
 
-	addMouseButtonListener(this);
 	if(!_text.empty()){
 		setText(_text);
 
@@ -45,12 +48,12 @@ Checkbox::Checkbox(GUI_Manager & _gui,bool _checked,const std::string & _text,fl
 		const Geometry::Vec2 textSize = Draw::getTextSize(_text,getGUI().getActiveFont(PROPERTY_DEFAULT_FONT));
 		setSize( textSize.getWidth()+getGUI().getGlobalValue(PROPERTY_CHECKBOX_LABEL_INDENTATION), textSize.getHeight() );
 	}
-	//ctor
 }
 
 //! (dtor)
 Checkbox::~Checkbox() {
 	getGUI().removeMouseClickListener(this, std::move(mouseClickListenerHandle));
+	getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
 	getGUI().removeKeyListener(this, std::move(keyListenerHandle));
 }
 

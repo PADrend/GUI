@@ -26,12 +26,17 @@ static const Util::StringIdentifier dataId_verticallScrollPos("scroll");
 
 
 //! (ctor)
-ScrollableContainer::ScrollableContainer(GUI_Manager & _gui,flag_t _flags/*=0*/)
-		: Container(_gui,_flags),MouseButtonListener(),MouseMotionListener(),contentContainer(new Container(_gui)){
+ScrollableContainer::ScrollableContainer(GUI_Manager & _gui,flag_t _flags/*=0*/) :
+		Container(_gui,_flags),
+		MouseMotionListener(),
+		contentContainer(new Container(_gui)),
+		mouseButtonListenerHandle(_gui.addMouseButtonListener(this, std::bind(&ScrollableContainer::onMouseButton, 
+																			  this, 
+																			  std::placeholders::_1,
+																			  std::placeholders::_2))) {
 
 	_addChild(contentContainer.get());
 	contentContainer->setFlag(IS_CLIENT_AREA,true);
-	addMouseButtonListener(this);
 	setFlag(USE_SCISSOR,true);
 }
 
@@ -42,6 +47,7 @@ ScrollableContainer::~ScrollableContainer() {
 										  std::move(*optionalScrollBarListener.get()));
 		optionalScrollBarListener.reset();
 	}
+	getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
 	getGUI().removeMouseMotionListener(this);
 }
 

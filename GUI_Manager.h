@@ -418,7 +418,6 @@ class GUI_Manager {
 	//!	@name Internal state
 	//	@{
 	private:
-		MouseButtonListenerHandle mouseCursorButtonListener;
 		std::unique_ptr<TooltipHandler> tooltipHandler;
 		FrameListenerHandle tooltipFrameListener;
 	//	@}

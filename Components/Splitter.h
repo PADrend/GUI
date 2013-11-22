@@ -13,6 +13,7 @@
 
 #include "Component.h"
 #include "../Base/Listener.h"
+#include "../GUI_Manager.h"
 
 namespace GUI{
 
@@ -22,7 +23,7 @@ class Image;
 	The Splitter should always be the second child of overall three children of the parent.
    Splitter ---|> Component
  */
-class Splitter: public Component,public MouseMotionListener,public MouseButtonListener	{
+class Splitter: public Component,public MouseMotionListener {
 	PROVIDES_TYPE_NAME(Splitter)
 	public:
 		enum splittingDirection_t { VERTICAL, HORIZONTAL };
@@ -33,16 +34,16 @@ class Splitter: public Component,public MouseMotionListener,public MouseButtonLi
 
 		// ---|> MouseMotionListener
 		virtual listenerResult_t onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent) override;
-		// ---|> MouseButtonListener
-		virtual bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
-//        // ---|> MouseClickListener
-//        virtual bool onMouseClick(Component * component, unsigned int button,const Geometry::Vec2 &pos);
 
 		// ---|> Component
 		virtual void doLayout() override;
 	private:
 		// ---|> Component
 		virtual void doDisplay(const Geometry::Rect & region) override;
+
+		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
+
+		GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
 
 	private:
 		const splittingDirection_t direction;

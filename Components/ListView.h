@@ -24,7 +24,7 @@ class Scrollbar;
  **     ListView ---|> Container ---|> Component
  **                   0..1 ------------> *
  **/
-class ListView : public Container, public MouseButtonListener, public MouseMotionListener {
+class ListView : public Container, public MouseMotionListener {
 		PROVIDES_TYPE_NAME(ListView)
 
 	// ------------------
@@ -138,12 +138,12 @@ public:
 	public:
 		// ---|> MouseMotionListener
 		virtual listenerResult_t onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent) override;
-		// ---|> MouseButtonListener
-		virtual bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
 	private:
 		GUI_Manager::KeyListenerHandle keyListenerHandle;
+		GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
 
 		bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
+		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
 	//	@}
 
 	// ------------------

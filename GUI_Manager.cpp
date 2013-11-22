@@ -94,14 +94,27 @@ std::string GUI_Manager::getStringFromClipboard() const {
 /**
  * MouseCursorHandler ---|> MouseMotionListener,FrameListener
  */
-class MouseCursorHandler : public MouseMotionListener, public MouseButtonListener {
+class MouseCursorHandler : public MouseMotionListener {
 	private:
 		GUI_Manager & gui;
 		bool cursorLockedByButton;
+		GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
 	public:
 		
-		MouseCursorHandler(GUI_Manager & _gui) : MouseMotionListener(), MouseButtonListener(), gui(_gui),cursorLockedByButton(false){
+		MouseCursorHandler(GUI_Manager & _gui) : 
+			MouseMotionListener(), 
+			gui(_gui),
+			cursorLockedByButton(false),
+			mouseButtonListenerHandle(_gui.addGlobalMouseButtonListener(
+				[this](Component *, const Util::UI::ButtonEvent & buttonEvent) {
+					activateCursor(std::move(queryHoverComponentMouseCursor(Geometry::Vec2(buttonEvent.x, buttonEvent.y))));
+					cursorLockedByButton = buttonEvent.pressed;
+					return false;
+				})) {
 			activateCursor(nullptr);
+		}
+		~MouseCursorHandler() {
+			gui.removeGlobalMouseButtonListener(std::move(mouseButtonListenerHandle));
 		}
 		
 		std::shared_ptr<Util::UI::Cursor> queryHoverComponentMouseCursor(const Vec2 & absPos)const{
@@ -116,14 +129,6 @@ class MouseCursorHandler : public MouseMotionListener, public MouseButtonListene
 			if(gui.getWindow()!=nullptr && gui.getWindow()->getCursor() != cursor)
 				gui.getWindow()->setCursor(std::move(cursor));
 		}
-		
-		// ---|> MouseButtonListener
-		bool onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) override {
-			activateCursor(std::move(queryHoverComponentMouseCursor(Geometry::Vec2(buttonEvent.x, buttonEvent.y))));
-			cursorLockedByButton = buttonEvent.pressed;
-			return false;
-		}
-		
 		// ---|> MouseMotionListener
 		listenerResult_t onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) override{
 			// if mouse button is pressed cursor should not be changed, cause position can be outside component and would end in cursor switch!
@@ -257,7 +262,6 @@ class TooltipHandler:public Component, public MouseMotionListener {
 GUI_Manager::GUI_Manager(Util::UI::EventContext & context) : 
 	eventContext(context), window(nullptr), debugMode(0),
 	lazyRendering(false), style(new StyleManager),
-	mouseCursorButtonListener(addGlobalMouseButtonListener(std::bind(&MouseCursorHandler::onMouseButton, mouseCursorHandler.get(), std::placeholders::_1, std::placeholders::_2))),
 	tooltipHandler(new TooltipHandler(*this)),
 	tooltipFrameListener(addFrameListener(std::bind(&TooltipHandler::onFrame, tooltipHandler.get(), std::placeholders::_1))) {
 	globalContainer=new GlobalContainer(*this,Rect(0,0,1280,1024));
@@ -276,7 +280,6 @@ GUI_Manager::~GUI_Manager() {
 	cleanup();
 	setActiveComponent(nullptr);
 	globalContainer=nullptr;
-	removeGlobalMouseButtonListener(std::move(mouseCursorButtonListener));
 	removeFrameListener(std::move(tooltipFrameListener));
 }
 
@@ -349,12 +352,14 @@ bool GUI_Manager::handleMouseButton(const Util::UI::ButtonEvent & buttonEvent) {
 			c.isNotNull() && c->isEnabled() && c->coversAbsPosition(absPos);
 			c=c->getParent() ){
 
-		std::list<MouseButtonListener*> * l=MouseButtonListener::getListenerRegistry().getListeners(c.get());//c->getMouseButtonListener();
-		if(l==nullptr)
+		const auto componentIt = mouseButtonListener.find(c.get());
+		if(componentIt == mouseButtonListener.cend()) {
 			continue;
-		for(auto butIt = l->rbegin(); butIt != l->rend(); ++butIt) {
-			auto result = (*butIt)->onMouseButton(c.get(), buttonEvent);
-			if(!result) {
+		}
+		for(auto butIt = componentIt->second.getElements().crbegin(); 
+				butIt != componentIt->second.getElements().crend();
+				++butIt) {
+			if(!((*butIt)(c.get(), buttonEvent))) {
 				continue;
 			}
 

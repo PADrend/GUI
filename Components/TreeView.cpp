@@ -53,19 +53,21 @@ class TV_ScrollAnimation:public AnimationHandler{
 
 //! (TreeView::TreeViewEntry] [ctor)
 TreeView::TreeViewEntry::TreeViewEntry(GUI_Manager & _gui,TreeView * _treeView,Component * c/*=nullptr*/,flag_t _flags/*=0*/):
-		Container(_gui,_flags),MouseButtonListener(),
-		myTreeView(_treeView),marked(false) {
+		Container(_gui,_flags),
+		myTreeView(_treeView),marked(false),
+		mouseButtonListenerHandle(_gui.addMouseButtonListener(this, std::bind(&TreeViewEntry::onMouseButton, 
+																			  this, 
+																			  std::placeholders::_1,
+																			  std::placeholders::_2))) {
 	if(c) {
 		Container::_insertAfter(c,getLastChild());
 	}
-	addMouseButtonListener(this);
-	//ctor
 }
 
 //! (TreeView::TreeViewEntry] [dtor)
 TreeView::TreeViewEntry::~TreeViewEntry() {
+	getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
 	myTreeView = nullptr;
-	//ctor
 }
 
 //! [TreeView::TreeViewEntry] ---|> Component
@@ -107,8 +109,7 @@ void TreeView::TreeViewEntry::doDisplay(const Geometry::Rect & region) {
 
 }
 
-//! ---|> MouseButtonListener
-bool TreeView::TreeViewEntry::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent){
+bool TreeView::TreeViewEntry::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) {
 	if(myTreeView==nullptr)
 		return false;
 	if(!buttonEvent.pressed)
@@ -320,15 +321,18 @@ void TreeView::TreeViewEntry::unmarkSubtree(Component * subroot)const{
 
 //! (ctor)
 TreeView::TreeView(GUI_Manager & _gui,const Geometry::Rect & _r,const std::string & _actionName,flag_t _flags/*=0*/):
-		Container(_gui,_r,_flags),MouseButtonListener(),MouseMotionListener(),
+		Container(_gui,_r,_flags), MouseMotionListener(),
 		actionName(_actionName),root(new TreeViewEntry(_gui,this)),scrollPos(0),multiSelect(true),scrollBar(nullptr),
 		keyListenerHandle(_gui.addKeyListener(this, std::bind(&TreeView::onKeyEvent, 
 															  this, 
-															  std::placeholders::_1))) {
+															  std::placeholders::_1))),
+		mouseButtonListenerHandle(_gui.addMouseButtonListener(this, std::bind(&TreeView::onMouseButton, 
+																			  this, 
+																			  std::placeholders::_1,
+																			  std::placeholders::_2))) {
 	setFlag(SELECTABLE,true);
 
 	_addChild(root.get());
-	addMouseButtonListener(this);
 
 	setFlag(USE_SCISSOR,true);
 	setFlag(LOWERED_BORDER,true);
@@ -342,6 +346,7 @@ TreeView::~TreeView() {
 		optionalScrollBarListener.reset();
 	}
 	getGUI().removeMouseMotionListener(this);
+	getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
 	getGUI().removeKeyListener(this, std::move(keyListenerHandle));
 	// destroy root
 	root = nullptr;

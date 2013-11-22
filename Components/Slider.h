@@ -21,7 +21,7 @@ class Button;
 /***
  **     Slider ---|> Container
  **/
-class Slider : public Container, public MouseButtonListener {
+class Slider : public Container {
 		PROVIDES_TYPE_NAME(Slider)
 	public:
 		// flags
@@ -49,9 +49,6 @@ class Slider : public Container, public MouseButtonListener {
 		// ---o
 		virtual void dataUpdated() ;
 
-		// ---|> MouseButtonListener
-		virtual bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
-
 		// ---|> Component
 		virtual void doLayout() override;
 
@@ -60,6 +57,7 @@ class Slider : public Container, public MouseButtonListener {
 		virtual void doDisplay(const Geometry::Rect & region) override;
 
 		bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
+		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
 
 	protected:
 		// ---o
@@ -82,6 +80,7 @@ class Slider : public Container, public MouseButtonListener {
 		Util::StringIdentifier dataName;
 
 		GUI_Manager::KeyListenerHandle keyListenerHandle;
+		GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
 };
 }
 #endif // GUI_Slider_H

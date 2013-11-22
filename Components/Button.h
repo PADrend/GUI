@@ -21,7 +21,7 @@ namespace GUI {
  **     Button ---|> Container ---|> Component
  **                   0..1 ------------> *
  **/
-class Button : public Container, public MouseMotionListener, public MouseButtonListener {
+class Button : public Container, public MouseMotionListener {
 		PROVIDES_TYPE_NAME(Button)
 	public:
 		static const flag_t FLAT_BUTTON=1<<24;
@@ -50,16 +50,13 @@ class Button : public Container, public MouseMotionListener, public MouseButtonL
 
 		// ---|> MouseMotionListener
 		virtual listenerResult_t onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent) override;
-		// ---|> MouseButtonListener
-		virtual bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
 
 	private:
 		// ---|> Component
 		virtual void doDisplay(const Geometry::Rect & region) override;
 
 		bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
-
-		GUI_Manager::MouseClickListenerHandle mouseClickListenerHandle;
+		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
 
 	protected:
 		Util::WeakPointer<Label> textLabel;
@@ -67,6 +64,8 @@ class Button : public Container, public MouseMotionListener, public MouseButtonL
 		bool switchedOn;
 		bool hover;
 		HandleActionFun actionListener;
+		GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
+		GUI_Manager::MouseClickListenerHandle mouseClickListenerHandle;
 		GUI_Manager::KeyListenerHandle keyListenerHandle;
 };
 }

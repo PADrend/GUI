@@ -21,25 +21,30 @@ namespace GUI{
 /***
  **  Scrollbar ---|> Component
  **/
-class ScrollMarker:public Component,public MouseMotionListener,public MouseButtonListener {
+class ScrollMarker:public Component,public MouseMotionListener {
 		Scrollbar & myScrollbar;
 		float dragStartPos;
 		float dragStartScroll;
 		bool catchDragStartPos;
 
+		GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
+
 	public:
 	//! (ctor)
 	ScrollMarker(GUI_Manager & _gui,Scrollbar & _myScrollbar):
-			Component(_gui),myScrollbar(_myScrollbar) {
-		addMouseButtonListener(this);
+			Component(_gui),myScrollbar(_myScrollbar),
+			mouseButtonListenerHandle(_gui.addMouseButtonListener(this, std::bind(&ScrollMarker::onMouseButton, 
+																				  this, 
+																				  std::placeholders::_1,
+																				  std::placeholders::_2))) {
 	}
 	//! (ctor)
 	virtual ~ScrollMarker() {
+		getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
 		getGUI().removeMouseMotionListener(this);
 	}
 
-	//! ---|> MouseButtonListener
-	bool onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) override {
+	bool onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) {
 		if(buttonEvent.button == Util::UI::MOUSE_WHEEL_UP || buttonEvent.button == Util::UI::MOUSE_WHEEL_DOWN) {
 			return false;
 		}
@@ -88,14 +93,20 @@ class ScrollMarker:public Component,public MouseMotionListener,public MouseButto
 
 //! (ctor)
 Scrollbar::Scrollbar(GUI_Manager & _gui,Util::StringIdentifier _dataName,flag_t _flags/*=0*/):
-		Container(_gui,Geometry::Rect(),_flags),MouseButtonListener(),
-		maxScrollPos(1),scrollPos(0),dataName(std::move(_dataName)) {
+		Container(_gui,Geometry::Rect(),_flags),
+		maxScrollPos(1),scrollPos(0),dataName(std::move(_dataName)),
+		mouseButtonListenerHandle(_gui.addMouseButtonListener(this, std::bind(&Scrollbar::onMouseButton, 
+																			  this, 
+																			  std::placeholders::_1,
+																			  std::placeholders::_2))) {
 	setFlag(SELECTABLE,true);
 
 	marker=new ScrollMarker(getGUI(),*this);
 	_addChild(marker.get());
+}
 
-	addMouseButtonListener(this);
+Scrollbar::~Scrollbar() {
+	getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
 }
 
 //! ---|> Component

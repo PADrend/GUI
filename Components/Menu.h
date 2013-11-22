@@ -22,18 +22,13 @@ namespace GUI {
  **     Menu ---|> Container ---|> Component
  **                   0..1 ------------> *
  **/
-class Menu: public Container, public MouseButtonListener {
+class Menu: public Container {
 		PROVIDES_TYPE_NAME(Menu)
 	public:
 		static const flag_t ONE_TIME_MENU=1<<24;
 
 		Menu(GUI_Manager & gui,flag_t flags=0);
 		virtual ~Menu();
-
-		// ---|> MouseButtonListener
-		virtual bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
-
-		// ---|> Container
 
 		// ---|> Component
 		virtual void doLayout() override;
@@ -45,8 +40,10 @@ class Menu: public Container, public MouseButtonListener {
 		virtual void doDisplay(const Geometry::Rect & region) override;
 
 		bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
+		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
 
 		GUI_Manager::KeyListenerHandle keyListenerHandle;
+		GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
 		std::unique_ptr<GUI_Manager::FrameListenerHandle> optionalFrameListener;
 
 	public:

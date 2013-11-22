@@ -24,7 +24,7 @@ class Button;
  **     Window ---|> Container ---|> Component
  **                   0..1 ------------> *
  **/
-class Window : public Container, public MouseButtonListener {
+class Window : public Container {
 		PROVIDES_TYPE_NAME(Window)
 	public:
 		static const Util::StringIdentifier ACTION_onWindowClosed;
@@ -61,9 +61,6 @@ class Window : public Container, public MouseButtonListener {
 		//! (internal) Called when the closing animation has finished.
 		void _onClosed();
 
-
-		// ---|> MouseButtonListener
-		virtual bool onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) override;
 		// ---|> Container
 		virtual void addContent(const Ref & child) override 						{	clientAreaPanel->addContent(child);	}
 		virtual void removeContent(const Ref & child) override 					{	clientAreaPanel->removeContent(child);	}
@@ -89,6 +86,7 @@ class Window : public Container, public MouseButtonListener {
 		virtual void doDisplay(const Geometry::Rect & region) override;
 
 		bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
+		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
 
 		Util::WeakPointer<Container> clientAreaPanel;
 		Util::WeakPointer<Container> titlePanel;
@@ -105,6 +103,7 @@ class Window : public Container, public MouseButtonListener {
 		std::unique_ptr<MouseMotionListener> autoMinimizer;
 
 		GUI_Manager::KeyListenerHandle keyListenerHandle;
+		GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
 };
 }
 #endif // GUI_WINDOW_H

@@ -33,7 +33,6 @@ namespace GUI {
 class Container;
 class GUI_Manager;
 struct MouseMotionListener;
-struct MouseButtonListener;
 
 /***
  **  Component
@@ -295,9 +294,6 @@ class Component: public Util::AttributeProvider, public Util::ReferenceCounter<C
 	public:
 		void addMouseMotionListener(MouseMotionListener * a);
 		void removeMouseMotionListener(MouseMotionListener * a);
-
-		void addMouseButtonListener(MouseButtonListener * a);
-		void removeMouseButtonListener(MouseButtonListener * a);
 	 // @}
 
 	// -----------------------------------
