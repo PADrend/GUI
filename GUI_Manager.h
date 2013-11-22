@@ -200,13 +200,29 @@ class GUI_Manager {
 
 		//----
 
-		typedef std::list<DataChangeListener *> dataChangeListenerList;
-		dataChangeListenerList dataChangeListener;
-		void registerDataChangeListener(DataChangeListener * a) {
-			if (a)
-				dataChangeListener.push_back(a);
+	private:
+		typedef Util::Registry<std::list<HandleDataChangeFun>> DataChangeListenerRegistry;
+		typedef std::unordered_map<Component *, DataChangeListenerRegistry> DataChangeListenerMap;
+		DataChangeListenerMap dataChangeListener;
+	public:
+		typedef DataChangeListenerRegistry::handle_t DataChangeListenerHandle;
+		DataChangeListenerHandle addDataChangeListener(Component * component, HandleDataChangeFun fun) {
+			return std::move(dataChangeListener[component].registerElement(std::move(fun)));
 		}
-		void removeDataChangeListener(DataChangeListener * a)		{	dataChangeListener.remove(a);	}
+		void removeDataChangeListener(Component * component, DataChangeListenerHandle handle) {
+			const auto it = dataChangeListener.find(component);
+			if(it != dataChangeListener.cend()) {
+				it->second.unregisterElement(std::move(handle));
+			}
+		}
+		DataChangeListenerHandle addGlobalDataChangeListener(HandleDataChangeFun fun) {
+			// Use nullptr as component to access global registry.
+			return std::move(addDataChangeListener(nullptr, std::move(fun)));
+		}
+		void removeGlobalDataChangeListener(DataChangeListenerHandle handle) {
+			// Use nullptr as component to access global registry.
+			removeDataChangeListener(nullptr, std::move(handle));
+		}
 
 		//----
 

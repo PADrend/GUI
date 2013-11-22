@@ -108,6 +108,13 @@ enum listenerResult_t : uint32_t {
  */
 typedef std::function<bool (Component *, const Util::StringIdentifier &)> HandleActionFun;
 
+
+/**
+ * Type of functions reacting on a change of a component's data. The function
+ * receives the component for which the data has changed as parameter.
+ */
+typedef std::function<void (Component *)> HandleDataChangeFun;
+
 struct DataChangeListener {
 	static RegisteredListenerRegistry<DataChangeListener> & getListenerRegistry();
 	virtual void handleDataChange(Component *,const Util::StringIdentifier & actionName)=0;

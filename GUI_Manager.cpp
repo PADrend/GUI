@@ -636,7 +636,7 @@ void GUI_Manager::componentActionPerformed(Component * c, const Util::StringIden
 
 void GUI_Manager::componentDataChanged(Component *c,const Util::StringIdentifier & actionName){
 	// inform component's dataChange-Listener
-	dataChangeListenerList * l=DataChangeListener::getListenerRegistry().getListeners(c);//c->getDataChangeListener();
+	auto l=DataChangeListener::getListenerRegistry().getListeners(c);//c->getDataChangeListener();
 	if(l!=nullptr){
 		for(const auto & changeListener : *l) {
 			if(changeListener) {
@@ -644,10 +644,12 @@ void GUI_Manager::componentDataChanged(Component *c,const Util::StringIdentifier
 			}
 		}
 	}
-	// inform global dataChange-Listener
-	for(const auto & changeListener : dataChangeListener) {
-		if(changeListener) {
-			changeListener->handleDataChange(c, actionName);
+	// Inform global data change listeners
+	// Use nullptr as component to access global registry.
+	const auto globalIt = dataChangeListener.find(nullptr);
+	if(globalIt != dataChangeListener.cend()) {
+		for(const auto & changeListener : globalIt->second.getElements()) {
+			changeListener(c);
 		}
 	}
 }
