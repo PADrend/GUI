@@ -246,6 +246,24 @@ class GUI_Manager {
 		//----
 
 	private:
+		typedef Util::Registry<std::list<HandleMouseClickFun>> MouseClickListenerRegistry;
+		typedef std::unordered_map<Component *, MouseClickListenerRegistry> MouseClickListenerMap;
+		MouseClickListenerMap mouseClickListener;
+	public:
+		typedef MouseClickListenerRegistry::handle_t MouseClickListenerHandle;
+		MouseClickListenerHandle addMouseClickListener(Component * component, HandleMouseClickFun fun) {
+			return std::move(mouseClickListener[component].registerElement(std::move(fun)));
+		}
+		void removeMouseClickListener(Component * component, MouseClickListenerHandle handle) {
+			const auto it = mouseClickListener.find(component);
+			if(it != mouseClickListener.cend()) {
+				it->second.unregisterElement(std::move(handle));
+			}
+		}
+
+		//----
+
+	private:
 		typedef std::function<bool (const Util::UI::KeyboardEvent &)> KeyListenerFun;
 		typedef Util::Registry<std::list<KeyListenerFun>> KeyListenerRegistry;
 		typedef std::unordered_map<Component *, KeyListenerRegistry> KeyListenerMap;

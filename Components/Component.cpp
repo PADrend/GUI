@@ -42,7 +42,6 @@ Component::~Component() {
 //    setShape(nullptr);
 	MouseMotionListener::getListenerRegistry().removeListeners(this);
 	MouseButtonListener::getListenerRegistry().removeListeners(this);
-	MouseClickListener::getListenerRegistry().removeListeners(this);
 //	setParent(nullptr,0);
 	//dtor
 }
@@ -515,13 +514,6 @@ void Component::addMouseButtonListener(MouseButtonListener * l){
 }
 void Component::removeMouseButtonListener(MouseButtonListener * l){
 	MouseButtonListener::getListenerRegistry().remove( this,l );
-}
-
-void Component::addMouseClickListener(MouseClickListener * l){
-	MouseClickListener::getListenerRegistry().add( this,l );
-}
-void Component::removeMouseClickListener(MouseClickListener * l){
-	MouseClickListener::getListenerRegistry().remove( this,l );
 }
 
 } // namespace GUI

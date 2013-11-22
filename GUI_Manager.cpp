@@ -374,11 +374,11 @@ bool GUI_Manager::handleMouseButton(const Util::UI::ButtonEvent & buttonEvent) {
 			if (buttonEvent.pressed || c!=lastActive)
 				return true;
 
-			std::list<MouseClickListener*> * click=MouseClickListener::getListenerRegistry().getListeners(c.get());//->getMouseClickListener();
-			if(click!=nullptr){
+			const auto clickIt = mouseClickListener.find(c.get());
+			if(clickIt != mouseClickListener.cend()) {
 				const Geometry::Vec2 localPos = absPos - c->getAbsPosition();
-				for(const auto & clickListener : *click) {
-					if(clickListener->onMouseClick(c.get(), buttonEvent.button, localPos)) {
+				for(const auto & clickListener : clickIt->second.getElements()) {
+					if(clickListener(c.get(), buttonEvent.button, localPos)) {
 						break;
 					}
 				}
@@ -386,7 +386,7 @@ bool GUI_Manager::handleMouseButton(const Util::UI::ButtonEvent & buttonEvent) {
 			return true;
 		}
 	}
-	if (buttonEvent.pressed){
+	if(buttonEvent.pressed) {
 		unselectAll();
 	}
 	return false;
@@ -625,14 +625,6 @@ void GUI_Manager::componentActionPerformed(Component * c, const Util::StringIden
 		}
 	}
 }
-
-///**
-// *
-// */
-//void GUI_Manager::componentMouseClicked(Component *c,unsigned int button,const Geometry::Vec2 &localPos,bool pressed){
-//	std::cout << "\nTODO!!!!!! "<< c<<":"<<button<<":"<<localPos.toString()<<"\n";
-//
-//}
 
 void GUI_Manager::componentDataChanged(Component * component, const Util::StringIdentifier & actionName) {
 	// Inform component's data change listener

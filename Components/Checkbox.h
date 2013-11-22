@@ -21,7 +21,7 @@ namespace GUI {
  **     Checkbox ---|> Component
  **
  **/
-class Checkbox : public Container, public MouseButtonListener, public MouseClickListener {
+class Checkbox : public Container, public MouseButtonListener {
 		PROVIDES_TYPE_NAME(Checkbox)
 	public:
 		Checkbox(GUI_Manager & gui,bool checked=false,const std::string & text="",flag_t flags=0);
@@ -47,8 +47,6 @@ class Checkbox : public Container, public MouseButtonListener, public MouseClick
 
 		// ---|> MouseButtonListener
 		virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
-		// ---|> MouseClickListener
-		virtual bool onMouseClick(Component * component,unsigned int button,const Geometry::Vec2 &pos) override;
 
 		// ---|> Component
 		virtual void doLayout() override;
@@ -59,6 +57,9 @@ class Checkbox : public Container, public MouseButtonListener, public MouseClick
 
 		bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
 
+		GUI_Manager::KeyListenerHandle keyListenerHandle;
+		GUI_Manager::MouseClickListenerHandle mouseClickListenerHandle;
+
 	protected:
 		Util::WeakPointer<Label> textLabel;
 		bool * boolValueRef;
@@ -66,7 +67,6 @@ class Checkbox : public Container, public MouseButtonListener, public MouseClick
 		unsigned int intBitMask;
 		bool value;
 		Util::StringIdentifier dataName;
-		GUI_Manager::KeyListenerHandle keyListenerHandle;
 };
 }
 #endif // GUI_Checkbox_H

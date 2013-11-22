@@ -125,14 +125,21 @@ struct MouseButtonListener {
 	virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) = 0;
 	virtual ~MouseButtonListener() {}
 };
+
 /**
- * \note In order to receive mouse clicks on a component, it has to get activated via MouseButtonListener first.
+ * Type of functions reacting on a mouse click (mouse button down and mouse 
+ * button up) onto a component. The function receives the component onto which
+ * the mouse click was detected, the mouse button, and the local position of
+ * the click inside the component.
+ * If it returns @c true, the callee signalizes that is processed the click and
+ * no other click handlers will be called. If it returns @c false, the callee
+ * signalizes that it did not process the click and the next click handler
+ * will be called.
+ * 
+ * @note In order to receive mouse clicks on a component, the component has to
+ * get activated via MouseButtonListener first.
  */
-struct MouseClickListener {
-	static RegisteredListenerRegistry<MouseClickListener> & getListenerRegistry();
-	virtual bool onMouseClick(Component * component, unsigned int button,const Geometry::Vec2 &pos)=0;
-	virtual ~MouseClickListener() {}
-};
+typedef std::function<bool (Component *, unsigned int, const Geometry::Vec2 &)> HandleMouseClickFun;
 
 }
 #endif // GUI_LISTENER_H

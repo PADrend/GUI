@@ -34,11 +34,18 @@ static ExtLayouter * getDefaultLabelLayouter(){
 
 //! (ctor)
 Button::Button(GUI_Manager & _gui,flag_t _flags/*=0*/)
-		:Container(_gui,_flags),MouseMotionListener(),MouseButtonListener(),MouseClickListener(),
+		:Container(_gui,_flags),MouseMotionListener(),MouseButtonListener(),
 		actionName(ACTION_Button_click),switchedOn(false),hover(false),actionListener(),
 		keyListenerHandle(_gui.addKeyListener(this, std::bind(&Button::onKeyEvent, 
 															  this, 
-															  std::placeholders::_1))) {
+															  std::placeholders::_1))),
+		mouseClickListenerHandle(_gui.addMouseClickListener(	this,
+																[this](Component *, unsigned int, const Geometry::Vec2 &) {
+																	if(!isLocked()) {
+																		action();
+																	}
+																	return true;
+																})) {
 	setFlag(SELECTABLE,true);
 
 	// create Label
@@ -48,12 +55,12 @@ Button::Button(GUI_Manager & _gui,flag_t _flags/*=0*/)
 	addContent(textLabel.get());
 	addMouseMotionListener(this);
 	addMouseButtonListener(this);
-	addMouseClickListener(this);
 }
 
 //! (dtor)
 Button::~Button(){
 	getGUI().removeMouseMotionListener(this);
+	getGUI().removeMouseClickListener(this, std::move(mouseClickListenerHandle));
 	getGUI().removeKeyListener(this, std::move(keyListenerHandle));
 }
 
@@ -116,12 +123,6 @@ listenerResult_t Button::onMouseButton(Component * /*component*/, const Util::UI
 		}
 	}
 	return LISTENER_EVENT_CONSUMED;
-}
-
-//! ---|> MouseClickListener
-bool Button::onMouseClick(Component * /*component*/,unsigned int /*button*/,const Geometry::Vec2 & /*pos*/){
-	if(!isLocked())action();
-	return true;
 }
 
 bool Button::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {

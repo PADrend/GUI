@@ -22,7 +22,14 @@ Checkbox::Checkbox(GUI_Manager & _gui,bool _checked,const std::string & _text,fl
 		:Container(_gui,Geometry::Rect(0,0,16,16),_flags),boolValueRef(nullptr),intValueRef(nullptr),intBitMask(0),value(_checked),dataName(""),
 		keyListenerHandle(_gui.addKeyListener(this, std::bind(&Checkbox::onKeyEvent, 
 															  this, 
-															  std::placeholders::_1))) {
+															  std::placeholders::_1))),
+		mouseClickListenerHandle(_gui.addMouseClickListener(	this,
+																[this](Component *, unsigned int, const Geometry::Vec2 &) {
+																	if(!isLocked()) {
+																		action();
+																	}
+																	return true;
+																})) {
 	setFlag(SELECTABLE,true);
 
 	// create Label
@@ -31,7 +38,6 @@ Checkbox::Checkbox(GUI_Manager & _gui,bool _checked,const std::string & _text,fl
 	addContent(textLabel.get());
 
 	addMouseButtonListener(this);
-	addMouseClickListener(this);
 	if(!_text.empty()){
 		setText(_text);
 
@@ -44,6 +50,7 @@ Checkbox::Checkbox(GUI_Manager & _gui,bool _checked,const std::string & _text,fl
 
 //! (dtor)
 Checkbox::~Checkbox() {
+	getGUI().removeMouseClickListener(this, std::move(mouseClickListenerHandle));
 	getGUI().removeKeyListener(this, std::move(keyListenerHandle));
 }
 
@@ -95,13 +102,6 @@ listenerResult_t Checkbox::onMouseButton(Component * /*component*/, const Util::
 	}
 	return LISTENER_EVENT_CONSUMED;
 
-}
-
-//! ---|> MouseClickListener
-bool Checkbox::onMouseClick(Component * /*component*/,unsigned int /*button*/,const Geometry::Vec2 &/*pos*/){
-	if(!isLocked())
-		action();
-	return true;
 }
 
 bool Checkbox::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {

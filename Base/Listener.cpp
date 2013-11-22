@@ -24,10 +24,4 @@ RegisteredListenerRegistry<MouseButtonListener> & MouseButtonListener::getListen
 	return l;
 }
 
-/*! (static, singleton) */
-RegisteredListenerRegistry<MouseClickListener> & MouseClickListener::getListenerRegistry(){
-	static RegisteredListenerRegistry<MouseClickListener> l;
-	return l;
-}
-
 }
