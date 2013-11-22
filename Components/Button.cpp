@@ -57,7 +57,7 @@ Button::Button(GUI_Manager & _gui,flag_t _flags/*=0*/)
 	textLabel->addLayouter(getDefaultLabelLayouter());
 	textLabel->setTextStyle(Draw::TEXT_ALIGN_CENTER|Draw::TEXT_ALIGN_MIDDLE);
 	addContent(textLabel.get());
-	addMouseMotionListener(this);
+	getGUI().addMouseMotionListener(this);
 }
 
 //! (dtor)
@@ -169,7 +169,7 @@ void Button::action(){
 //! ---|> MouseMotionListener
 listenerResult_t Button::onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent){
 	const Geometry::Vec2 absPos(motionEvent.x, motionEvent.y);
-	if(component==this && !hover && getAbsRect().contains(absPos) && !isLocked()){
+	if(!isLocked() && !hover && coversAbsPosition(absPos)) {
 		hover=true;
 		invalidateRegion();
 		getGUI().addMouseMotionListener(this);
@@ -181,7 +181,7 @@ listenerResult_t Button::onMouseMove(Component * component, const Util::UI::Moti
 
 		// markForRepaint()
 		return LISTENER_EVENT_CONSUMED;
-	}else if(component==nullptr && hover && (!coversAbsPosition(absPos))){
+	} else if(!isLocked() && hover && !coversAbsPosition(absPos)) {
 		hover=false;
 		invalidateRegion();
 		// markForRepaint()

@@ -32,7 +32,6 @@ namespace GUI {
 
 class Container;
 class GUI_Manager;
-struct MouseMotionListener;
 
 /***
  **  Component
@@ -285,15 +284,6 @@ class Component: public Util::AttributeProvider, public Util::ReferenceCounter<C
 		// ---o
 		virtual bool onSelect();
 		virtual bool onUnselect();
-	 // @}
-
-	// -----------------------------------
-
-	/*!	@name Listener	*/
-	// @{
-	public:
-		void addMouseMotionListener(MouseMotionListener * a);
-		void removeMouseMotionListener(MouseMotionListener * a);
 	 // @}
 
 	// -----------------------------------

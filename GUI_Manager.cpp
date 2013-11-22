@@ -311,23 +311,6 @@ bool GUI_Manager::handleMouseMovement(const Util::UI::MotionEvent & motionEvent)
 		if(result & LISTENER_EVENT_CONSUMED)
 			return true;
 	}
-	// Local Listener
-	const Geometry::Vec2 absPos(motionEvent.x, motionEvent.y);
-	for(Component * c=getComponentAtPos(absPos);c!=nullptr;c=c->getParent()){
-		mouseListenerList * l=MouseMotionListener::getListenerRegistry().getListeners(c);// c->getMouseMotionListener();
-		if(l==nullptr)
-			continue;
-		for(auto it=l->begin();it!=l->end();){
-			listenerResult_t result = (*it)->onMouseMove(c, motionEvent);
-			if(result & LISTENER_REMOVE_LISTENER){
-				it = l->erase(it);
-			}else{
-				++it;
-			}
-			if(result & LISTENER_EVENT_CONSUMED)
-				return true;
-		}
-	}
 	return false;
 }
 

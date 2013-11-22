@@ -40,7 +40,6 @@ Component::~Component() {
 	removeExternalLayout();
 	removeAttributes();
 //    setShape(nullptr);
-	MouseMotionListener::getListenerRegistry().removeListeners(this);
 //	setParent(nullptr,0);
 	//dtor
 }
@@ -498,14 +497,6 @@ void Component::setExtLayout(uint32_t _flags,const Geometry::Vec2 & extPos, cons
 
 void Component::removeExternalLayout(){
 	removeLayouter<ExtLayouter>();
-}
-
-// ---------------------------------------
-void Component::addMouseMotionListener(MouseMotionListener * l){
-	MouseMotionListener::getListenerRegistry().add( this,l );
-}
-void Component::removeMouseMotionListener(MouseMotionListener * l){
-	MouseMotionListener::getListenerRegistry().remove( this,l );
 }
 
 } // namespace GUI

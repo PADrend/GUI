@@ -11,11 +11,4 @@
 #include "Listener.h"
 
 namespace GUI {
-
-/*! (static, singleton) */
-RegisteredListenerRegistry<MouseMotionListener> & MouseMotionListener::getListenerRegistry(){
-	static RegisteredListenerRegistry<MouseMotionListener> l;
-	return l;
-}
-
 }
