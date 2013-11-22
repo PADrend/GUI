@@ -257,6 +257,7 @@ class TooltipHandler:public Component, public MouseMotionListener {
 GUI_Manager::GUI_Manager(Util::UI::EventContext & context) : 
 	eventContext(context), window(nullptr), debugMode(0),
 	lazyRendering(false), style(new StyleManager),
+	mouseCursorButtonListener(addGlobalMouseButtonListener(std::bind(&MouseCursorHandler::onMouseButton, mouseCursorHandler.get(), std::placeholders::_1, std::placeholders::_2))),
 	tooltipHandler(new TooltipHandler(*this)),
 	tooltipFrameListener(addFrameListener(std::bind(&TooltipHandler::onFrame, tooltipHandler.get(), std::placeholders::_1))) {
 	globalContainer=new GlobalContainer(*this,Rect(0,0,1280,1024));
@@ -268,7 +269,6 @@ GUI_Manager::GUI_Manager(Util::UI::EventContext & context) :
     
     auto mh = new MouseCursorHandler(*this);
     addMouseMotionListener(mh);
-    addMouseButtonListener(mh);
 }
 
 //! (dtor)
@@ -276,6 +276,7 @@ GUI_Manager::~GUI_Manager() {
 	cleanup();
 	setActiveComponent(nullptr);
 	globalContainer=nullptr;
+	removeGlobalMouseButtonListener(std::move(mouseCursorButtonListener));
 	removeFrameListener(std::move(tooltipFrameListener));
 }
 
@@ -329,15 +330,17 @@ bool GUI_Manager::handleMouseMovement(const Util::UI::MotionEvent & motionEvent)
 
 //! (internal)
 bool GUI_Manager::handleMouseButton(const Util::UI::ButtonEvent & buttonEvent) {
-	
-	// handle global listeners
-	for(const auto & it : mouseButtonListeners) {
-		if(it->onMouseButton(nullptr, buttonEvent)) {
-			return true;
+	// Handle global listeners
+	// Use nullptr as component to access global registry.
+	const auto globalIt = mouseButtonListener.find(nullptr);
+	if(globalIt != mouseButtonListener.cend()) {
+		for(const auto & handleMouseButtonFun : globalIt->second.getElements()) {
+			if(handleMouseButtonFun(nullptr, buttonEvent)) {
+				return true;
+			}
 		}
 	}
-	
-	
+
 	Component * lastActive=getActiveComponent();
 	setActiveComponent(nullptr);
 

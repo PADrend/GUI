@@ -225,13 +225,29 @@ class GUI_Manager {
 
 		//----
 
-		typedef std::list<MouseButtonListener *> mouseButtonListenerList;
-		mouseButtonListenerList mouseButtonListeners;
-		void addMouseButtonListener(MouseButtonListener * a) {
-			if (a)
-				mouseButtonListeners.push_front(a);
+	private:
+		typedef Util::Registry<std::list<HandleMouseButtonFun>> MouseButtonListenerRegistry;
+		typedef std::unordered_map<Component *, MouseButtonListenerRegistry> MouseButtonListenerMap;
+		MouseButtonListenerMap mouseButtonListener;
+	public:
+		typedef MouseButtonListenerRegistry::handle_t MouseButtonListenerHandle;
+		MouseButtonListenerHandle addMouseButtonListener(Component * component, HandleMouseButtonFun fun) {
+			return std::move(mouseButtonListener[component].registerElement(std::move(fun)));
 		}
-		void removeMouseButtonListener(MouseButtonListener * a)		{	mouseButtonListeners.remove(a);	}
+		void removeMouseButtonListener(Component * component, MouseButtonListenerHandle handle) {
+			const auto it = mouseButtonListener.find(component);
+			if(it != mouseButtonListener.cend()) {
+				it->second.unregisterElement(std::move(handle));
+			}
+		}
+		MouseButtonListenerHandle addGlobalMouseButtonListener(HandleMouseButtonFun fun) {
+			// Use nullptr as component to access global registry.
+			return std::move(addMouseButtonListener(nullptr, std::move(fun)));
+		}
+		void removeGlobalMouseButtonListener(MouseButtonListenerHandle handle) {
+			// Use nullptr as component to access global registry.
+			removeMouseButtonListener(nullptr, std::move(handle));
+		}
 
 		//----
 
@@ -402,6 +418,7 @@ class GUI_Manager {
 	//!	@name Internal state
 	//	@{
 	private:
+		MouseButtonListenerHandle mouseCursorButtonListener;
 		std::unique_ptr<TooltipHandler> tooltipHandler;
 		FrameListenerHandle tooltipFrameListener;
 	//	@}

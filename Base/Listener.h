@@ -120,6 +120,18 @@ struct MouseMotionListener {
 	virtual listenerResult_t onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent) = 0;
 	virtual ~MouseMotionListener() {}
 };
+
+/**
+ * Type of functions reacting on a mouse button event onto a component. The
+ * function receives the component onto which the mouse button event was
+ * detected, and the mouse button event.
+ * If it returns @c true, the callee signalizes that is processed the event and
+ * no other event handlers will be called. If it returns @c false, the callee
+ * signalizes that it did not process the event and the next event handler
+ * will be called.
+ */
+typedef std::function<bool (Component *, const Util::UI::ButtonEvent &)> HandleMouseButtonFun;
+
 struct MouseButtonListener {
 	static RegisteredListenerRegistry<MouseButtonListener> & getListenerRegistry();
 	virtual bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) = 0;
