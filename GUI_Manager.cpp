@@ -618,19 +618,14 @@ bool GUI_Manager::selectLast(Component * c){
 	return false;
 }
 
-void GUI_Manager::componentActionPerformed(Component *c,const Util::StringIdentifier & actionName){
-	for(auto it=actionListener.begin();it!=actionListener.end();){
-		listenerResult_t result=(*it)->handleAction(c,actionName);
-		if(result & LISTENER_REMOVE_LISTENER){
-			it=actionListener.erase(it);
-		}else{
-			++it;
-		}
-		if(result&LISTENER_EVENT_CONSUMED)
+void GUI_Manager::componentActionPerformed(Component * c, const Util::StringIdentifier & actionName) {
+	for(const auto & handleAction : actionListener.getElements()) {
+		if(handleAction(c, actionName)) {
 			return;
+		}
 	}
-//    std::cout << "Info: Unhandled Action:"<<actionName<<" \n";
 }
+
 ///**
 // *
 // */

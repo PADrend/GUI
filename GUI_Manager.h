@@ -185,15 +185,18 @@ class GUI_Manager {
 
 	//! @name Event handling & Listener
 	//	@{
+	private:
+		typedef Util::Registry<std::list<HandleActionFun>> ActionListenerRegistry;
+		ActionListenerRegistry actionListener;
 	public:
-		typedef std::list<ActionListener *> actionListenerList;
-		actionListenerList actionListener;
-		
-		void registerActionListener(ActionListener * a) {
-			if (a)
-				actionListener.push_back(a);
+		typedef ActionListenerRegistry::handle_t ActionListenerHandle;
+		ActionListenerHandle addActionListener(HandleActionFun fun) {
+			return std::move(actionListener.registerElement(std::move(fun)));
 		}
-		void removeActionListener(ActionListener * a) 				{	actionListener.remove(a);	}
+		void removeActionListener(ActionListenerHandle handle) {
+			actionListener.unregisterElement(std::move(handle));
+		}
+
 
 		//----
 

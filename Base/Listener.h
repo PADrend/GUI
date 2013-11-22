@@ -107,10 +107,7 @@ enum listenerResult_t : uint32_t {
  * will be called.
  */
 typedef std::function<bool (Component *, const Util::StringIdentifier &)> HandleActionFun;
-struct ActionListener {
-	virtual listenerResult_t handleAction(Component *,const Util::StringIdentifier & actionName)=0;
-	virtual ~ActionListener() {}
-};
+
 struct DataChangeListener {
 	static RegisteredListenerRegistry<DataChangeListener> & getListenerRegistry();
 	virtual void handleDataChange(Component *,const Util::StringIdentifier & actionName)=0;
