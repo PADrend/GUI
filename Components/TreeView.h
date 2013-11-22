@@ -23,7 +23,7 @@ class Scrollbar;
  **     TreeView ---|> Container ---|> Component
  **                   0..1 ------------> *
  **/
-class TreeView: public Container,public DataChangeListener,public MouseButtonListener,public MouseMotionListener {
+class TreeView: public Container,public MouseButtonListener,public MouseMotionListener {
 		PROVIDES_TYPE_NAME(TreeView)
 	public:
 		/***
@@ -99,9 +99,6 @@ class TreeView: public Container,public DataChangeListener,public MouseButtonLis
 		std::vector<Component*> getMarkedComponents();
 		void markingChanged();
 
-
-		// ---|> DataChangeListener
-		virtual void handleDataChange(Component *,const Util::StringIdentifier & actionName) override;
 		// ---|> MouseButtonListener
 		virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
 		// ---|> MouseMotionListener

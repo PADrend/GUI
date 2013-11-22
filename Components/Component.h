@@ -35,7 +35,6 @@ class GUI_Manager;
 struct MouseMotionListener;
 struct MouseButtonListener;
 struct MouseClickListener;
-struct DataChangeListener;
 
 /***
  **  Component
@@ -300,9 +299,6 @@ class Component: public Util::AttributeProvider, public Util::ReferenceCounter<C
 
 		void addMouseButtonListener(MouseButtonListener * a);
 		void removeMouseButtonListener(MouseButtonListener * a);
-
-		void addDataChangeListener(DataChangeListener * a);
-		void removeDataChangeListener(DataChangeListener * a);
 
 		void addMouseClickListener(MouseClickListener * a);
 		void removeMouseClickListener(MouseClickListener * a);

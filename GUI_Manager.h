@@ -61,7 +61,6 @@ class Window;
 class TreeView;
 class Entry;
 struct ActionListener;
-struct DataChangeListener;
 struct MouseMotionListener;
 struct FrameListener;
 class AnimationHandler;

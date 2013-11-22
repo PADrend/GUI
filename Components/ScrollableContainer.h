@@ -22,7 +22,7 @@ class Scrollbar;
 /***
  **     ScrollableContainer ---|> Container ---|> Component
  **/
-class ScrollableContainer: public Container,public DataChangeListener,public MouseButtonListener,public MouseMotionListener {
+class ScrollableContainer: public Container,public MouseButtonListener,public MouseMotionListener {
 		PROVIDES_TYPE_NAME(ScrollableContainer)
 	public:
 
@@ -39,8 +39,6 @@ class ScrollableContainer: public Container,public DataChangeListener,public Mou
 		virtual listenerResult_t onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent) override;
 		// ---|> MouseButtonListener
 		virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
-		// ---|> DataChangeListener
-		virtual void handleDataChange(Component *,const Util::StringIdentifier & actionName) override;
 
 		// ---|> Container
 		virtual void addContent(const Ref & child) override						{	contentContainer->addContent(child);	}

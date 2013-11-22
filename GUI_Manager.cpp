@@ -634,14 +634,12 @@ void GUI_Manager::componentActionPerformed(Component * c, const Util::StringIden
 //
 //}
 
-void GUI_Manager::componentDataChanged(Component *c,const Util::StringIdentifier & actionName){
-	// inform component's dataChange-Listener
-	auto l=DataChangeListener::getListenerRegistry().getListeners(c);//c->getDataChangeListener();
-	if(l!=nullptr){
-		for(const auto & changeListener : *l) {
-			if(changeListener) {
-				changeListener->handleDataChange(c, actionName);
-			}
+void GUI_Manager::componentDataChanged(Component * component, const Util::StringIdentifier & actionName) {
+	// Inform component's data change listener
+	const auto componentIt = dataChangeListener.find(component);
+	if(componentIt != dataChangeListener.cend()) {
+		for(const auto & changeListener : componentIt->second.getElements()) {
+			changeListener(component);
 		}
 	}
 	// Inform global data change listeners
@@ -649,7 +647,7 @@ void GUI_Manager::componentDataChanged(Component *c,const Util::StringIdentifier
 	const auto globalIt = dataChangeListener.find(nullptr);
 	if(globalIt != dataChangeListener.cend()) {
 		for(const auto & changeListener : globalIt->second.getElements()) {
-			changeListener(c);
+			changeListener(component);
 		}
 	}
 }

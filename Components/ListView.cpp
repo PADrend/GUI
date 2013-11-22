@@ -68,7 +68,7 @@ void ListView::ListViewClientArea::doDisplay(const Geometry::Rect & region) {
 
 //! (ctor)
 ListView::ListView(GUI_Manager & _gui, flag_t _flags/*=0*/) :
-	Container(_gui, _flags), DataChangeListener(), MouseButtonListener(), MouseMotionListener(),
+	Container(_gui, _flags), MouseButtonListener(), MouseMotionListener(),
 	entryHeight(getGUI().getGlobalValue(PROPERTY_LISTVIEW_DEFAULT_ENTRY_HEIGHT)),
 	clientArea(new ListViewClientArea(_gui, *this)), cursor(0),
 	keyListenerHandle(_gui.addKeyListener(this, std::bind(&ListView::onKeyEvent, 
@@ -121,7 +121,12 @@ void ListView::doLayout() {
 	} else {
 		if(scrollBar.isNull()){
 			scrollBar = new Scrollbar(getGUI(), dataId_scrollPos, Scrollbar::VERTICAL);
-			scrollBar->addDataChangeListener(this);
+			getGUI().addDataChangeListener(	scrollBar.get(),
+											[this](Component *) {
+												if(scrollBar.isNotNull()) {
+													setScrollingPosition( Geometry::Vec2(0.0f,scrollBar->getScrollPos() ));
+												}
+											});
 			scrollBar->setExtLayout( 	ExtLayouter::POS_X_ABS|ExtLayouter::REFERENCE_X_RIGHT|ExtLayouter::ALIGN_X_RIGHT|
 						ExtLayouter::POS_Y_ABS|ExtLayouter::REFERENCE_Y_TOP|ExtLayouter::ALIGN_Y_TOP |
 						ExtLayouter::WIDTH_ABS|ExtLayouter::HEIGHT_ABS,
@@ -239,14 +244,6 @@ void ListView::moveCursor(int delta) {
 
 // ------------------------------------------------------------------
 // Events
-
-
-//! ---|> DataChangeListener
-void ListView::handleDataChange(Component *, const Util::StringIdentifier & actionName) {
-	if(scrollBar.isNotNull() && actionName==dataId_scrollPos){
-		setScrollingPosition( Geometry::Vec2(0.0f,scrollBar->getScrollPos() ));
-	}
-}
 
 //! ---|> MouseButtonListener
 listenerResult_t ListView::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) {

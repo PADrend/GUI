@@ -40,7 +40,6 @@ Component::~Component() {
 	removeExternalLayout();
 	removeAttributes();
 //    setShape(nullptr);
-	DataChangeListener::getListenerRegistry().removeListeners(this);
 	MouseMotionListener::getListenerRegistry().removeListeners(this);
 	MouseButtonListener::getListenerRegistry().removeListeners(this);
 	MouseClickListener::getListenerRegistry().removeListeners(this);
@@ -523,13 +522,6 @@ void Component::addMouseClickListener(MouseClickListener * l){
 }
 void Component::removeMouseClickListener(MouseClickListener * l){
 	MouseClickListener::getListenerRegistry().remove( this,l );
-}
-
-void Component::addDataChangeListener(DataChangeListener * l){
-	DataChangeListener::getListenerRegistry().add( this,l );
-}
-void Component::removeDataChangeListener(DataChangeListener * l){
-	DataChangeListener::getListenerRegistry().remove( this,l );
 }
 
 } // namespace GUI

@@ -320,7 +320,7 @@ void TreeView::TreeViewEntry::unmarkSubtree(Component * subroot)const{
 
 //! (ctor)
 TreeView::TreeView(GUI_Manager & _gui,const Geometry::Rect & _r,const std::string & _actionName,flag_t _flags/*=0*/):
-		Container(_gui,_r,_flags),DataChangeListener(),MouseButtonListener(),MouseMotionListener(),
+		Container(_gui,_r,_flags),MouseButtonListener(),MouseMotionListener(),
 		actionName(_actionName),root(new TreeViewEntry(_gui,this)),scrollPos(0),multiSelect(true),scrollBar(nullptr),
 		keyListenerHandle(_gui.addKeyListener(this, std::bind(&TreeView::onKeyEvent, 
 															  this, 
@@ -351,7 +351,14 @@ void TreeView::doLayout() {
 											ExtLayouter::POS_Y_ABS|ExtLayouter::REFERENCE_Y_TOP|ExtLayouter::ALIGN_Y_TOP |
 											ExtLayouter::WIDTH_ABS|ExtLayouter::HEIGHT_ABS,
 											Geometry::Vec2(1,2),Geometry::Vec2(getGUI().getGlobalValue(PROPERTY_SCROLLBAR_WIDTH),-4));
-			scrollBar->addDataChangeListener(this);
+			getGUI().addDataChangeListener(	scrollBar.get(),
+											[this](Component *) {
+												if(scrollBar.isNotNull()) {
+													invalidateRegion();
+													invalidateLayout();
+													scrollTo(scrollBar->getScrollPos());
+												}
+											});
 			_addChild(scrollBar.get());
 		}
 		const int maxScrollPos = std::max(0,static_cast<int>(root->getHeight()-getHeight()));
@@ -594,15 +601,6 @@ std::vector<Component*> TreeView::getMarkedComponents(){
 
 void TreeView::markingChanged(){
 	getGUI().componentDataChanged(this,actionName);
-}
-
-//! ---|> DataChangeListener
-void TreeView::handleDataChange(Component *,const Util::StringIdentifier & _actionName){
-	if(_actionName==dataId_scrollPos && scrollBar.isNotNull()){
-		invalidateRegion();
-		invalidateLayout();
-		scrollTo(scrollBar->getScrollPos());
-	}
 }
 
 //! ---|> Container

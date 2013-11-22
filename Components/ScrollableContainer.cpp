@@ -27,7 +27,7 @@ static const Util::StringIdentifier dataId_verticallScrollPos("scroll");
 
 //! (ctor)
 ScrollableContainer::ScrollableContainer(GUI_Manager & _gui,flag_t _flags/*=0*/)
-		: Container(_gui,_flags),DataChangeListener(),MouseButtonListener(),MouseMotionListener(),contentContainer(new Container(_gui)){
+		: Container(_gui,_flags),MouseButtonListener(),MouseMotionListener(),contentContainer(new Container(_gui)){
 
 	_addChild(contentContainer.get());
 	contentContainer->setFlag(IS_CLIENT_AREA,true);
@@ -65,7 +65,16 @@ void ScrollableContainer::doLayout() {
 	}else{
 		if(vScrollBar.isNull()){
 			vScrollBar=new Scrollbar(getGUI(),dataId_verticallScrollPos,Scrollbar::VERTICAL);
-			vScrollBar->addDataChangeListener(this);
+			getGUI().addDataChangeListener(	vScrollBar.get(),
+											[this](Component *) {
+												if(vScrollBar.isNotNull()) {
+													if(scrollPos.y() != vScrollBar->getScrollPos()) {
+														invalidateRegion();
+														invalidateLayout();
+														scrollPos.y(vScrollBar->getScrollPos());
+													}
+												}
+											});
 			vScrollBar->setExtLayout( 	ExtLayouter::POS_X_ABS|ExtLayouter::REFERENCE_X_RIGHT|ExtLayouter::ALIGN_X_RIGHT|
 									ExtLayouter::POS_Y_ABS|ExtLayouter::REFERENCE_Y_TOP|ExtLayouter::ALIGN_Y_TOP |
 									ExtLayouter::WIDTH_ABS|ExtLayouter::HEIGHT_ABS,
@@ -89,19 +98,6 @@ void ScrollableContainer::doLayout() {
 
 	// set scrollPosition
 	contentContainer->setPosition(-scrollPos);
-}
-
-
-//! ---|> DataChangeListener
-void ScrollableContainer::handleDataChange(Component *,const Util::StringIdentifier & actionName){
-	if(vScrollBar.isNotNull() && actionName==dataId_verticallScrollPos){
-		if(scrollPos.y()!=vScrollBar->getScrollPos()){
-			invalidateRegion();
-			invalidateLayout();
-			scrollPos.y(vScrollBar->getScrollPos());
-		}
-	}
-	
 }
 
 //! ---|> MouseButtonListener

@@ -115,11 +115,6 @@ typedef std::function<bool (Component *, const Util::StringIdentifier &)> Handle
  */
 typedef std::function<void (Component *)> HandleDataChangeFun;
 
-struct DataChangeListener {
-	static RegisteredListenerRegistry<DataChangeListener> & getListenerRegistry();
-	virtual void handleDataChange(Component *,const Util::StringIdentifier & actionName)=0;
-	virtual ~DataChangeListener() {}
-};
 struct MouseMotionListener {
 	static RegisteredListenerRegistry<MouseMotionListener> & getListenerRegistry();
 	virtual listenerResult_t onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent) = 0;

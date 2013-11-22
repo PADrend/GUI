@@ -27,7 +27,7 @@ class TextareaTextProcessor;
  **  Textarea ---|> Container
  **/
 class Textarea: public Container,public MouseButtonListener,
-				public MouseMotionListener,public DataChangeListener {
+				public MouseMotionListener {
 		PROVIDES_TYPE_NAME(Textarea)
 	public:
 		Textarea(GUI_Manager & gui,flag_t flags);
@@ -99,9 +99,6 @@ class Textarea: public Container,public MouseButtonListener,
 		Geometry::Vec2 scrollPos;
 		
 	public:
-		// ---|> DataChangeListener
-		virtual void handleDataChange(Component *,const Util::StringIdentifier & actionName) override;
-
 		const Geometry::Vec2 & getScrollPos()const	{	return scrollPos;	}
 		void scrollTo(const Geometry::Vec2 &);
 	//	\}
