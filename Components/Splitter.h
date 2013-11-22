@@ -34,7 +34,7 @@ class Splitter: public Component,public MouseMotionListener,public MouseButtonLi
 		// ---|> MouseMotionListener
 		virtual listenerResult_t onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent) override;
 		// ---|> MouseButtonListener
-		virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
+		virtual bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
 //        // ---|> MouseClickListener
 //        virtual bool onMouseClick(Component * component, unsigned int button,const Geometry::Vec2 &pos);
 

@@ -119,8 +119,8 @@ void Menu::close(){
 
 
 //! ---|> MouseButtonListener
-listenerResult_t Menu::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & /*buttonEvent*/){
-	return LISTENER_EVENT_CONSUMED;
+bool Menu::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & /*buttonEvent*/){
+	return true;
 }
 
 bool Menu::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {

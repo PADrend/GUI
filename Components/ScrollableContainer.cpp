@@ -110,18 +110,18 @@ void ScrollableContainer::doLayout() {
 }
 
 //! ---|> MouseButtonListener
-listenerResult_t ScrollableContainer::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent){
+bool ScrollableContainer::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent){
 	if(buttonEvent.button == Util::UI::MOUSE_BUTTON_MIDDLE) {
 		if(maxScrollPos.x()<=0 && maxScrollPos.y()<=0)
-			return LISTENER_EVENT_NOT_CONSUMED;
+			return false;
 		else if(buttonEvent.pressed){
 			getGUI().addMouseMotionListener(this);
 		} else {// !pressed
 			getGUI().removeMouseMotionListener(this);
 		}
-		return LISTENER_EVENT_CONSUMED;
+		return true;
 	}
-	return LISTENER_EVENT_NOT_CONSUMED;
+	return true;
 
 }
 

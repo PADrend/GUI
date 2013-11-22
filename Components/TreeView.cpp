@@ -108,11 +108,11 @@ void TreeView::TreeViewEntry::doDisplay(const Geometry::Rect & region) {
 }
 
 //! ---|> MouseButtonListener
-listenerResult_t TreeView::TreeViewEntry::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent){
+bool TreeView::TreeViewEntry::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent){
 	if(myTreeView==nullptr)
-		return LISTENER_EVENT_NOT_CONSUMED;
+		return false;
 	if(!buttonEvent.pressed)
-		return LISTENER_EVENT_NOT_CONSUMED;
+		return false;
 	if(buttonEvent.button == Util::UI::MOUSE_BUTTON_LEFT) {
 		const Geometry::Vec2 localPos = Geometry::Vec2(buttonEvent.x, buttonEvent.y) - getAbsPosition();
 		if(localPos.getX()<10&&localPos.getY()<20&& getContentsCount()>1) {
@@ -134,13 +134,13 @@ listenerResult_t TreeView::TreeViewEntry::onMouseButton(Component * /*component*
 			}
 			myTreeView->markingChanged();
 		}
-		return LISTENER_EVENT_CONSUMED;
+		return true;
 	} else if(buttonEvent.button == Util::UI::MOUSE_BUTTON_RIGHT) {
 		myTreeView->unmarkAll();
 		myTreeView->markingChanged();
-		return LISTENER_EVENT_CONSUMED;
+		return true;
 	}
-	return LISTENER_EVENT_NOT_CONSUMED;
+	return false;
 }
 
 const Util::StringIdentifier TreeView::TreeViewEntry::ACTION_TreeViewEntry_collapse("TreeViewEntry_collapse");
@@ -482,28 +482,28 @@ void TreeView::clearContents() {
 }
 
 //! ---|> MouseButtonListener
-listenerResult_t TreeView::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent){
+bool TreeView::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent){
 	if(buttonEvent.button == Util::UI::MOUSE_BUTTON_MIDDLE && scrollBar.isNotNull()) {
 		if(buttonEvent.pressed) {
 			getGUI().addMouseMotionListener(this);
 		} else {// !pressed
 			getGUI().removeMouseMotionListener(this);
 		}
-		return LISTENER_EVENT_CONSUMED;
+		return true;
 	} else if(buttonEvent.pressed && buttonEvent.button == Util::UI::MOUSE_WHEEL_UP) {
 //		scroll(-getHeight()*0.25);
 
 		getGUI().stopAnimations(this);
 		getGUI().addAnimationHandler(new TV_ScrollAnimation(this, scrollPos-getHeight()*0.5 ,0.3));
 
-		return LISTENER_EVENT_CONSUMED;
+		return true;
 	}else if(buttonEvent.pressed && buttonEvent.button == Util::UI::MOUSE_WHEEL_DOWN) {
 //		scroll(+getHeight()*0.25);
 		getGUI().stopAnimations(this);
 		getGUI().addAnimationHandler(new TV_ScrollAnimation(this, scrollPos+getHeight()*0.5 ,0.3));
-		return LISTENER_EVENT_CONSUMED;
+		return true;
 	}else{
-		return LISTENER_EVENT_NOT_CONSUMED;
+		return false;
 	}
 }
 

@@ -40,7 +40,7 @@ class ScrollableContainer: public Container,public MouseButtonListener,public Mo
 		// ---|> MouseMotionListener
 		virtual listenerResult_t onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent) override;
 		// ---|> MouseButtonListener
-		virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
+		virtual bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
 
 		// ---|> Container
 		virtual void addContent(const Ref & child) override						{	contentContainer->addContent(child);	}

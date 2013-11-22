@@ -311,7 +311,7 @@ bool Textfield::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {
 }
 
 //! ---|> MouseButtonListener
-listenerResult_t Textfield::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent){
+bool Textfield::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent){
 	if (buttonEvent.pressed && !isLocked()) {
 		const Geometry::Vec2 localPos = Geometry::Vec2(buttonEvent.x, buttonEvent.y) - getAbsPosition();
 		if (isSelected() && buttonEvent.button == Util::UI::MOUSE_BUTTON_LEFT) {
@@ -319,7 +319,7 @@ listenerResult_t Textfield::onMouseButton(Component * /*component*/, const Util:
 			const Geometry::Rect clearRect(getLocalRect().getWidth()-buttonSize,0,buttonSize,buttonSize);
 			if(clearRect.contains(localPos)){
 				setText("");
-				return LISTENER_EVENT_CONSUMED;
+				return true;
 			}
 		}
 		select();
@@ -331,11 +331,11 @@ listenerResult_t Textfield::onMouseButton(Component * /*component*/, const Util:
 		}else if(buttonEvent.button == Util::UI::MOUSE_WHEEL_DOWN && hasOptions()) {
 			setCurrentOptionIndex( (getCurrentOptionIndex()+1) % countOptions());
 		}else{
-			return LISTENER_EVENT_NOT_CONSUMED;
+			return false;
 		}
-		return LISTENER_EVENT_CONSUMED;
+		return true;
 	}
-	return LISTENER_EVENT_NOT_CONSUMED;
+	return false;
 
 }
 

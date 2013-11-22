@@ -63,7 +63,7 @@ class Window : public Container, public MouseButtonListener {
 
 
 		// ---|> MouseButtonListener
-		virtual listenerResult_t onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) override;
+		virtual bool onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) override;
 		// ---|> Container
 		virtual void addContent(const Ref & child) override 						{	clientAreaPanel->addContent(child);	}
 		virtual void removeContent(const Ref & child) override 					{	clientAreaPanel->removeContent(child);	}

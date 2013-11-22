@@ -35,16 +35,16 @@ struct TitlePanel:public Container,public MouseMotionListener,public MouseButton
 		getGUI().removeMouseMotionListener(this);
 	}
 	// ---|> MouseButtonListener
-	listenerResult_t onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) override{
+	bool onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) override{
 		if(!buttonEvent.pressed)
-			return LISTENER_EVENT_NOT_CONSUMED;
+			return false;
 		activate();
 		getGUI().selectFirst(&window);
 		if(buttonEvent.button == Util::UI::MOUSE_BUTTON_LEFT) {
 			getGUI().addMouseMotionListener(this);
 			dragOffset = window.getPosition() - Geometry::Vec2(buttonEvent.x, buttonEvent.y);
 		}
-		return LISTENER_EVENT_CONSUMED;
+		return true;
 	}
 	 // ---|> MouseMotionListener
 	listenerResult_t onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) override{
@@ -77,11 +77,11 @@ struct ResizePanel:public Component,public MouseMotionListener,public MouseButto
 		}
 	}
 	// ---|> MouseMovementListner
-	listenerResult_t onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) override{
+	bool onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) override{
 		if(!buttonEvent.pressed)
-			return LISTENER_EVENT_NOT_CONSUMED;
+			return false;
 		startResizing(1,1);
-		return LISTENER_EVENT_CONSUMED;
+		return true;
 	}
 	void startResizing(int x,int y){
 		changeX = x;
@@ -443,7 +443,7 @@ void Window::invalidateRegion(){
 }
 
 //! ---|> MouseButtonListener
-listenerResult_t Window::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent){
+bool Window::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent){
 	if(buttonEvent.pressed){
 		if(resizePanel.isNotNull() && !isMinimized()){
 			static const float resizeBorderWidth = 5.0f;
@@ -471,9 +471,9 @@ listenerResult_t Window::onMouseButton(Component * /*component*/, const Util::UI
 			
 		}
 		getGUI().selectFirst(this);
-		return LISTENER_EVENT_CONSUMED;
+		return true;
 	}
-	return LISTENER_EVENT_NOT_CONSUMED;
+	return false;
 }
 
 //! (internal)

@@ -122,7 +122,7 @@ struct MouseMotionListener {
 };
 struct MouseButtonListener {
 	static RegisteredListenerRegistry<MouseButtonListener> & getListenerRegistry();
-	virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) = 0;
+	virtual bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) = 0;
 	virtual ~MouseButtonListener() {}
 };
 

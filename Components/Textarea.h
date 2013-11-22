@@ -37,7 +37,7 @@ class Textarea: public Container,public MouseButtonListener,
 		std::string getText()const;
 
 		// ---|> MouseButtonListener
-		virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
+		virtual bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
 		// ---|> MouseMotionListener
 		virtual listenerResult_t onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent) override;
 

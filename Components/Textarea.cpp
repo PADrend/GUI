@@ -484,7 +484,7 @@ bool Textarea::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {
 }
 
 //! ---|> MouseButtonListener
-listenerResult_t Textarea::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent){
+bool Textarea::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent){
 	if(buttonEvent.pressed && !isLocked()) {
 		select();
 		const Geometry::Vec2 localPos = Geometry::Vec2(buttonEvent.x, buttonEvent.y) - getAbsPosition();
@@ -498,11 +498,11 @@ listenerResult_t Textarea::onMouseButton(Component * /*component*/, const Util::
 		}else if(buttonEvent.button == Util::UI::MOUSE_WHEEL_DOWN) { // scroll
 			scrollTo( getScrollPos()+Geometry::Vec2(0,3.0f*lineHeight) );
 		}else{
-			return LISTENER_EVENT_NOT_CONSUMED;
+			return false;
 		}
-		return LISTENER_EVENT_CONSUMED;
+		return true;
 	}
-	return LISTENER_EVENT_NOT_CONSUMED;
+	return false;
 
 }
 //

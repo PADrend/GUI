@@ -93,14 +93,14 @@ void Checkbox::doDisplay(const Geometry::Rect & region){
 }
 
 //! ---|> MouseButtonListener
-listenerResult_t Checkbox::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent){
+bool Checkbox::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent){
 	if(buttonEvent.pressed){
 		select();
 		if(buttonEvent.button == Util::UI::MOUSE_BUTTON_LEFT) {
 			activate();
 		}
 	}
-	return LISTENER_EVENT_CONSUMED;
+	return true;
 
 }
 

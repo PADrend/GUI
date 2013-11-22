@@ -59,7 +59,7 @@ class TreeView: public Container,public MouseButtonListener,public MouseMotionLi
 				void setComponent(const Ref & c);
 
 				// ---|> MouseButtonListener
-				virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
+				virtual bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
 
 				// ---|> Container
 				virtual void addContent(const Ref & child) override;
@@ -101,7 +101,7 @@ class TreeView: public Container,public MouseButtonListener,public MouseMotionLi
 		void markingChanged();
 
 		// ---|> MouseButtonListener
-		virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
+		virtual bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
 		// ---|> MouseMotionListener
 		virtual listenerResult_t onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) override;
 

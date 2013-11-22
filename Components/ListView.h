@@ -139,7 +139,7 @@ public:
 		// ---|> MouseMotionListener
 		virtual listenerResult_t onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent) override;
 		// ---|> MouseButtonListener
-		virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
+		virtual bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
 	private:
 		GUI_Manager::KeyListenerHandle keyListenerHandle;
 

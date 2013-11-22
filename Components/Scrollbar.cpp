@@ -39,9 +39,9 @@ class ScrollMarker:public Component,public MouseMotionListener,public MouseButto
 	}
 
 	//! ---|> MouseButtonListener
-	listenerResult_t onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) override {
+	bool onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) override {
 		if(buttonEvent.button == Util::UI::MOUSE_WHEEL_UP || buttonEvent.button == Util::UI::MOUSE_WHEEL_DOWN) {
-			return LISTENER_EVENT_NOT_CONSUMED;
+			return false;
 		}
 		if (buttonEvent.pressed) {
 			select();
@@ -49,7 +49,7 @@ class ScrollMarker:public Component,public MouseMotionListener,public MouseButto
 				startDragging();
 			}
 		}
-		return LISTENER_EVENT_CONSUMED;
+		return true;
 	}
 
 	//! ---|> MouseMotionListener
@@ -125,7 +125,7 @@ void Scrollbar::doDisplay(const Geometry::Rect & region) {
 }
 
 //! ---|> MouseButtonListener
-listenerResult_t Scrollbar::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) {
+bool Scrollbar::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) {
 	if (buttonEvent.pressed && !isLocked()) {
 		select();
 		if (buttonEvent.button == Util::UI::MOUSE_BUTTON_LEFT) {
@@ -148,7 +148,7 @@ listenerResult_t Scrollbar::onMouseButton(Component * /*component*/, const Util:
 			updateScrollPos(getScrollPos()+(isVertical() ? getHeight() : getWidth())*0.2);
 		}
 	}
-	return LISTENER_EVENT_CONSUMED;
+	return true;
 
 }
 

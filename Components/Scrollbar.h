@@ -40,7 +40,7 @@ class Scrollbar : public Container, public MouseButtonListener {
 		void updateScrollPos(const int32_t f);
 
 		// ---|> MouseButtonListener
-		virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
+		virtual bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
 
 		// ---|> Component
 		virtual void doLayout() override;

@@ -31,7 +31,7 @@ class Menu: public Container, public MouseButtonListener {
 		virtual ~Menu();
 
 		// ---|> MouseButtonListener
-		virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
+		virtual bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
 
 		// ---|> Container
 

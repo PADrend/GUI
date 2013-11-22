@@ -85,7 +85,7 @@ struct TabTitlePanel : public Container, public MouseMotionListener, public Mous
 	}
 
 	//! ---|> MouseButtonListener
-	listenerResult_t onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) override {
+	bool onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) override {
 		if (buttonEvent.pressed) {
 			if(buttonEvent.button == Util::UI::MOUSE_BUTTON_RIGHT && getGUI().isCtrlPressed()){
 				TabbedPanel * oldTabbedPanel=getTab()->getTabbedPanel();
@@ -96,15 +96,15 @@ struct TabTitlePanel : public Container, public MouseMotionListener, public Mous
 				getTab()->invalidateRegion();
 				getTab()->invalidateLayout();
 				oldTabbedPanel->recalculateTabTitlePositions();
-				return LISTENER_EVENT_CONSUMED;
+				return true;
 			}
 			getGUI().setActiveComponent(this);
 			select();
 			myTab.makeActiveTab();
 			getGUI().addMouseMotionListener(this);
-			return LISTENER_EVENT_CONSUMED;
+			return true;
 		}
-		return LISTENER_EVENT_NOT_CONSUMED;
+		return false;
 	}
 	//! ---|> MouseMotionListener
 	listenerResult_t onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) override{

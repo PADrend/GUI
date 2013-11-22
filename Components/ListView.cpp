@@ -255,41 +255,41 @@ void ListView::moveCursor(int delta) {
 // Events
 
 //! ---|> MouseButtonListener
-listenerResult_t ListView::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) {
+bool ListView::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) {
 	const Geometry::Vec2 localPos = Geometry::Vec2(buttonEvent.x, buttonEvent.y) - getAbsPosition()+scrollPos;
 	if(buttonEvent.pressed)
 		select();
 	if(buttonEvent.button == Util::UI::MOUSE_BUTTON_MIDDLE ) {
 		if(maxScrollPos.x() <= 0 && maxScrollPos.y() <= 0)
-			return LISTENER_EVENT_NOT_CONSUMED;
+			return false;
 		else if(buttonEvent.pressed) {
 			getGUI().addMouseMotionListener(this);
 		} else {// !pressed
 			getGUI().removeMouseMotionListener(this);
 		}
-		return LISTENER_EVENT_CONSUMED;
+		return true;
 	} else if(buttonEvent.button == Util::UI::MOUSE_BUTTON_LEFT && buttonEvent.pressed) {
 		const size_t index = getEntryIndexByPosition(localPos);
 		if(index != npos) {
 			performMarkingAction(getEntryIndexByPosition(localPos), getGUI().isCtrlPressed(), getGUI().isShiftPressed());
 			setCursorIndex(index);
 		}
-		return LISTENER_EVENT_CONSUMED;
+		return true;
 	} else if(buttonEvent.button == Util::UI::MOUSE_BUTTON_RIGHT && buttonEvent.pressed) {
 		clearMarkings();
-		return LISTENER_EVENT_CONSUMED;
+		return true;
 	} else if(buttonEvent.button == Util::UI::MOUSE_WHEEL_DOWN && buttonEvent.pressed) {
 		finishScrolling();
 		const float amount = std::min(getEntryHeight() * 3.0, getHeight() * 0.33);
 		scrollTo(scrollPos + Geometry::Vec2(0, amount), 0.1);
-		return LISTENER_EVENT_CONSUMED;
+		return true;
 	} else if(buttonEvent.button == Util::UI::MOUSE_WHEEL_UP && buttonEvent.pressed) {
 		finishScrolling();
 		const float amount = std::min(getEntryHeight() * 3.0, getHeight() * 0.33);
 		scrollTo(scrollPos + Geometry::Vec2(0, -amount), 0.1);
-		return LISTENER_EVENT_CONSUMED;
+		return true;
 	} else {
-		return LISTENER_EVENT_NOT_CONSUMED;
+		return false;
 	}
 }
 

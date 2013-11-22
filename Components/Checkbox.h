@@ -46,7 +46,7 @@ class Checkbox : public Container, public MouseButtonListener {
 		virtual void action();
 
 		// ---|> MouseButtonListener
-		virtual listenerResult_t onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
+		virtual bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent) override;
 
 		// ---|> Component
 		virtual void doLayout() override;

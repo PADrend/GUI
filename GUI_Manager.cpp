@@ -118,10 +118,10 @@ class MouseCursorHandler : public MouseMotionListener, public MouseButtonListene
 		}
 		
 		// ---|> MouseButtonListener
-		listenerResult_t onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) override {
+		bool onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) override {
 			activateCursor(std::move(queryHoverComponentMouseCursor(Geometry::Vec2(buttonEvent.x, buttonEvent.y))));
 			cursorLockedByButton = buttonEvent.pressed;
-			return LISTENER_EVENT_NOT_CONSUMED;
+			return false;
 		}
 		
 		// ---|> MouseMotionListener
@@ -331,15 +331,10 @@ bool GUI_Manager::handleMouseMovement(const Util::UI::MotionEvent & motionEvent)
 bool GUI_Manager::handleMouseButton(const Util::UI::ButtonEvent & buttonEvent) {
 	
 	// handle global listeners
-	for(auto it = mouseButtonListeners.begin(); it!=mouseButtonListeners.end(); ){
-		const auto result = (*it)->onMouseButton(nullptr, buttonEvent);
-		if( result & LISTENER_REMOVE_LISTENER ){
-			it = mouseButtonListeners.erase(it);
-		}else{
-			++it;
-		}
-		if( result & LISTENER_EVENT_CONSUMED )
+	for(const auto & it : mouseButtonListeners) {
+		if(it->onMouseButton(nullptr, buttonEvent)) {
 			return true;
+		}
 	}
 	
 	
@@ -354,21 +349,11 @@ bool GUI_Manager::handleMouseButton(const Util::UI::ButtonEvent & buttonEvent) {
 		std::list<MouseButtonListener*> * l=MouseButtonListener::getListenerRegistry().getListeners(c.get());//c->getMouseButtonListener();
 		if(l==nullptr)
 			continue;
-		for(auto butIt = l->rbegin(); butIt != l->rend();) {
-			listenerResult_t result = (*butIt)->onMouseButton(c.get(), buttonEvent);
-			if(result & LISTENER_REMOVE_LISTENER){
-				// \note This strange construct is used, because std::list does not take reverse_iterators
-				//		as parameter for erase
-				// @see Item 28 in the book "Effective STL"
-				auto tempIter = l->erase((++butIt).base());
-				butIt = std::list<MouseButtonListener*>::reverse_iterator(tempIter);
-
-//				butIt= l->erase(butIt);
-			}else{
-				++butIt;
-			}
-			if( ! (result & LISTENER_EVENT_CONSUMED))
+		for(auto butIt = l->rbegin(); butIt != l->rend(); ++butIt) {
+			auto result = (*butIt)->onMouseButton(c.get(), buttonEvent);
+			if(!result) {
 				continue;
+			}
 
 			c->bringToFront();
 			if (buttonEvent.pressed || c!=lastActive)

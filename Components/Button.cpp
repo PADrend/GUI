@@ -112,9 +112,9 @@ void Button::doDisplay(const Geometry::Rect & region){
 }
 
 //! ---|> MouseButtonListener
-listenerResult_t Button::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent){
+bool Button::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent){
 	if(buttonEvent.button == Util::UI::MOUSE_BUTTON_MIDDLE) {
-		return LISTENER_EVENT_NOT_CONSUMED;
+		return false;
 	}
 	if(buttonEvent.pressed && !isLocked()){
 		select();
@@ -122,7 +122,7 @@ listenerResult_t Button::onMouseButton(Component * /*component*/, const Util::UI
 			activate();
 		}
 	}
-	return LISTENER_EVENT_CONSUMED;
+	return true;
 }
 
 bool Button::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {

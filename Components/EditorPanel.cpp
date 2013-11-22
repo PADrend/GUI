@@ -125,7 +125,7 @@ listenerResult_t EditorPanel::onMouseMove(Component * /*component*/, const Util:
 static const Util::StringIdentifier dataId_marking("marking");
 
 //! ---|> MouseButtonListener
-listenerResult_t EditorPanel::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent){
+bool EditorPanel::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent){
 	if(buttonEvent.pressed && getGUI().isCtrlPressed()) {
 		if(buttonEvent.button == Util::UI::MOUSE_WHEEL_UP) {
 			float scale=0.8;
@@ -134,7 +134,7 @@ listenerResult_t EditorPanel::onMouseButton(Component * /*component*/, const Uti
 				child->setWidth(child->getWidth()*scale);
 				child->setHeight(child->getHeight()*scale);
 			}
-			return LISTENER_EVENT_CONSUMED;
+			return true;
 		} else if(buttonEvent.button == Util::UI::MOUSE_WHEEL_DOWN) {
 
 			float scale=1.0/0.8;
@@ -143,7 +143,7 @@ listenerResult_t EditorPanel::onMouseButton(Component * /*component*/, const Uti
 				child->setWidth(child->getWidth()*scale);
 				child->setHeight(child->getHeight()*scale);
 			}
-			return LISTENER_EVENT_CONSUMED;
+			return true;
 		}
 	}
 	const Geometry::Vec2 localPos = Geometry::Vec2(buttonEvent.x, buttonEvent.y) - getAbsPosition();
@@ -154,7 +154,7 @@ listenerResult_t EditorPanel::onMouseButton(Component * /*component*/, const Uti
 				for(const auto & markedChild : getMarkedChildren()) {
 					if(markedChild->coversLocalPos(localPos - markedChild->getPosition())) {
 						move_start(localPos);
-						return LISTENER_EVENT_CONSUMED;
+						return true;
 					}
 				}
 				for(Component * child=getFirstChild();child!=nullptr;child=child->getNext()){
@@ -165,28 +165,28 @@ listenerResult_t EditorPanel::onMouseButton(Component * /*component*/, const Uti
 					markChild(child);
 					getGUI().componentDataChanged(this,dataId_marking);
 					move_start(localPos);
-					return LISTENER_EVENT_CONSUMED;
+					return true;
 				}
 				rectSelect_start(localPos);
 //				getGUI().componentMouseClicked(this,button,pos,pressed); // ???
-				return LISTENER_EVENT_CONSUMED;
+				return true;
 
 			}else if(buttonEvent.button == Util::UI::MOUSE_BUTTON_RIGHT) {
 				if(!getMarkedChildren().empty()){
 					unmarkAll();
 					getGUI().componentDataChanged(this,dataId_marking);
 				}
-				return LISTENER_EVENT_CONSUMED;
+				return true;
 			}
 			break;
 		}
 		case DRAG_SELECTING:{
 			if(!buttonEvent.pressed && buttonEvent.button == Util::UI::MOUSE_BUTTON_LEFT) {
 				rectSelect_finish(localPos);
-				return LISTENER_EVENT_CONSUMED;
+				return true;
 			} else if(buttonEvent.pressed && buttonEvent.button == Util::UI::MOUSE_BUTTON_RIGHT) {
 				rectSelect_break();
-				return LISTENER_EVENT_CONSUMED;
+				return true;
 			}
 
 			break;
@@ -194,17 +194,17 @@ listenerResult_t EditorPanel::onMouseButton(Component * /*component*/, const Uti
 		case MOVING:{
 			if(!buttonEvent.pressed && buttonEvent.button == Util::UI::MOUSE_BUTTON_LEFT) {
 				move_finish();
-				return LISTENER_EVENT_CONSUMED;
+				return true;
 			} else if(buttonEvent.pressed && buttonEvent.button == Util::UI::MOUSE_BUTTON_RIGHT) {
 				move_break(localPos);
-				return LISTENER_EVENT_CONSUMED;
+				return true;
 			}
 			break;
 		}
 		default:
 			WARN("unexpected case in switch statement");
 	}
-	return LISTENER_EVENT_NOT_CONSUMED;
+	return false;
 }
 
 void EditorPanel::rectSelect_start(const Vec2 & pos){

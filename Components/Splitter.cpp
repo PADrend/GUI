@@ -104,19 +104,19 @@ void Splitter::doLayout(){
 }
 
 //! ---|> MouseButtonListener
-listenerResult_t Splitter::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) {
+bool Splitter::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) {
 	if(buttonEvent.button == Util::UI::MOUSE_BUTTON_LEFT) {
 		if(buttonEvent.pressed && !isSelected()) {
 			select();
 			getGUI().addMouseMotionListener(this);
-			return LISTENER_EVENT_CONSUMED;
+			return true;
 		} else if(!buttonEvent.pressed && isSelected()) {
 			unselect();
 			getGUI().removeMouseMotionListener(this);
-			return LISTENER_EVENT_CONSUMED;
+			return true;
 		}
 	}
-	return LISTENER_EVENT_NOT_CONSUMED;
+	return false;
 }
 
 //! ---|> MouseMotionListener
