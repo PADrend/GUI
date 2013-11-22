@@ -37,9 +37,14 @@ ScrollableContainer::ScrollableContainer(GUI_Manager & _gui,flag_t _flags/*=0*/)
 
 //! (dtor)
 ScrollableContainer::~ScrollableContainer() {
+	if(optionalScrollBarListener) {
+		getGUI().removeDataChangeListener(vScrollBar.get(),
+										  std::move(*optionalScrollBarListener.get()));
+		optionalScrollBarListener.reset();
+	}
 	getGUI().removeMouseMotionListener(this);
-	//dtor
 }
+
 //! ---|> Component
 void ScrollableContainer::doDisplay(const Geometry::Rect & region) {
 	displayChildren(region,true);
@@ -59,22 +64,26 @@ void ScrollableContainer::doLayout() {
 	if (maxScrollPos.y()<=0){
 		maxScrollPos.y(0);
 		if(vScrollBar.isNotNull()){
+			getGUI().removeDataChangeListener(vScrollBar.get(), 
+											  std::move(*optionalScrollBarListener.get()));
+			optionalScrollBarListener.reset();
 			Component::destroy(vScrollBar.get());
 			vScrollBar = nullptr;
 		}
 	}else{
 		if(vScrollBar.isNull()){
 			vScrollBar=new Scrollbar(getGUI(),dataId_verticallScrollPos,Scrollbar::VERTICAL);
-			getGUI().addDataChangeListener(	vScrollBar.get(),
-											[this](Component *) {
-												if(vScrollBar.isNotNull()) {
-													if(scrollPos.y() != vScrollBar->getScrollPos()) {
-														invalidateRegion();
-														invalidateLayout();
-														scrollPos.y(vScrollBar->getScrollPos());
+			optionalScrollBarListener.reset(new GUI_Manager::DataChangeListenerHandle(getGUI().addDataChangeListener(
+												vScrollBar.get(),
+												[this](Component *) {
+													if(vScrollBar.isNotNull()) {
+														if(scrollPos.y() != vScrollBar->getScrollPos()) {
+															invalidateRegion();
+															invalidateLayout();
+															scrollPos.y(vScrollBar->getScrollPos());
+														}
 													}
-												}
-											});
+												})));
 			vScrollBar->setExtLayout( 	ExtLayouter::POS_X_ABS|ExtLayouter::REFERENCE_X_RIGHT|ExtLayouter::ALIGN_X_RIGHT|
 									ExtLayouter::POS_Y_ABS|ExtLayouter::REFERENCE_Y_TOP|ExtLayouter::ALIGN_Y_TOP |
 									ExtLayouter::WIDTH_ABS|ExtLayouter::HEIGHT_ABS,

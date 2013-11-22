@@ -178,6 +178,11 @@ Textarea::Textarea(GUI_Manager & _gui,flag_t _flags):
 
 //! (dtor)
 Textarea::~Textarea() {
+	if(optionalScrollBarListener) {
+		getGUI().removeDataChangeListener(scrollBar.get(),
+										  std::move(*optionalScrollBarListener.get()));
+		optionalScrollBarListener.reset();
+	}
 	getGUI().removeMouseMotionListener(this);
 	getGUI().removeKeyListener(this, std::move(keyListenerHandle));
 }
@@ -567,13 +572,14 @@ void Textarea::updateScrollPos(){
 	if(maxScrollPos>0){
 		if(scrollBar.isNull()){
 			scrollBar = new Scrollbar(getGUI(), dataId_scrollPos, Scrollbar::VERTICAL);
-			getGUI().addDataChangeListener(	scrollBar.get(),
-											[this](Component *) {
-												if(scrollBar.isNotNull()) {
-													scrollTo(Geometry::Vec2(getScrollPos().x(),
-																			scrollBar->getScrollPos()));
-												}
-											});
+			optionalScrollBarListener.reset(new GUI_Manager::DataChangeListenerHandle(getGUI().addDataChangeListener(
+												scrollBar.get(),
+												[this](Component *) {
+													if(scrollBar.isNotNull()) {
+														scrollTo(Geometry::Vec2(getScrollPos().x(),
+																				scrollBar->getScrollPos()));
+													}
+												})));
 			scrollBar->setExtLayout( 	ExtLayouter::POS_X_ABS|ExtLayouter::REFERENCE_X_RIGHT|ExtLayouter::ALIGN_X_RIGHT|
 						ExtLayouter::POS_Y_ABS|ExtLayouter::REFERENCE_Y_TOP|ExtLayouter::ALIGN_Y_TOP |
 						ExtLayouter::WIDTH_ABS|ExtLayouter::HEIGHT_ABS,
@@ -584,6 +590,9 @@ void Textarea::updateScrollPos(){
 		scrollBar->setScrollPos( getScrollPos().y() );
 	}else{
 		 if(scrollBar.isNotNull()){
+			getGUI().removeDataChangeListener(scrollBar.get(), 
+											  std::move(*optionalScrollBarListener.get()));
+			optionalScrollBarListener.reset();
 			getGUI().markForRemoval(scrollBar.get());
 			scrollBar = nullptr;
 		}

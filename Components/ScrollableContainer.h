@@ -15,7 +15,9 @@
 #include "LayoutHelper.h"
 #include "../Base/Listener.h"
 #include "../Base/Layouters/FlowLayouter.h"
+#include "../GUI_Manager.h"
 #include <iostream>
+#include <memory>
 
 namespace GUI {
 class Scrollbar;
@@ -56,6 +58,7 @@ class ScrollableContainer: public Container,public MouseButtonListener,public Mo
 	private:
 		Util::WeakPointer<Container> contentContainer;
 		Util::WeakPointer<Scrollbar> vScrollBar;
+		std::unique_ptr<GUI_Manager::DataChangeListenerHandle> optionalScrollBarListener;
 		Geometry::Vec2 scrollPos;
 		Geometry::Vec2 maxScrollPos;
 };

@@ -14,6 +14,7 @@
 #include "Container.h"
 #include "../Base/Listener.h"
 #include "../GUI_Manager.h"
+#include <memory>
 #include <set>
 #include <vector>
 
@@ -186,6 +187,7 @@ public:
 	private:
 		void finishScrolling();
 		Util::WeakPointer<Scrollbar> scrollBar;
+		std::unique_ptr<GUI_Manager::DataChangeListenerHandle> optionalScrollBarListener;
 		Geometry::Vec2 scrollPos;
 		Geometry::Vec2 maxScrollPos;
 	//	@}

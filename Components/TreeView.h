@@ -15,6 +15,7 @@
 #include "Label.h"
 #include "../Base/Listener.h"
 #include "../GUI_Manager.h"
+#include <memory>
 
 namespace GUI {
 class Scrollbar;
@@ -128,6 +129,7 @@ class TreeView: public Container,public MouseButtonListener,public MouseMotionLi
 		float scrollPos;
 		bool multiSelect;
 		Util::WeakPointer<Scrollbar> scrollBar;
+		std::unique_ptr<GUI_Manager::DataChangeListenerHandle> optionalScrollBarListener;
 
 		GUI_Manager::KeyListenerHandle keyListenerHandle;
 };

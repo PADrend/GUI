@@ -96,6 +96,7 @@ class Textarea: public Container,public MouseButtonListener,
 	//!	@name Scrolling
 	//	\{
 		Util::WeakPointer<Scrollbar> scrollBar;
+		std::unique_ptr<GUI_Manager::DataChangeListenerHandle> optionalScrollBarListener;
 		Geometry::Vec2 scrollPos;
 		
 	public:

@@ -90,6 +90,11 @@ void ListView::assertIsChild(Component * c)const {
 
 //! (dtor)
 ListView::~ListView() {
+	if(optionalScrollBarListener) {
+		getGUI().removeDataChangeListener(scrollBar.get(),
+										  std::move(*optionalScrollBarListener.get()));
+		optionalScrollBarListener.reset();
+	}
 	getGUI().removeMouseMotionListener(this);
 	getGUI().removeKeyListener(this, std::move(keyListenerHandle));
 }
@@ -114,6 +119,9 @@ void ListView::doLayout() {
 
 	if (maxScrollPos.y() <= 0) {
 		if(scrollBar.isNotNull()){
+			getGUI().removeDataChangeListener(scrollBar.get(), 
+											  std::move(*optionalScrollBarListener.get()));
+			optionalScrollBarListener.reset();
 			Component::destroy(scrollBar.get());
 			scrollBar = nullptr;
 		}
@@ -121,12 +129,13 @@ void ListView::doLayout() {
 	} else {
 		if(scrollBar.isNull()){
 			scrollBar = new Scrollbar(getGUI(), dataId_scrollPos, Scrollbar::VERTICAL);
-			getGUI().addDataChangeListener(	scrollBar.get(),
-											[this](Component *) {
-												if(scrollBar.isNotNull()) {
-													setScrollingPosition( Geometry::Vec2(0.0f,scrollBar->getScrollPos() ));
-												}
-											});
+			optionalScrollBarListener.reset(new GUI_Manager::DataChangeListenerHandle(getGUI().addDataChangeListener(
+												scrollBar.get(),
+												[this](Component *) {
+													if(scrollBar.isNotNull()) {
+														setScrollingPosition( Geometry::Vec2(0.0f,scrollBar->getScrollPos() ));
+													}
+												})));
 			scrollBar->setExtLayout( 	ExtLayouter::POS_X_ABS|ExtLayouter::REFERENCE_X_RIGHT|ExtLayouter::ALIGN_X_RIGHT|
 						ExtLayouter::POS_Y_ABS|ExtLayouter::REFERENCE_Y_TOP|ExtLayouter::ALIGN_Y_TOP |
 						ExtLayouter::WIDTH_ABS|ExtLayouter::HEIGHT_ABS,
