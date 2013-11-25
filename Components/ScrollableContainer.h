@@ -24,7 +24,7 @@ class Scrollbar;
 /***
  **     ScrollableContainer ---|> Container ---|> Component
  **/
-class ScrollableContainer: public Container, public MouseMotionListener {
+class ScrollableContainer: public Container {
 		PROVIDES_TYPE_NAME(ScrollableContainer)
 	public:
 
@@ -36,9 +36,6 @@ class ScrollableContainer: public Container, public MouseMotionListener {
 		const Geometry::Vec2 & getScrollPos()const						{	return scrollPos;	}
 
 		Container * getContentContainer()const							{	return contentContainer.get();	}
-
-		// ---|> MouseMotionListener
-		virtual listenerResult_t onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent) override;
 
 		// ---|> Container
 		virtual void addContent(const Ref & child) override						{	contentContainer->addContent(child);	}
@@ -60,8 +57,11 @@ class ScrollableContainer: public Container, public MouseMotionListener {
 		Geometry::Vec2 scrollPos;
 		Geometry::Vec2 maxScrollPos;
 		GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
+		GUI_Manager::MouseMotionListenerHandle mouseMotionListenerHandle;
+		bool listenOnMouseMove;
 
 		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
+		listenerResult_t onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent);
 };
 }
 #endif // GUI_ScrollableContainer_H

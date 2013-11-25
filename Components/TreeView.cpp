@@ -320,13 +320,17 @@ void TreeView::TreeViewEntry::unmarkSubtree(Component * subroot)const{
 //// ------------------------------------------------------------------------------
 
 //! (ctor)
-TreeView::TreeView(GUI_Manager & _gui,const Geometry::Rect & _r,const std::string & _actionName,flag_t _flags/*=0*/):
-		Container(_gui,_r,_flags), MouseMotionListener(),
+TreeView::TreeView(GUI_Manager & _gui,const Geometry::Rect & _r,const std::string & _actionName,flag_t _flags/*=0*/) :
+		Container(_gui,_r,_flags),
 		actionName(_actionName),root(new TreeViewEntry(_gui,this)),scrollPos(0),multiSelect(true),scrollBar(nullptr),
 		keyListenerHandle(_gui.addKeyListener(this, std::bind(&TreeView::onKeyEvent, 
 															  this, 
 															  std::placeholders::_1))),
 		mouseButtonListenerHandle(_gui.addMouseButtonListener(this, std::bind(&TreeView::onMouseButton, 
+																			  this, 
+																			  std::placeholders::_1,
+																			  std::placeholders::_2))),
+		mouseMotionListenerHandle(_gui.addGlobalMouseMotionListener(std::bind(&TreeView::onMouseMove, 
 																			  this, 
 																			  std::placeholders::_1,
 																			  std::placeholders::_2))) {
@@ -345,7 +349,7 @@ TreeView::~TreeView() {
 										  std::move(*optionalScrollBarListener.get()));
 		optionalScrollBarListener.reset();
 	}
-	getGUI().removeMouseMotionListener(this);
+	getGUI().removeGlobalMouseMotionListener(std::move(mouseMotionListenerHandle));
 	getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
 	getGUI().removeKeyListener(this, std::move(keyListenerHandle));
 	// destroy root
@@ -486,13 +490,12 @@ void TreeView::clearContents() {
 	scrollPos = 0;
 }
 
-//! ---|> MouseButtonListener
-bool TreeView::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent){
+bool TreeView::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) {
 	if(buttonEvent.button == Util::UI::MOUSE_BUTTON_MIDDLE && scrollBar.isNotNull()) {
 		if(buttonEvent.pressed) {
-			getGUI().addMouseMotionListener(this);
+			listenOnMouseMove = true;
 		} else {// !pressed
-			getGUI().removeMouseMotionListener(this);
+			listenOnMouseMove = false;
 		}
 		return true;
 	} else if(buttonEvent.pressed && buttonEvent.button == Util::UI::MOUSE_WHEEL_UP) {
@@ -512,14 +515,18 @@ bool TreeView::onMouseButton(Component * /*component*/, const Util::UI::ButtonEv
 	}
 }
 
-//! ---|> MouseMotionListener
 listenerResult_t TreeView::onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
+	if(!listenOnMouseMove) {
+		return LISTENER_EVENT_NOT_CONSUMED;
+	}
 	if(!(motionEvent.buttonMask & Util::UI::MASK_MOUSE_BUTTON_MIDDLE)) {
-		return LISTENER_EVENT_NOT_CONSUMED_AND_REMOVE_LISTENER;
+		listenOnMouseMove = false;
+		return LISTENER_EVENT_NOT_CONSUMED;
 	}
 	scroll(motionEvent.deltaY * -2.0);
 	return LISTENER_EVENT_CONSUMED;
 }
+
 void TreeView::scroll(float amount) {
 	scrollTo(scrollPos+amount);
 }

@@ -60,9 +60,6 @@ class Textfield;
 class Window;
 class TreeView;
 class Entry;
-struct ActionListener;
-struct MouseMotionListener;
-struct FrameListener;
 class AnimationHandler;
 class Style;
 class MouseCursorHandler;
@@ -251,13 +248,17 @@ class GUI_Manager {
 
 		//----
 
-		typedef std::list<MouseMotionListener *> mouseListenerList;
-		mouseListenerList mouseMoveListener;
-		void addMouseMotionListener(MouseMotionListener * a) {
-			if (a)
-				mouseMoveListener.push_back(a);
+	private:
+		typedef Util::Registry<std::list<HandleMouseMotionFun>> MouseMotionListenerRegistry;
+		MouseMotionListenerRegistry globalMouseMotionListener;
+	public:
+		typedef MouseMotionListenerRegistry::handle_t MouseMotionListenerHandle;
+		MouseMotionListenerHandle addGlobalMouseMotionListener(HandleMouseMotionFun fun) {
+			return std::move(globalMouseMotionListener.registerElement(std::move(fun)));
 		}
-		void removeMouseMotionListener(MouseMotionListener * a)		{	mouseMoveListener.remove(a);	}
+		void removeGlobalMouseMotionListener(MouseMotionListenerHandle handle) {
+			globalMouseMotionListener.unregisterElement(std::move(handle));
+		}
 
 		//----
 

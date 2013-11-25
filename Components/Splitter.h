@@ -23,7 +23,7 @@ class Image;
 	The Splitter should always be the second child of overall three children of the parent.
    Splitter ---|> Component
  */
-class Splitter: public Component,public MouseMotionListener {
+class Splitter: public Component {
 	PROVIDES_TYPE_NAME(Splitter)
 	public:
 		enum splittingDirection_t { VERTICAL, HORIZONTAL };
@@ -32,23 +32,20 @@ class Splitter: public Component,public MouseMotionListener {
 
 		splittingDirection_t getDirection()const				{	return direction;	}
 
-		// ---|> MouseMotionListener
-		virtual listenerResult_t onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent) override;
-
 		// ---|> Component
 		virtual void doLayout() override;
 	private:
+		const splittingDirection_t direction;
+
+		GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
+		GUI_Manager::MouseMotionListenerHandle mouseMotionListenerHandle;
+		bool listenOnMouseMove;
+
 		// ---|> Component
 		virtual void doDisplay(const Geometry::Rect & region) override;
 
 		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
-
-		GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
-
-	private:
-		const splittingDirection_t direction;
-		Geometry::Vec2 currentMousePos;
-
+		listenerResult_t onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent);
 };
 
 }

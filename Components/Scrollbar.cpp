@@ -21,13 +21,15 @@ namespace GUI{
 /***
  **  Scrollbar ---|> Component
  **/
-class ScrollMarker:public Component,public MouseMotionListener {
+class ScrollMarker : public Component {
 		Scrollbar & myScrollbar;
 		float dragStartPos;
 		float dragStartScroll;
 		bool catchDragStartPos;
 
 		GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
+		GUI_Manager::MouseMotionListenerHandle mouseMotionListenerHandle;
+		bool listenOnMouseMove;
 
 	public:
 	//! (ctor)
@@ -36,12 +38,17 @@ class ScrollMarker:public Component,public MouseMotionListener {
 			mouseButtonListenerHandle(_gui.addMouseButtonListener(this, std::bind(&ScrollMarker::onMouseButton, 
 																				  this, 
 																				  std::placeholders::_1,
-																				  std::placeholders::_2))) {
+																				  std::placeholders::_2))),
+			mouseMotionListenerHandle(_gui.addGlobalMouseMotionListener(std::bind(&ScrollMarker::onMouseMove, 
+																				  this, 
+																				  std::placeholders::_1,
+																				  std::placeholders::_2))),
+			listenOnMouseMove(false) {
 	}
 	//! (ctor)
 	virtual ~ScrollMarker() {
+		getGUI().removeGlobalMouseMotionListener(std::move(mouseMotionListenerHandle));
 		getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
-		getGUI().removeMouseMotionListener(this);
 	}
 
 	bool onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) {
@@ -57,10 +64,13 @@ class ScrollMarker:public Component,public MouseMotionListener {
 		return true;
 	}
 
-	//! ---|> MouseMotionListener
-	listenerResult_t onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) override{
+	listenerResult_t onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
+		if(!listenOnMouseMove) {
+			return LISTENER_EVENT_NOT_CONSUMED;
+		}
 		if (!isActive() || motionEvent.buttonMask == Util::UI::MASK_NO_BUTTON) {
-			return LISTENER_EVENT_NOT_CONSUMED_AND_REMOVE_LISTENER;
+			listenOnMouseMove = false;
+			return LISTENER_EVENT_NOT_CONSUMED;
 		}
 		const float p = myScrollbar.isVertical() ? motionEvent.y : motionEvent.x;
 		if(catchDragStartPos){
@@ -76,7 +86,7 @@ class ScrollMarker:public Component,public MouseMotionListener {
 	}
 	void startDragging(){
 		activate();
-		getGUI().addMouseMotionListener(this);
+		listenOnMouseMove = true;
 		catchDragStartPos = true;
 	}
 

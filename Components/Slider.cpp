@@ -22,23 +22,31 @@ namespace GUI{
 /***
  **  Slider ---|> Component
  **/
-class SliderMarker:public Component, public MouseMotionListener {
+class SliderMarker:public Component {
 	Slider & slider;
 	GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
+	GUI_Manager::MouseMotionListenerHandle mouseMotionListenerHandle;
 
 	public:
+	bool listenOnMouseMove;
 	//! (ctor)
-	SliderMarker(GUI_Manager & _gui,Slider & _slider):
-			Component(_gui),slider(_slider),
+	SliderMarker(GUI_Manager & _gui,Slider & _slider) :
+			Component(_gui),
+			slider(_slider),
 			mouseButtonListenerHandle(_gui.addMouseButtonListener(this, std::bind(&SliderMarker::onMouseButton, 
 																				  this, 
 																				  std::placeholders::_1,
-																				  std::placeholders::_2))) {
+																				  std::placeholders::_2))),
+			mouseMotionListenerHandle(_gui.addGlobalMouseMotionListener(std::bind(&SliderMarker::onMouseMove, 
+																				  this, 
+																				  std::placeholders::_1,
+																				  std::placeholders::_2))),
+			listenOnMouseMove(false) {
 	}
 	//! (ctor)
 	virtual ~SliderMarker() {
+		getGUI().removeGlobalMouseMotionListener(std::move(mouseMotionListenerHandle));
 		getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
-		getGUI().removeMouseMotionListener(this);
 	}
 
 	bool onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) {
@@ -49,16 +57,19 @@ class SliderMarker:public Component, public MouseMotionListener {
 			select();
 			if (buttonEvent.button == Util::UI::MOUSE_BUTTON_LEFT) {
 				getGUI().setActiveComponent(this);
-				getGUI().addMouseMotionListener(this);
+				listenOnMouseMove = true;
 			}
 		}
 		return true;
 	}
 
-	//! ---|> MouseMotionListener
-	listenerResult_t onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) override{
+	listenerResult_t onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
+		if(!listenOnMouseMove) {
+			return LISTENER_EVENT_NOT_CONSUMED;
+		}
 		if (!isActive() || motionEvent.buttonMask == Util::UI::MASK_NO_BUTTON) {
-			return LISTENER_EVENT_NOT_CONSUMED_AND_REMOVE_LISTENER;
+			listenOnMouseMove = false;
+			return LISTENER_EVENT_NOT_CONSUMED;
 		}
 		const Geometry::Vec2 localPos = Geometry::Vec2(motionEvent.x, motionEvent.y) - slider.getAbsPosition();
 		slider.updateDataFromPos(localPos);
@@ -209,7 +220,7 @@ bool Slider::onMouseButton(Component * /*component*/, const Util::UI::ButtonEven
 			updateDataFromPos(localPos);
 			sliderMarker->activate();
 			SliderMarker * s=dynamic_cast<SliderMarker *>(sliderMarker.get());
-			getGUI().addMouseMotionListener(s);
+			s->listenOnMouseMove = true;
 		}else if(buttonEvent.button == Util::UI::MOUSE_WHEEL_UP) {
 			updateData(getValue()+stepWidth);
 		}else if(buttonEvent.button == Util::UI::MOUSE_WHEEL_DOWN) {

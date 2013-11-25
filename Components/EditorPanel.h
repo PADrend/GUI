@@ -21,7 +21,7 @@ namespace GUI {
 /***
  **     EditorPanel ---|> Container ---|> Component
  **/
-class EditorPanel: public Container, public MouseMotionListener {
+class EditorPanel: public Container {
 		PROVIDES_TYPE_NAME(EditorPanel)
 		
 		enum state_t{
@@ -32,9 +32,6 @@ class EditorPanel: public Container, public MouseMotionListener {
 
 		EditorPanel(GUI_Manager & gui,flag_t flags=0);
 		virtual ~EditorPanel();
-
-		// ---|> MouseMotionListener
-		virtual listenerResult_t onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent) override;
 
 		// ---|> Container
 		virtual void removeContent(const Ref & child) override	{
@@ -51,11 +48,14 @@ class EditorPanel: public Container, public MouseMotionListener {
 		virtual void doDisplay(const Geometry::Rect & region) override;
 
 		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
+		listenerResult_t onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent);
 
 		Geometry::Vec2 dragStartPos;
 		Geometry::Vec2 dragPos;
 
 		GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
+		GUI_Manager::MouseMotionListenerHandle mouseMotionListenerHandle;
+		bool listenOnMouseMove;
 
 		void rectSelect_start(const Geometry::Vec2 & pos);
 		void rectSelect_break();

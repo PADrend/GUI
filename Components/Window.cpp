@@ -25,21 +25,28 @@ namespace GUI{
 const Util::StringIdentifier Window::ACTION_onWindowClosed("onWindowClosed");
 
 //! TitlePanel ---|> Container, MouseMotionListener, MouseButtonListener
-struct TitlePanel:public Container,public MouseMotionListener {
+struct TitlePanel : public Container {
 	Window & window;
 	Geometry::Vec2 dragOffset;
 	GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
+	GUI_Manager::MouseMotionListenerHandle mouseMotionListenerHandle;
+	bool listenOnMouseMove;
 	TitlePanel(Window & win) :
 		Container(win.getGUI()),
 		window(win),
 		mouseButtonListenerHandle(win.getGUI().addMouseButtonListener(this, std::bind(&TitlePanel::onMouseButton, 
 																					  this, 
 																					  std::placeholders::_1,
-																					  std::placeholders::_2))) {
+																					  std::placeholders::_2))),
+		mouseMotionListenerHandle(win.getGUI().addGlobalMouseMotionListener(std::bind(&TitlePanel::onMouseMove, 
+																					  this, 
+																					  std::placeholders::_1,
+																					  std::placeholders::_2))),
+		listenOnMouseMove(false) {
 	}
 	virtual ~TitlePanel(){
+		getGUI().removeGlobalMouseMotionListener(std::move(mouseMotionListenerHandle));
 		getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
-		getGUI().removeMouseMotionListener(this);
 	}
 	bool onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) {
 		if(!buttonEvent.pressed)
@@ -47,15 +54,18 @@ struct TitlePanel:public Container,public MouseMotionListener {
 		activate();
 		getGUI().selectFirst(&window);
 		if(buttonEvent.button == Util::UI::MOUSE_BUTTON_LEFT) {
-			getGUI().addMouseMotionListener(this);
+			listenOnMouseMove = true;
 			dragOffset = window.getPosition() - Geometry::Vec2(buttonEvent.x, buttonEvent.y);
 		}
 		return true;
 	}
-	 // ---|> MouseMotionListener
-	listenerResult_t onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) override{
+	listenerResult_t onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
+		if(!listenOnMouseMove) {
+			return LISTENER_EVENT_NOT_CONSUMED;
+		}
 		if (!isActive() || !(motionEvent.buttonMask & Util::UI::MASK_MOUSE_BUTTON_LEFT)) {
-			return LISTENER_EVENT_NOT_CONSUMED_AND_REMOVE_LISTENER;
+			listenOnMouseMove = false;
+			return LISTENER_EVENT_NOT_CONSUMED;
 		}
 		const Geometry::Vec2 currentMousePos(motionEvent.x, motionEvent.y);
 		window.setPosition(currentMousePos + dragOffset);
@@ -64,21 +74,28 @@ struct TitlePanel:public Container,public MouseMotionListener {
 };
 
 //! ResizePanel ---|> Component, MouseMotionListener, MouseButtonListener
-struct ResizePanel:public Component,public MouseMotionListener {
+struct ResizePanel : public Component{
 	Window & window;
 	int changeX, changeY;
 	GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
+	GUI_Manager::MouseMotionListenerHandle mouseMotionListenerHandle;
+	bool listenOnMouseMove;
 	ResizePanel(Window & win) :
 		Component(win.getGUI()),
 		window(win),
 		mouseButtonListenerHandle(win.getGUI().addMouseButtonListener(this, std::bind(&ResizePanel::onMouseButton, 
 																					  this, 
 																					  std::placeholders::_1,
-																					  std::placeholders::_2))) {
+																					  std::placeholders::_2))),
+		mouseMotionListenerHandle(win.getGUI().addGlobalMouseMotionListener(std::bind(&ResizePanel::onMouseMove, 
+																					  this, 
+																					  std::placeholders::_1,
+																					  std::placeholders::_2))),
+		listenOnMouseMove(false) {
 	}
-	virtual ~ResizePanel(){
+	virtual ~ResizePanel() {
+		getGUI().removeGlobalMouseMotionListener(std::move(mouseMotionListenerHandle));
 		getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
-		getGUI().removeMouseMotionListener(this);
 	}
 
 	//! ---|> Component
@@ -100,13 +117,15 @@ struct ResizePanel:public Component,public MouseMotionListener {
 		changeY = y;
 		activate();
 		select();
-		getGUI().addMouseMotionListener(this);
+		listenOnMouseMove = true;
 	}
-	
-	// ---|> MouseMotionListener
-	listenerResult_t onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) override{
+	listenerResult_t onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
+		if(!listenOnMouseMove) {
+			return LISTENER_EVENT_NOT_CONSUMED;
+		}
 		if (!isActive() || !(motionEvent.buttonMask & Util::UI::MASK_MOUSE_BUTTON_LEFT)) {
-			return LISTENER_EVENT_NOT_CONSUMED_AND_REMOVE_LISTENER;
+			listenOnMouseMove = false;
+			return LISTENER_EVENT_NOT_CONSUMED;
 		}
 		Geometry::Rect r = window.getRect();
 		if(changeX > 0) {
@@ -130,13 +149,21 @@ struct ResizePanel:public Component,public MouseMotionListener {
 	}
 };
 
-//! AutoMinimizer ---|> MouseMotionListener
-struct AutoMinimizer:public MouseMotionListener{
+struct AutoMinimizer {
 	Window & win;
-	AutoMinimizer(Window & _win):MouseMotionListener(),win(_win)	{	}
-	virtual ~AutoMinimizer() 										{	}
-	// ---|> MouseMotionListener
-	listenerResult_t onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) override{
+	GUI_Manager::MouseMotionListenerHandle mouseMotionListenerHandle;
+	AutoMinimizer(Window & _win) : 
+		win(_win),
+		mouseMotionListenerHandle(win.getGUI().addGlobalMouseMotionListener(std::bind(&AutoMinimizer::onMouseMove, 
+																					  this, 
+																					  std::placeholders::_1,
+																					  std::placeholders::_2))) {
+	}
+	~AutoMinimizer() {
+		win.getGUI().removeGlobalMouseMotionListener(std::move(mouseMotionListenerHandle));
+	}
+
+	listenerResult_t onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
 		if(motionEvent.buttonMask == Util::UI::MASK_NO_BUTTON) {
 			bool inside=win.getAbsRect().changeSizeCentered(40,40).contains(motionEvent.x, motionEvent.y);
 			if(inside && win.isMinimized()){
@@ -537,7 +564,6 @@ void Window::minimize(){
 		return;
 	if(!autoMinimizer){
 		autoMinimizer.reset(new AutoMinimizer(*this));
-		getGUI().addMouseMotionListener(autoMinimizer.get());
 		minimizeButton->setText("A");
 	}
 
@@ -563,13 +589,11 @@ void Window::restoreRect(){
 
 void Window::restore(){
 	restoreRect();
-	if(autoMinimizer){
-		getGUI().removeMouseMotionListener(autoMinimizer.get());
+	if(autoMinimizer) {
 		autoMinimizer.reset();
 		minimizeButton->setText(".");
 	}
 }
-
 
 void Window::setLogo(Component * newLogo){
 	if(newLogo==getLogo())

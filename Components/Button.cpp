@@ -33,9 +33,12 @@ static ExtLayouter * getDefaultLabelLayouter(){
 }
 
 //! (ctor)
-Button::Button(GUI_Manager & _gui,flag_t _flags/*=0*/)
-		:Container(_gui,_flags),MouseMotionListener(),
-		actionName(ACTION_Button_click),switchedOn(false),hover(false),actionListener(),
+Button::Button(GUI_Manager & _gui,flag_t _flags/*=0*/) :
+		Container(_gui,_flags),
+		actionName(ACTION_Button_click),
+		switchedOn(false),
+		hover(false),
+		actionListener(),
 		keyListenerHandle(_gui.addKeyListener(this, std::bind(&Button::onKeyEvent, 
 															  this, 
 															  std::placeholders::_1))),
@@ -49,7 +52,11 @@ Button::Button(GUI_Manager & _gui,flag_t _flags/*=0*/)
 																		action();
 																	}
 																	return true;
-																})) {
+																})),
+		mouseMotionListenerHandle(_gui.addGlobalMouseMotionListener(std::bind(&Button::onMouseMove, 
+																			  this, 
+																			  std::placeholders::_1,
+																			  std::placeholders::_2))) {
 	setFlag(SELECTABLE,true);
 
 	// create Label
@@ -57,12 +64,11 @@ Button::Button(GUI_Manager & _gui,flag_t _flags/*=0*/)
 	textLabel->addLayouter(getDefaultLabelLayouter());
 	textLabel->setTextStyle(Draw::TEXT_ALIGN_CENTER|Draw::TEXT_ALIGN_MIDDLE);
 	addContent(textLabel.get());
-	getGUI().addMouseMotionListener(this);
 }
 
 //! (dtor)
 Button::~Button() {
-	getGUI().removeMouseMotionListener(this);
+	getGUI().removeGlobalMouseMotionListener(std::move(mouseMotionListenerHandle));
 	getGUI().removeMouseClickListener(this, std::move(mouseClickListenerHandle));
 	getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
 	getGUI().removeKeyListener(this, std::move(keyListenerHandle));
@@ -166,13 +172,11 @@ void Button::action(){
 	getGUI().componentActionPerformed(this,actionName);
 }
 
-//! ---|> MouseMotionListener
-listenerResult_t Button::onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent){
+listenerResult_t Button::onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent) {
 	const Geometry::Vec2 absPos(motionEvent.x, motionEvent.y);
 	if(!isLocked() && !hover && coversAbsPosition(absPos)) {
 		hover=true;
 		invalidateRegion();
-		getGUI().addMouseMotionListener(this);
 
 		if(getFlag(HOVER_BUTTON)){
 			select();
@@ -185,7 +189,7 @@ listenerResult_t Button::onMouseMove(Component * component, const Util::UI::Moti
 		hover=false;
 		invalidateRegion();
 		// markForRepaint()
-		return LISTENER_EVENT_CONSUMED_AND_REMOVE_LISTENER;
+		return LISTENER_EVENT_CONSUMED;
 	}
 	return LISTENER_EVENT_NOT_CONSUMED;
 }

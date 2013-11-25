@@ -37,11 +37,7 @@ Panel::Panel(GUI_Manager & _gui,flag_t _flags/*=0*/) : ScrollableContainer(_gui,
 	getContentContainer()->addLayouter(getDefaultLayouter());
 }
 
-//! (dtor)
-Panel::~Panel() {
-	getGUI().removeMouseMotionListener(this);
-	//dtor
-}
+Panel::~Panel() = default;
 
 void Panel::disableAutoBreak(){
 	accessLayouter().setAutoBreak(false);

@@ -28,12 +28,16 @@ static const Util::StringIdentifier dataId_verticallScrollPos("scroll");
 //! (ctor)
 ScrollableContainer::ScrollableContainer(GUI_Manager & _gui,flag_t _flags/*=0*/) :
 		Container(_gui,_flags),
-		MouseMotionListener(),
 		contentContainer(new Container(_gui)),
 		mouseButtonListenerHandle(_gui.addMouseButtonListener(this, std::bind(&ScrollableContainer::onMouseButton, 
 																			  this, 
 																			  std::placeholders::_1,
-																			  std::placeholders::_2))) {
+																			  std::placeholders::_2))),
+		mouseMotionListenerHandle(_gui.addGlobalMouseMotionListener(std::bind(&ScrollableContainer::onMouseMove, 
+																			  this, 
+																			  std::placeholders::_1,
+																			  std::placeholders::_2))),
+		listenOnMouseMove(false) {
 
 	_addChild(contentContainer.get());
 	contentContainer->setFlag(IS_CLIENT_AREA,true);
@@ -47,8 +51,9 @@ ScrollableContainer::~ScrollableContainer() {
 										  std::move(*optionalScrollBarListener.get()));
 		optionalScrollBarListener.reset();
 	}
+	getGUI().removeGlobalMouseMotionListener(std::move(mouseMotionListenerHandle));
 	getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
-	getGUI().removeMouseMotionListener(this);
+
 }
 
 //! ---|> Component
@@ -115,15 +120,14 @@ void ScrollableContainer::doLayout() {
 	contentContainer->setPosition(-scrollPos);
 }
 
-//! ---|> MouseButtonListener
-bool ScrollableContainer::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent){
+bool ScrollableContainer::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) {
 	if(buttonEvent.button == Util::UI::MOUSE_BUTTON_MIDDLE) {
 		if(maxScrollPos.x()<=0 && maxScrollPos.y()<=0)
 			return false;
 		else if(buttonEvent.pressed){
-			getGUI().addMouseMotionListener(this);
+			listenOnMouseMove = true;
 		} else {// !pressed
-			getGUI().removeMouseMotionListener(this);
+			listenOnMouseMove = false;
 		}
 		return true;
 	}
@@ -131,10 +135,13 @@ bool ScrollableContainer::onMouseButton(Component * /*component*/, const Util::U
 
 }
 
-//! ---|> MouseMotionListener
-listenerResult_t ScrollableContainer::onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent){
+listenerResult_t ScrollableContainer::onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
+	if(!listenOnMouseMove) {
+		return LISTENER_EVENT_NOT_CONSUMED;
+	}
 	if(!(motionEvent.buttonMask & Util::UI::MASK_MOUSE_BUTTON_MIDDLE)) {
-		return LISTENER_EVENT_NOT_CONSUMED_AND_REMOVE_LISTENER;
+		listenOnMouseMove = false;
+		return LISTENER_EVENT_NOT_CONSUMED;
 	}
 	const Geometry::Vec2 delta(motionEvent.deltaX, motionEvent.deltaY);
 	scrollTo(scrollPos - delta * 2.0);

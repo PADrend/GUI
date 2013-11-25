@@ -22,11 +22,17 @@ namespace GUI {
 
 //! (ctor)
 Splitter::Splitter(GUI_Manager & _gui,splittingDirection_t _direction,flag_t _flags/*=0*/):
-		Component(_gui,_flags),MouseMotionListener(),direction(_direction),
+		Component(_gui,_flags),
+		direction(_direction),
 		mouseButtonListenerHandle(_gui.addMouseButtonListener(this, std::bind(&Splitter::onMouseButton, 
 																			  this, 
 																			  std::placeholders::_1,
-																			  std::placeholders::_2))) {
+																			  std::placeholders::_2))),
+		mouseMotionListenerHandle(_gui.addGlobalMouseMotionListener(std::bind(&Splitter::onMouseMove, 
+																			  this, 
+																			  std::placeholders::_1,
+																			  std::placeholders::_2))),
+		listenOnMouseMove(false) {
 	if( direction == HORIZONTAL){
 		setExtLayout(
 			ExtLayouter::WIDTH_REL|ExtLayouter::HEIGHT_ABS,
@@ -40,9 +46,9 @@ Splitter::Splitter(GUI_Manager & _gui,splittingDirection_t _direction,flag_t _fl
 }
 
 //! (dtor)
-Splitter::~Splitter(){
+Splitter::~Splitter() {
+	getGUI().removeGlobalMouseMotionListener(std::move(mouseMotionListenerHandle));
 	getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
-	getGUI().removeMouseMotionListener(this);
 }
 
 //! ---|> Component
@@ -104,27 +110,29 @@ void Splitter::doLayout(){
 
 }
 
-//! ---|> MouseButtonListener
 bool Splitter::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) {
 	if(buttonEvent.button == Util::UI::MOUSE_BUTTON_LEFT) {
 		if(buttonEvent.pressed && !isSelected()) {
 			select();
-			getGUI().addMouseMotionListener(this);
+			listenOnMouseMove = true;
 			return true;
 		} else if(!buttonEvent.pressed && isSelected()) {
 			unselect();
-			getGUI().removeMouseMotionListener(this);
+			listenOnMouseMove = false;
 			return true;
 		}
 	}
 	return false;
 }
 
-//! ---|> MouseMotionListener
-listenerResult_t Splitter::onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent){
+listenerResult_t Splitter::onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
+	if(!listenOnMouseMove) {
+		return LISTENER_EVENT_NOT_CONSUMED;
+	}
 	if( !hasParent() || getPrev()==nullptr || getNext()==nullptr || !(motionEvent.buttonMask & Util::UI::MASK_MOUSE_BUTTON_LEFT)) {
 		unselect();
-		return LISTENER_EVENT_CONSUMED_AND_REMOVE_LISTENER;
+		listenOnMouseMove = false;
+		return LISTENER_EVENT_CONSUMED;
 	}
 	if(direction == VERTICAL) {
 		getPrev()->setWidth(std::max(0.0f, std::min(getPrev()->getWidth() + motionEvent.deltaX, getParent()->getWidth() - getWidth())));

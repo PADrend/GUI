@@ -22,7 +22,7 @@ namespace GUI {
 /***
  **  Textfield ---|> Component
  **/
-class Textfield: public Component, public MouseMotionListener {
+class Textfield: public Component {
 		PROVIDES_TYPE_NAME(Textfield)
 	public:
 		Textfield(GUI_Manager & gui,const std::string &text="",std::string dataName="",flag_t flags=0);
@@ -33,9 +33,6 @@ class Textfield: public Component, public MouseMotionListener {
 		const std::string & getText()const;
 //		void setFont(AbstractFont * newFont);
 
-		// ---|> MouseMotionListener
-		virtual listenerResult_t onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent) override;
-
 		// ---|> Component
 		virtual bool onSelect() override;
 		virtual bool onUnselect() override;
@@ -45,6 +42,7 @@ class Textfield: public Component, public MouseMotionListener {
 
 		bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
 		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
+		listenerResult_t onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent);
 
 		std::string text;
 		std::string * textRef;
@@ -59,6 +57,8 @@ class Textfield: public Component, public MouseMotionListener {
 
 		GUI_Manager::KeyListenerHandle keyListenerHandle;
 		GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
+		GUI_Manager::MouseMotionListenerHandle mouseMotionListenerHandle;
+		bool listenOnMouseMove;
 
 		Geometry::Vec2 getCursorCoordinate(int cursorPos);
 		int getCursorPositionFromCoordinate(const Geometry::Vec2 & pos);

@@ -17,6 +17,7 @@
 #include <memory>
 
 namespace GUI {
+struct AutoMinimizer;
 class Label;
 class Button;
 
@@ -100,7 +101,7 @@ class Window : public Container {
 		Geometry::Rect storedRect;
 		float opacity;
 
-		std::unique_ptr<MouseMotionListener> autoMinimizer;
+		std::unique_ptr<AutoMinimizer> autoMinimizer;
 
 		GUI_Manager::KeyListenerHandle keyListenerHandle;
 		GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;

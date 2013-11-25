@@ -161,15 +161,20 @@ static const Util::StringIdentifier dataId_scrollPos("scroll");
 
 //! (ctor)
 Textarea::Textarea(GUI_Manager & _gui,flag_t _flags):
-		Container(_gui,_flags), MouseMotionListener(),lineHeight(15),
+		Container(_gui,_flags),
+		lineHeight(15),
 		selectionStart(std::make_pair(0,std::string::npos)), dataName("text"),dataChanged(false),activeTextUpdateIndex(0),
 		keyListenerHandle(_gui.addKeyListener(this, std::bind(&Textarea::onKeyEvent, 
 															  this, 
 															  std::placeholders::_1))),
-		 mouseButtonListenerHandle(_gui.addMouseButtonListener(this, std::bind(&Textarea::onMouseButton, 
-																			   this, 
-																			   std::placeholders::_1,
-																			   std::placeholders::_2))) {
+		mouseButtonListenerHandle(_gui.addMouseButtonListener(this, std::bind(&Textarea::onMouseButton, 
+																			  this, 
+																			  std::placeholders::_1,
+																			  std::placeholders::_2))),
+		mouseMotionListenerHandle(_gui.addGlobalMouseMotionListener(std::bind(&Textarea::onMouseMove, 
+																			  this, 
+																			  std::placeholders::_1,
+																			  std::placeholders::_2))) {
 	fontReference = getGUI().getActiveFont(PROPERTY_DEFAULT_FONT);
 	setFlag(SELECTABLE,true);
 	setFlag(USE_SCISSOR,true);
@@ -178,7 +183,6 @@ Textarea::Textarea(GUI_Manager & _gui,flag_t _flags):
     processor = new SimpleTextProcessor;
 }
 
-
 //! (dtor)
 Textarea::~Textarea() {
 	if(optionalScrollBarListener) {
@@ -186,7 +190,7 @@ Textarea::~Textarea() {
 										  std::move(*optionalScrollBarListener.get()));
 		optionalScrollBarListener.reset();
 	}
-	getGUI().removeMouseMotionListener(this);
+	getGUI().removeGlobalMouseMotionListener(std::move(mouseMotionListenerHandle));
 	getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
 	getGUI().removeKeyListener(this, std::move(keyListenerHandle));
 }
@@ -487,16 +491,15 @@ bool Textarea::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {
 	return true;
 }
 
-//! ---|> MouseButtonListener
 bool Textarea::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent){
 	if(buttonEvent.pressed && !isLocked()) {
 		select();
 		const Geometry::Vec2 localPos = Geometry::Vec2(buttonEvent.x, buttonEvent.y) - getAbsPosition();
 		if(buttonEvent.button == Util::UI::MOUSE_BUTTON_LEFT) {
 			moveCursor(processor->textPosToCursor(*this,localPos+scrollPos), getGUI().isShiftPressed());
-			getGUI().addMouseMotionListener(this);
+			listenOnMouseMove = true;
 		}else if(buttonEvent.button == Util::UI::MOUSE_BUTTON_MIDDLE) {
-			getGUI().addMouseMotionListener(this);
+			listenOnMouseMove = false;
 		}else if(buttonEvent.button == Util::UI::MOUSE_WHEEL_UP ) { // scroll
 			scrollTo( getScrollPos()-Geometry::Vec2(0,3.0f*lineHeight) );
 		}else if(buttonEvent.button == Util::UI::MOUSE_WHEEL_DOWN) { // scroll
@@ -507,11 +510,12 @@ bool Textarea::onMouseButton(Component * /*component*/, const Util::UI::ButtonEv
 		return true;
 	}
 	return false;
-
 }
-//
-//! ---|> MouseMotionListener
-listenerResult_t Textarea::onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent){
+
+listenerResult_t Textarea::onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
+	if(!listenOnMouseMove) {
+		return LISTENER_EVENT_NOT_CONSUMED;
+	}
 	if((motionEvent.buttonMask & Util::UI::MASK_MOUSE_BUTTON_LEFT) && !isLocked()) {
 		const Geometry::Vec2 localPos = Geometry::Vec2(motionEvent.x, motionEvent.y) - getAbsPosition();
 		moveCursor(processor->textPosToCursor(*this,localPos+scrollPos), true);
@@ -521,7 +525,8 @@ listenerResult_t Textarea::onMouseMove(Component * /*component*/, const Util::UI
 		scrollTo( getScrollPos() - delta*2.0 );
 		return LISTENER_EVENT_CONSUMED;
 	}
-	return LISTENER_EVENT_NOT_CONSUMED_AND_REMOVE_LISTENER;
+	listenOnMouseMove = false;
+	return LISTENER_EVENT_NOT_CONSUMED;
 }
 
 //! ---|> Component
@@ -531,7 +536,7 @@ bool Textarea::onSelect() {
 
 //! ---|> Component
 bool Textarea::onUnselect() {
-	getGUI().removeMouseMotionListener(this);
+	listenOnMouseMove = false;
 	if(dataChanged) { 
 		dataChanged = false;
 		getGUI().componentDataChanged(this,dataName);

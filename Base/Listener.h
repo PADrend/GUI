@@ -115,11 +115,6 @@ typedef std::function<bool (Component *, const Util::StringIdentifier &)> Handle
  */
 typedef std::function<void (Component *)> HandleDataChangeFun;
 
-struct MouseMotionListener {
-	virtual listenerResult_t onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent) = 0;
-	virtual ~MouseMotionListener() {}
-};
-
 /**
  * Type of functions reacting on a mouse button event onto a component. The
  * function receives the component onto which the mouse button event was
@@ -145,6 +140,17 @@ typedef std::function<bool (Component *, const Util::UI::ButtonEvent &)> HandleM
  * get activated via MouseButtonListener first.
  */
 typedef std::function<bool (Component *, unsigned int, const Geometry::Vec2 &)> HandleMouseClickFun;
+
+/**
+ * Type of functions reacting on a mouse motion event onto a component. The
+ * function receives the component onto which the mouse motion event was
+ * detected, and the mouse motion event.
+ * If it returns @c true, the callee signalizes that is processed the event and
+ * no other event handlers will be called. If it returns @c false, the callee
+ * signalizes that it did not process the event and the next event handler
+ * will be called.
+ */
+typedef std::function<bool (Component *, const Util::UI::MotionEvent &)> HandleMouseMotionFun;
 
 }
 #endif // GUI_LISTENER_H
