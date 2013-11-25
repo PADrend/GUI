@@ -57,7 +57,7 @@ class Scrollbar : public Container {
 		Util::WeakPointer<Component> marker;
 		Util::StringIdentifier dataName;
 
-		GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
+		MouseButtonListenerHandle mouseButtonListenerHandle;
 };
 }
 #endif // GUI_Scrollbar_H

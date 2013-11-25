@@ -136,9 +136,9 @@ public:
 	//! @name Event handling
 	//	@{
 	private:
-		GUI_Manager::KeyListenerHandle keyListenerHandle;
-		GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
-		GUI_Manager::MouseMotionListenerHandle mouseMotionListenerHandle;
+		KeyListenerHandle keyListenerHandle;
+		MouseButtonListenerHandle mouseButtonListenerHandle;
+		MouseMotionListenerHandle mouseMotionListenerHandle;
 		bool listenOnMouseMove;
 
 		bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
@@ -187,7 +187,7 @@ public:
 	private:
 		void finishScrolling();
 		Util::WeakPointer<Scrollbar> scrollBar;
-		std::unique_ptr<GUI_Manager::DataChangeListenerHandle> optionalScrollBarListener;
+		std::unique_ptr<DataChangeListenerHandle> optionalScrollBarListener;
 		Geometry::Vec2 scrollPos;
 		Geometry::Vec2 maxScrollPos;
 	//	@}

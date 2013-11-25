@@ -105,7 +105,7 @@ void Menu::open(const Geometry::Vec2 &pos){
 	bringToFront();
 
 	getGUI().selectFirst(this);
-	optionalFrameListener.reset(new GUI_Manager::FrameListenerHandle(getGUI().addFrameListener(std::bind(&onFrame, std::ref(*this), std::placeholders::_1))));
+	optionalFrameListener.reset(new FrameListenerHandle(getGUI().addFrameListener(std::bind(&onFrame, std::ref(*this), std::placeholders::_1))));
 }
 
 void Menu::close(){

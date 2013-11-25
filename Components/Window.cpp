@@ -28,8 +28,8 @@ const Util::StringIdentifier Window::ACTION_onWindowClosed("onWindowClosed");
 struct TitlePanel : public Container {
 	Window & window;
 	Geometry::Vec2 dragOffset;
-	GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
-	GUI_Manager::MouseMotionListenerHandle mouseMotionListenerHandle;
+	MouseButtonListenerHandle mouseButtonListenerHandle;
+	MouseMotionListenerHandle mouseMotionListenerHandle;
 	bool listenOnMouseMove;
 	TitlePanel(Window & win) :
 		Container(win.getGUI()),
@@ -77,8 +77,8 @@ struct TitlePanel : public Container {
 struct ResizePanel : public Component{
 	Window & window;
 	int changeX, changeY;
-	GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
-	GUI_Manager::MouseMotionListenerHandle mouseMotionListenerHandle;
+	MouseButtonListenerHandle mouseButtonListenerHandle;
+	MouseMotionListenerHandle mouseMotionListenerHandle;
 	bool listenOnMouseMove;
 	ResizePanel(Window & win) :
 		Component(win.getGUI()),
@@ -151,7 +151,7 @@ struct ResizePanel : public Component{
 
 struct AutoMinimizer {
 	Window & win;
-	GUI_Manager::MouseMotionListenerHandle mouseMotionListenerHandle;
+	MouseMotionListenerHandle mouseMotionListenerHandle;
 	AutoMinimizer(Window & _win) : 
 		win(_win),
 		mouseMotionListenerHandle(win.getGUI().addGlobalMouseMotionListener(std::bind(&AutoMinimizer::onMouseMove, 

@@ -103,8 +103,8 @@ class Window : public Container {
 
 		std::unique_ptr<AutoMinimizer> autoMinimizer;
 
-		GUI_Manager::KeyListenerHandle keyListenerHandle;
-		GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
+		KeyListenerHandle keyListenerHandle;
+		MouseButtonListenerHandle mouseButtonListenerHandle;
 };
 }
 #endif // GUI_WINDOW_H

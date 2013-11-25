@@ -55,9 +55,9 @@ class Checkbox : public Container {
 		bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
 		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
 
-		GUI_Manager::KeyListenerHandle keyListenerHandle;
-		GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
-		GUI_Manager::MouseClickListenerHandle mouseClickListenerHandle;
+		KeyListenerHandle keyListenerHandle;
+		MouseButtonListenerHandle mouseButtonListenerHandle;
+		MouseClickListenerHandle mouseClickListenerHandle;
 
 	protected:
 		Util::WeakPointer<Label> textLabel;

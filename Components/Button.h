@@ -62,10 +62,10 @@ class Button : public Container {
 		bool switchedOn;
 		bool hover;
 		HandleActionFun actionListener;
-		GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
-		GUI_Manager::MouseClickListenerHandle mouseClickListenerHandle;
-		GUI_Manager::MouseMotionListenerHandle mouseMotionListenerHandle;
-		GUI_Manager::KeyListenerHandle keyListenerHandle;
+		MouseButtonListenerHandle mouseButtonListenerHandle;
+		MouseClickListenerHandle mouseClickListenerHandle;
+		MouseMotionListenerHandle mouseMotionListenerHandle;
+		KeyListenerHandle keyListenerHandle;
 };
 }
 #endif // GUI_Button_H

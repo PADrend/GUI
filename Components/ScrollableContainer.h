@@ -53,11 +53,11 @@ class ScrollableContainer: public Container {
 	private:
 		Util::WeakPointer<Container> contentContainer;
 		Util::WeakPointer<Scrollbar> vScrollBar;
-		std::unique_ptr<GUI_Manager::DataChangeListenerHandle> optionalScrollBarListener;
+		std::unique_ptr<DataChangeListenerHandle> optionalScrollBarListener;
 		Geometry::Vec2 scrollPos;
 		Geometry::Vec2 maxScrollPos;
-		GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
-		GUI_Manager::MouseMotionListenerHandle mouseMotionListenerHandle;
+		MouseButtonListenerHandle mouseButtonListenerHandle;
+		MouseMotionListenerHandle mouseMotionListenerHandle;
 		bool listenOnMouseMove;
 
 		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);

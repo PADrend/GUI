@@ -24,8 +24,8 @@ namespace GUI{
  **/
 class SliderMarker:public Component {
 	Slider & slider;
-	GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
-	GUI_Manager::MouseMotionListenerHandle mouseMotionListenerHandle;
+	MouseButtonListenerHandle mouseButtonListenerHandle;
+	MouseMotionListenerHandle mouseMotionListenerHandle;
 
 	public:
 	bool listenOnMouseMove;

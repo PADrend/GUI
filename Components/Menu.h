@@ -42,9 +42,9 @@ class Menu: public Container {
 		bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
 		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
 
-		GUI_Manager::KeyListenerHandle keyListenerHandle;
-		GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
-		std::unique_ptr<GUI_Manager::FrameListenerHandle> optionalFrameListener;
+		KeyListenerHandle keyListenerHandle;
+		MouseButtonListenerHandle mouseButtonListenerHandle;
+		std::unique_ptr<FrameListenerHandle> optionalFrameListener;
 
 	public:
 		// ---o

@@ -92,7 +92,7 @@ class Textarea: public Container {
 	//!	@name Scrolling
 	//	\{
 		Util::WeakPointer<Scrollbar> scrollBar;
-		std::unique_ptr<GUI_Manager::DataChangeListenerHandle> optionalScrollBarListener;
+		std::unique_ptr<DataChangeListenerHandle> optionalScrollBarListener;
 		Geometry::Vec2 scrollPos;
 		
 	public:
@@ -127,9 +127,9 @@ class Textarea: public Container {
 		std::vector<TextUpdate> commands;
 		size_t activeTextUpdateIndex;
 		
-		GUI_Manager::KeyListenerHandle keyListenerHandle;
-		GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
-		GUI_Manager::MouseMotionListenerHandle mouseMotionListenerHandle;
+		KeyListenerHandle keyListenerHandle;
+		MouseButtonListenerHandle mouseButtonListenerHandle;
+		MouseMotionListenerHandle mouseMotionListenerHandle;
 		bool listenOnMouseMove;
 	//	\}
 };

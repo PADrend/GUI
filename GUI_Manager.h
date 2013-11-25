@@ -184,7 +184,6 @@ class GUI_Manager {
 	private:
 		ActionListenerRegistry actionListener;
 	public:
-		typedef ActionListenerRegistry::handle_t ActionListenerHandle;
 		ActionListenerHandle addActionListener(HandleActionFun fun) {
 			return std::move(actionListener.registerElement(std::move(fun)));
 		}
@@ -199,7 +198,6 @@ class GUI_Manager {
 		typedef std::unordered_map<Component *, DataChangeListenerRegistry> DataChangeListenerMap;
 		DataChangeListenerMap dataChangeListener;
 	public:
-		typedef DataChangeListenerRegistry::handle_t DataChangeListenerHandle;
 		DataChangeListenerHandle addDataChangeListener(Component * component, HandleDataChangeFun fun) {
 			return std::move(dataChangeListener[component].registerElement(std::move(fun)));
 		}
@@ -224,7 +222,6 @@ class GUI_Manager {
 		typedef std::unordered_map<Component *, MouseButtonListenerRegistry> MouseButtonListenerMap;
 		MouseButtonListenerMap mouseButtonListener;
 	public:
-		typedef MouseButtonListenerRegistry::handle_t MouseButtonListenerHandle;
 		MouseButtonListenerHandle addMouseButtonListener(Component * component, HandleMouseButtonFun fun) {
 			return std::move(mouseButtonListener[component].registerElement(std::move(fun)));
 		}
@@ -248,7 +245,6 @@ class GUI_Manager {
 	private:
 		MouseMotionListenerRegistry globalMouseMotionListener;
 	public:
-		typedef MouseMotionListenerRegistry::handle_t MouseMotionListenerHandle;
 		MouseMotionListenerHandle addGlobalMouseMotionListener(HandleMouseMotionFun fun) {
 			return std::move(globalMouseMotionListener.registerElement(std::move(fun)));
 		}
@@ -262,7 +258,6 @@ class GUI_Manager {
 		typedef std::unordered_map<Component *, MouseClickListenerRegistry> MouseClickListenerMap;
 		MouseClickListenerMap mouseClickListener;
 	public:
-		typedef MouseClickListenerRegistry::handle_t MouseClickListenerHandle;
 		MouseClickListenerHandle addMouseClickListener(Component * component, HandleMouseClickFun fun) {
 			return std::move(mouseClickListener[component].registerElement(std::move(fun)));
 		}
@@ -279,7 +274,6 @@ class GUI_Manager {
 		typedef std::unordered_map<Component *, KeyListenerRegistry> KeyListenerMap;
 		KeyListenerMap keyListener;
 	public:
-		typedef KeyListenerRegistry::handle_t KeyListenerHandle;
 		KeyListenerHandle addKeyListener(Component * component, HandleKeyFun fun) {
 			return std::move(keyListener[component].registerElement(std::move(fun)));
 		}
@@ -295,7 +289,6 @@ class GUI_Manager {
 	private:
 		FrameListenerRegistry frameListener;
 	public:
-		typedef FrameListenerRegistry::handle_t FrameListenerHandle;
 		FrameListenerHandle addFrameListener(FrameListenerFun fun) {
 			return std::move(frameListener.registerElement(std::move(fun)));
 		}

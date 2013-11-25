@@ -75,7 +75,7 @@ class TreeView: public Container {
 				void setTreeView( TreeView * myTreeView);
 				TreeView * myTreeView;
 				bool marked;
-				GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
+				MouseButtonListenerHandle mouseButtonListenerHandle;
 
 				void unmarkSubtree(Component * root)const;
 		};
@@ -126,11 +126,11 @@ class TreeView: public Container {
 		float scrollPos;
 		bool multiSelect;
 		Util::WeakPointer<Scrollbar> scrollBar;
-		std::unique_ptr<GUI_Manager::DataChangeListenerHandle> optionalScrollBarListener;
+		std::unique_ptr<DataChangeListenerHandle> optionalScrollBarListener;
 
-		GUI_Manager::KeyListenerHandle keyListenerHandle;
-		GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
-		GUI_Manager::MouseMotionListenerHandle mouseMotionListenerHandle;
+		KeyListenerHandle keyListenerHandle;
+		MouseButtonListenerHandle mouseButtonListenerHandle;
+		MouseMotionListenerHandle mouseMotionListenerHandle;
 		bool listenOnMouseMove;
 };
 }

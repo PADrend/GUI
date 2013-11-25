@@ -104,6 +104,8 @@ typedef std::function<bool (Component *,
 typedef std::function<bool (Component *, 
 							const Util::UI::MotionEvent &)> HandleMouseMotionFun;
 
+
+
 //! Registry for functions reacting on actions.
 typedef Util::Registry<std::list<HandleActionFun>> ActionListenerRegistry;
 //! Registry for functions reacting on a change of a component's data.
@@ -119,6 +121,22 @@ typedef Util::Registry<std::list<HandleMouseClickFun>> MouseClickListenerRegistr
 //! Registry for functions reacting on a mouse motion event.
 typedef Util::Registry<std::list<HandleMouseMotionFun>> MouseMotionListenerRegistry;
 
+
+
+//! Handle obtained by the registration of a HandleActionFun.
+typedef ActionListenerRegistry::handle_t ActionListenerHandle;
+//! Handle obtained by the registration of a HandleDataChangeFun.
+typedef DataChangeListenerRegistry::handle_t DataChangeListenerHandle;
+//! Handle obtained by the registration of a FrameListenerFun.
+typedef FrameListenerRegistry::handle_t FrameListenerHandle;
+//! Handle obtained by the registration of a HandleKeyFun.
+typedef KeyListenerRegistry::handle_t KeyListenerHandle;
+//! Handle obtained by the registration of a HandleMouseButtonFun.
+typedef MouseButtonListenerRegistry::handle_t MouseButtonListenerHandle;
+//! Handle obtained by the registration of a HandleMouseClickFun.
+typedef MouseClickListenerRegistry::handle_t MouseClickListenerHandle;
+//! Handle obtained by the registration of a HandleMouseMotionFun.
+typedef MouseMotionListenerRegistry::handle_t MouseMotionListenerHandle;
 
 }
 

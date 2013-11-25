@@ -84,7 +84,7 @@ void ScrollableContainer::doLayout() {
 	}else{
 		if(vScrollBar.isNull()){
 			vScrollBar=new Scrollbar(getGUI(),dataId_verticallScrollPos,Scrollbar::VERTICAL);
-			optionalScrollBarListener.reset(new GUI_Manager::DataChangeListenerHandle(getGUI().addDataChangeListener(
+			optionalScrollBarListener.reset(new DataChangeListenerHandle(getGUI().addDataChangeListener(
 												vScrollBar.get(),
 												[this](Component *) {
 													if(vScrollBar.isNotNull()) {

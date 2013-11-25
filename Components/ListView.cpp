@@ -138,7 +138,7 @@ void ListView::doLayout() {
 	} else {
 		if(scrollBar.isNull()){
 			scrollBar = new Scrollbar(getGUI(), dataId_scrollPos, Scrollbar::VERTICAL);
-			optionalScrollBarListener.reset(new GUI_Manager::DataChangeListenerHandle(getGUI().addDataChangeListener(
+			optionalScrollBarListener.reset(new DataChangeListenerHandle(getGUI().addDataChangeListener(
 												scrollBar.get(),
 												[this](Component *) {
 													if(scrollBar.isNotNull()) {

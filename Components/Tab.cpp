@@ -26,9 +26,9 @@ namespace GUI {
  **/
 struct TabTitlePanel : public Container {
 	TabbedPanel::Tab & myTab;
-	GUI_Manager::KeyListenerHandle keyListenerHandle;
-	GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
-	GUI_Manager::MouseMotionListenerHandle mouseMotionListenerHandle;
+	KeyListenerHandle keyListenerHandle;
+	MouseButtonListenerHandle mouseButtonListenerHandle;
+	MouseMotionListenerHandle mouseMotionListenerHandle;
 	bool listenOnMouseMove;
 	TabTitlePanel(GUI_Manager & _gui,TabbedPanel::Tab & tab) :
 			Container(_gui), myTab(tab),

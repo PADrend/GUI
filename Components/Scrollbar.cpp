@@ -27,8 +27,8 @@ class ScrollMarker : public Component {
 		float dragStartScroll;
 		bool catchDragStartPos;
 
-		GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
-		GUI_Manager::MouseMotionListenerHandle mouseMotionListenerHandle;
+		MouseButtonListenerHandle mouseButtonListenerHandle;
+		MouseMotionListenerHandle mouseMotionListenerHandle;
 		bool listenOnMouseMove;
 
 	public:

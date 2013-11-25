@@ -366,7 +366,7 @@ void TreeView::doLayout() {
 											ExtLayouter::POS_Y_ABS|ExtLayouter::REFERENCE_Y_TOP|ExtLayouter::ALIGN_Y_TOP |
 											ExtLayouter::WIDTH_ABS|ExtLayouter::HEIGHT_ABS,
 											Geometry::Vec2(1,2),Geometry::Vec2(getGUI().getGlobalValue(PROPERTY_SCROLLBAR_WIDTH),-4));
-			optionalScrollBarListener.reset(new GUI_Manager::DataChangeListenerHandle(getGUI().addDataChangeListener(
+			optionalScrollBarListener.reset(new DataChangeListenerHandle(getGUI().addDataChangeListener(
 												scrollBar.get(),
 												[this](Component *) {
 													if(scrollBar.isNotNull()) {

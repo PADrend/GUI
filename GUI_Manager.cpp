@@ -98,8 +98,8 @@ class MouseCursorHandler {
 	private:
 		GUI_Manager & gui;
 		bool cursorLockedByButton;
-		GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
-		GUI_Manager::MouseMotionListenerHandle mouseMotionListenerHandle;
+		MouseButtonListenerHandle mouseButtonListenerHandle;
+		MouseMotionListenerHandle mouseMotionListenerHandle;
 	public:
 		
 		MouseCursorHandler(GUI_Manager & _gui) :
@@ -156,7 +156,7 @@ class TooltipHandler : public Component {
 		enum mode_t{
 			SEARCHING,ACTIVE,INACTIVE
 		} mode;
-		GUI_Manager::MouseMotionListenerHandle mouseMotionListenerHandle;
+		MouseMotionListenerHandle mouseMotionListenerHandle;
 	public:
 
 		TooltipHandler(GUI_Manager & _gui) : 

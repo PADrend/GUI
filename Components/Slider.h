@@ -79,8 +79,8 @@ class Slider : public Container {
 
 		Util::StringIdentifier dataName;
 
-		GUI_Manager::KeyListenerHandle keyListenerHandle;
-		GUI_Manager::MouseButtonListenerHandle mouseButtonListenerHandle;
+		KeyListenerHandle keyListenerHandle;
+		MouseButtonListenerHandle mouseButtonListenerHandle;
 };
 }
 #endif // GUI_Slider_H
