@@ -191,9 +191,6 @@ class GUI_Manager {
 			actionListener.unregisterElement(std::move(handle));
 		}
 
-
-		//----
-
 	private:
 		typedef std::unordered_map<Component *, DataChangeListenerRegistry> DataChangeListenerMap;
 		DataChangeListenerMap dataChangeListener;
@@ -216,7 +213,29 @@ class GUI_Manager {
 			removeDataChangeListener(nullptr, std::move(handle));
 		}
 
-		//----
+	private:
+		FrameListenerRegistry frameListener;
+	public:
+		FrameListenerHandle addFrameListener(FrameListenerFun fun) {
+			return std::move(frameListener.registerElement(std::move(fun)));
+		}
+		void removeFrameListener(FrameListenerHandle handle) {
+			frameListener.unregisterElement(std::move(handle));
+		}
+
+	private:
+		typedef std::unordered_map<Component *, KeyListenerRegistry> KeyListenerMap;
+		KeyListenerMap keyListener;
+	public:
+		KeyListenerHandle addKeyListener(Component * component, HandleKeyFun fun) {
+			return std::move(keyListener[component].registerElement(std::move(fun)));
+		}
+		void removeKeyListener(Component * component, KeyListenerHandle handle) {
+			const auto it = keyListener.find(component);
+			if(it != keyListener.cend()) {
+				it->second.unregisterElement(std::move(handle));
+			}
+		}
 
 	private:
 		typedef std::unordered_map<Component *, MouseButtonListenerRegistry> MouseButtonListenerMap;
@@ -240,20 +259,6 @@ class GUI_Manager {
 			removeMouseButtonListener(nullptr, std::move(handle));
 		}
 
-		//----
-
-	private:
-		MouseMotionListenerRegistry globalMouseMotionListener;
-	public:
-		MouseMotionListenerHandle addGlobalMouseMotionListener(HandleMouseMotionFun fun) {
-			return std::move(globalMouseMotionListener.registerElement(std::move(fun)));
-		}
-		void removeGlobalMouseMotionListener(MouseMotionListenerHandle handle) {
-			globalMouseMotionListener.unregisterElement(std::move(handle));
-		}
-
-		//----
-
 	private:
 		typedef std::unordered_map<Component *, MouseClickListenerRegistry> MouseClickListenerMap;
 		MouseClickListenerMap mouseClickListener;
@@ -268,39 +273,20 @@ class GUI_Manager {
 			}
 		}
 
-		//----
-
 	private:
-		typedef std::unordered_map<Component *, KeyListenerRegistry> KeyListenerMap;
-		KeyListenerMap keyListener;
+		MouseMotionListenerRegistry globalMouseMotionListener;
 	public:
-		KeyListenerHandle addKeyListener(Component * component, HandleKeyFun fun) {
-			return std::move(keyListener[component].registerElement(std::move(fun)));
+		MouseMotionListenerHandle addGlobalMouseMotionListener(HandleMouseMotionFun fun) {
+			return std::move(globalMouseMotionListener.registerElement(std::move(fun)));
 		}
-		void removeKeyListener(Component * component, KeyListenerHandle handle) {
-			const auto it = keyListener.find(component);
-			if(it != keyListener.cend()) {
-				it->second.unregisterElement(std::move(handle));
-			}
+		void removeGlobalMouseMotionListener(MouseMotionListenerHandle handle) {
+			globalMouseMotionListener.unregisterElement(std::move(handle));
 		}
 
-		//----
 
-	private:
-		FrameListenerRegistry frameListener;
-	public:
-		FrameListenerHandle addFrameListener(FrameListenerFun fun) {
-			return std::move(frameListener.registerElement(std::move(fun)));
-		}
-		void removeFrameListener(FrameListenerHandle handle) {
-			frameListener.unregisterElement(std::move(handle));
-		}
-
-		//----
 
 		void componentActionPerformed(Component *c,const Util::StringIdentifier & actionName);
 		void componentDataChanged(Component *c,const Util::StringIdentifier & actionName);
-//		void componentMouseClicked(Component *c,unsigned int button,const Geometry::Vec2 &localPos,bool pressed);
 
 		bool isCtrlPressed() const;
 		bool isShiftPressed() const;
