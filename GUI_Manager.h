@@ -281,13 +281,12 @@ class GUI_Manager {
 		//----
 
 	private:
-		typedef std::function<bool (const Util::UI::KeyboardEvent &)> KeyListenerFun;
-		typedef Util::Registry<std::list<KeyListenerFun>> KeyListenerRegistry;
+		typedef Util::Registry<std::list<HandleKeyFun>> KeyListenerRegistry;
 		typedef std::unordered_map<Component *, KeyListenerRegistry> KeyListenerMap;
 		KeyListenerMap keyListener;
 	public:
 		typedef KeyListenerRegistry::handle_t KeyListenerHandle;
-		KeyListenerHandle addKeyListener(Component * component, KeyListenerFun fun) {
+		KeyListenerHandle addKeyListener(Component * component, HandleKeyFun fun) {
 			return std::move(keyListener[component].registerElement(std::move(fun)));
 		}
 		void removeKeyListener(Component * component, KeyListenerHandle handle) {

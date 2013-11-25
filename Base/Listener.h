@@ -39,12 +39,21 @@ class Component;
 typedef std::function<bool (Component *, 
 							const Util::StringIdentifier &)> HandleActionFun;
 
-
 /**
  * Type of functions reacting on a change of a component's data. The function
  * receives the component for which the data has changed as parameter.
  */
 typedef std::function<void (Component *)> HandleDataChangeFun;
+
+/**
+ * Type of functions reacting on global key events. The function receives the
+ * keyboard event as parameter
+ * If it returns @c true, the callee signalizes that is processed the event and
+ * no other event handlers will be called. If it returns @c false, the callee
+ * signalizes that it did not process the event and the next event handler
+ * will be called.
+ */
+typedef std::function<bool (const Util::UI::KeyboardEvent &)> HandleKeyFun;
 
 /**
  * Type of functions reacting on a mouse button event onto a component. The
