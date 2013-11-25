@@ -625,6 +625,18 @@ void GUI_Manager::componentDataChanged(Component * component, const Util::String
 	}
 }
 
+void GUI_Manager::componentDestruction(const Component * component) {
+	// Inform functions listening for a component's destruction
+	const auto componentIt = componentDestructionListener.find(component);
+	if(componentIt != componentDestructionListener.cend()) {
+		// Use a copy to allow insertions and deletions.
+		for(const auto & onComponentDestruction : componentIt->second.getElementsCopy()) {
+			onComponentDestruction();
+		}
+		componentDestructionListener.erase(componentIt);
+	}
+}
+
 Component * GUI_Manager::getComponentAtPos(const Geometry::Vec2 & pos){
 	return globalContainer->getComponentAtPos(pos);
 }

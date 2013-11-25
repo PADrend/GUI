@@ -42,6 +42,13 @@ typedef std::function<bool (Component *,
 							const Util::StringIdentifier &)> HandleActionFun;
 
 /**
+ * Type of functions reacting on the destruction of a component. The function
+ * will be called only once for the destruction of the respective component.
+ * After that, it will be removed from the registry automatically.
+ */
+typedef std::function<void ()> HandleComponentDestructionFun;
+
+/**
  * Type of functions reacting on a change of a component's data. The function
  * receives the component for which the data has changed as parameter.
  */
@@ -108,6 +115,8 @@ typedef std::function<bool (Component *,
 
 //! Registry for functions reacting on actions.
 typedef Util::Registry<std::list<HandleActionFun>> ActionListenerRegistry;
+//! Registry for functions reacting on the destruction of a component.
+typedef Util::Registry<std::list<HandleComponentDestructionFun>> ComponentDestructionListenerRegistry;
 //! Registry for functions reacting on a change of a component's data.
 typedef Util::Registry<std::list<HandleDataChangeFun>> DataChangeListenerRegistry;
 //! Registry for functions reacting on the end of a frame.
@@ -125,6 +134,8 @@ typedef Util::Registry<std::list<HandleMouseMotionFun>> MouseMotionListenerRegis
 
 //! Handle obtained by the registration of a HandleActionFun.
 typedef ActionListenerRegistry::handle_t ActionListenerHandle;
+//! Handle obtained by the registration of a HandleComponentDestructionFun.
+typedef ComponentDestructionListenerRegistry::handle_t ComponentDestructionListenerHandle;
 //! Handle obtained by the registration of a HandleDataChangeFun.
 typedef DataChangeListenerRegistry::handle_t DataChangeListenerHandle;
 //! Handle obtained by the registration of a FrameListenerFun.

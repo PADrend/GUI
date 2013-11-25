@@ -192,6 +192,22 @@ class GUI_Manager {
 		}
 
 	private:
+		typedef std::unordered_map<const Component *, ComponentDestructionListenerRegistry> ComponentDestructionListenerMap;
+		ComponentDestructionListenerMap componentDestructionListener;
+	public:
+		ComponentDestructionListenerHandle addComponentDestructionListener(const Component * component, 
+																		   HandleComponentDestructionFun fun) {
+			return std::move(componentDestructionListener[component].registerElement(std::move(fun)));
+		}
+		void removeComponentDestructionListener(const Component * component, 
+												ComponentDestructionListenerHandle handle) {
+			const auto it = componentDestructionListener.find(component);
+			if(it != componentDestructionListener.cend()) {
+				it->second.unregisterElement(std::move(handle));
+			}
+		}
+
+	private:
 		typedef std::unordered_map<Component *, DataChangeListenerRegistry> DataChangeListenerMap;
 		DataChangeListenerMap dataChangeListener;
 	public:
@@ -287,6 +303,7 @@ class GUI_Manager {
 
 		void componentActionPerformed(Component *c,const Util::StringIdentifier & actionName);
 		void componentDataChanged(Component *c,const Util::StringIdentifier & actionName);
+		void componentDestruction(const Component * component);
 
 		bool isCtrlPressed() const;
 		bool isShiftPressed() const;

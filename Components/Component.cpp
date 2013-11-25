@@ -36,7 +36,7 @@ Component::Component(GUI_Manager & _gui,const Geometry::Rect & _relRect,flag_t _
 
 //! (dtor)
 Component::~Component() {
-
+	getGUI().componentDestruction(this);
 	removeExternalLayout();
 	removeAttributes();
 //    setShape(nullptr);
