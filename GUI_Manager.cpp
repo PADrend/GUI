@@ -309,7 +309,8 @@ bool GUI_Manager::isShiftPressed() const {
 
 //! (internal)
 bool GUI_Manager::handleMouseMovement(const Util::UI::MotionEvent & motionEvent){
-	for(const auto & handleMouseMoveFun : globalMouseMotionListener.getElements()) {
+	// Use a copy to allow insertions and deletions.
+	for(const auto & handleMouseMoveFun : globalMouseMotionListener.getElementsCopy()) {
 		if(handleMouseMoveFun(nullptr, motionEvent)) {
 			return true;
 		}
@@ -323,7 +324,8 @@ bool GUI_Manager::handleMouseButton(const Util::UI::ButtonEvent & buttonEvent) {
 	// Use nullptr as component to access global registry.
 	const auto globalIt = mouseButtonListener.find(nullptr);
 	if(globalIt != mouseButtonListener.cend()) {
-		for(const auto & handleMouseButtonFun : globalIt->second.getElements()) {
+		// Use a copy to allow insertions and deletions.
+		for(const auto & handleMouseButtonFun : globalIt->second.getElementsCopy()) {
 			if(handleMouseButtonFun(nullptr, buttonEvent)) {
 				return true;
 			}
@@ -356,7 +358,8 @@ bool GUI_Manager::handleMouseButton(const Util::UI::ButtonEvent & buttonEvent) {
 			const auto clickIt = mouseClickListener.find(c.get());
 			if(clickIt != mouseClickListener.cend()) {
 				const Geometry::Vec2 localPos = absPos - c->getAbsPosition();
-				for(const auto & clickListener : clickIt->second.getElements()) {
+				// Use a copy to allow insertions and deletions.
+				for(const auto & clickListener : clickIt->second.getElementsCopy()) {
 					if(clickListener(c.get(), buttonEvent.button, localPos)) {
 						break;
 					}
@@ -379,7 +382,8 @@ bool GUI_Manager::handleKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {
 	for(Component::Ref c=globalContainer->findSelectedComponent();c!=nullptr && c->isEnabled(); c=c->getParent() ){
 		const auto it = keyListener.find(c.get());
 		if(it != keyListener.cend()) {
-			for(const auto & fun : it->second.getElements()) {
+			// Use a copy to allow insertions and deletions.
+			for(const auto & fun : it->second.getElementsCopy()) {
 				const bool consumed = fun(keyEvent);
 				if(consumed) {
 					return true;
@@ -496,12 +500,9 @@ void GUI_Manager::display(){
 
 	
 	{ // execute frameListeners
-		// make a copy to allow insertions and deletions.
-		const std::vector<FrameListenerFun> listenerListCopy(frameListener.getElements().cbegin(),
-															 frameListener.getElements().cend()); 
-
 		const double time = Util::Timer::now();
-		for(const auto & fun : listenerListCopy) {
+		// Use a copy to allow insertions and deletions.
+		for(const auto & fun : frameListener.getElementsCopy()) {
 			fun(time);
 		}
 
@@ -598,7 +599,8 @@ bool GUI_Manager::selectLast(Component * c){
 }
 
 void GUI_Manager::componentActionPerformed(Component * c, const Util::StringIdentifier & actionName) {
-	for(const auto & handleAction : actionListener.getElements()) {
+	// Use a copy to allow insertions and deletions.
+	for(const auto & handleAction : actionListener.getElementsCopy()) {
 		if(handleAction(c, actionName)) {
 			return;
 		}
@@ -609,7 +611,8 @@ void GUI_Manager::componentDataChanged(Component * component, const Util::String
 	// Inform component's data change listener
 	const auto componentIt = dataChangeListener.find(component);
 	if(componentIt != dataChangeListener.cend()) {
-		for(const auto & changeListener : componentIt->second.getElements()) {
+		// Use a copy to allow insertions and deletions.
+		for(const auto & changeListener : componentIt->second.getElementsCopy()) {
 			changeListener(component);
 		}
 	}
@@ -617,7 +620,8 @@ void GUI_Manager::componentDataChanged(Component * component, const Util::String
 	// Use nullptr as component to access global registry.
 	const auto globalIt = dataChangeListener.find(nullptr);
 	if(globalIt != dataChangeListener.cend()) {
-		for(const auto & changeListener : globalIt->second.getElements()) {
+		// Use a copy to allow insertions and deletions.
+		for(const auto & changeListener : globalIt->second.getElementsCopy()) {
 			changeListener(component);
 		}
 	}
