@@ -9,7 +9,9 @@
 #ifndef GUI_LISTENER_H
 #define GUI_LISTENER_H
 
+#include <Util/Registry.h>
 #include <functional>
+#include <list>
 
 namespace Geometry {
 template<typename T_> class _Vec2;
@@ -44,6 +46,12 @@ typedef std::function<bool (Component *,
  * receives the component for which the data has changed as parameter.
  */
 typedef std::function<void (Component *)> HandleDataChangeFun;
+
+/**
+ * Type of functions reacting on the end of a frame. The function receives the
+ * time since the start of the program in seconds as parameter.
+ */
+typedef std::function<void (float)> FrameListenerFun;
 
 /**
  * Type of functions reacting on global key events. The function receives the
@@ -95,6 +103,22 @@ typedef std::function<bool (Component *,
  */
 typedef std::function<bool (Component *, 
 							const Util::UI::MotionEvent &)> HandleMouseMotionFun;
+
+//! Registry for functions reacting on actions.
+typedef Util::Registry<std::list<HandleActionFun>> ActionListenerRegistry;
+//! Registry for functions reacting on a change of a component's data.
+typedef Util::Registry<std::list<HandleDataChangeFun>> DataChangeListenerRegistry;
+//! Registry for functions reacting on the end of a frame.
+typedef Util::Registry<std::list<FrameListenerFun>> FrameListenerRegistry;
+//! Registry for functions reacting on global key events.
+typedef Util::Registry<std::list<HandleKeyFun>> KeyListenerRegistry;
+//! Registry for functions reacting on a mouse button event.
+typedef Util::Registry<std::list<HandleMouseButtonFun>> MouseButtonListenerRegistry;
+//! Registry for functions reacting on a mouse click.
+typedef Util::Registry<std::list<HandleMouseClickFun>> MouseClickListenerRegistry;
+//! Registry for functions reacting on a mouse motion event.
+typedef Util::Registry<std::list<HandleMouseMotionFun>> MouseMotionListenerRegistry;
+
 
 }
 

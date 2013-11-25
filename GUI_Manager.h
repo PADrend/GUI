@@ -182,7 +182,6 @@ class GUI_Manager {
 	//! @name Event handling & Listener
 	//	@{
 	private:
-		typedef Util::Registry<std::list<HandleActionFun>> ActionListenerRegistry;
 		ActionListenerRegistry actionListener;
 	public:
 		typedef ActionListenerRegistry::handle_t ActionListenerHandle;
@@ -197,7 +196,6 @@ class GUI_Manager {
 		//----
 
 	private:
-		typedef Util::Registry<std::list<HandleDataChangeFun>> DataChangeListenerRegistry;
 		typedef std::unordered_map<Component *, DataChangeListenerRegistry> DataChangeListenerMap;
 		DataChangeListenerMap dataChangeListener;
 	public:
@@ -223,7 +221,6 @@ class GUI_Manager {
 		//----
 
 	private:
-		typedef Util::Registry<std::list<HandleMouseButtonFun>> MouseButtonListenerRegistry;
 		typedef std::unordered_map<Component *, MouseButtonListenerRegistry> MouseButtonListenerMap;
 		MouseButtonListenerMap mouseButtonListener;
 	public:
@@ -249,7 +246,6 @@ class GUI_Manager {
 		//----
 
 	private:
-		typedef Util::Registry<std::list<HandleMouseMotionFun>> MouseMotionListenerRegistry;
 		MouseMotionListenerRegistry globalMouseMotionListener;
 	public:
 		typedef MouseMotionListenerRegistry::handle_t MouseMotionListenerHandle;
@@ -263,7 +259,6 @@ class GUI_Manager {
 		//----
 
 	private:
-		typedef Util::Registry<std::list<HandleMouseClickFun>> MouseClickListenerRegistry;
 		typedef std::unordered_map<Component *, MouseClickListenerRegistry> MouseClickListenerMap;
 		MouseClickListenerMap mouseClickListener;
 	public:
@@ -281,7 +276,6 @@ class GUI_Manager {
 		//----
 
 	private:
-		typedef Util::Registry<std::list<HandleKeyFun>> KeyListenerRegistry;
 		typedef std::unordered_map<Component *, KeyListenerRegistry> KeyListenerMap;
 		KeyListenerMap keyListener;
 	public:
@@ -299,8 +293,6 @@ class GUI_Manager {
 		//----
 
 	private:
-		typedef std::function<void (float)> FrameListenerFun;
-		typedef Util::Registry<std::list<FrameListenerFun>> FrameListenerRegistry;
 		FrameListenerRegistry frameListener;
 	public:
 		typedef FrameListenerRegistry::handle_t FrameListenerHandle;
