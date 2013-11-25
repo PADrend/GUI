@@ -53,8 +53,7 @@ class EditorPanel: public Container {
 		Geometry::Vec2 dragPos;
 
 		MouseButtonListenerHandle mouseButtonListenerHandle;
-		MouseMotionListenerHandle mouseMotionListenerHandle;
-		bool listenOnMouseMove;
+		std::unique_ptr<MouseMotionListenerHandle> optionalMouseMotionListenerHandle;
 
 		void rectSelect_start(const Geometry::Vec2 & pos);
 		void rectSelect_break();

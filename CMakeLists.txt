@@ -25,7 +25,6 @@ add_library(GUI
 	Base/ImageData.cpp
 	Base/Layouters/ExtLayouter.cpp
 	Base/Layouters/FlowLayouter.cpp
-	Base/Listener.cpp
 	Base/Properties.cpp
 	Base/StyleManager.cpp
 	Components/Button.cpp

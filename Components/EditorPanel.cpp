@@ -11,6 +11,7 @@
 #include "EditorPanel.h"
 #include "../GUI_Manager.h"
 #include "../Base/Draw.h"
+#include "../Base/ListenerHelper.h"
 #include "../Base/Layouters/ExtLayouter.h"
 #include "../Style/Colors.h" // \todo Remove this!
 #include "ComponentPropertyIds.h"
@@ -64,11 +65,7 @@ EditorPanel::EditorPanel(GUI_Manager & _gui,flag_t _flags/*=0*/) :
 																			  this, 
 																			  std::placeholders::_1,
 																			  std::placeholders::_2))),
-		mouseMotionListenerHandle(_gui.addGlobalMouseMotionListener(std::bind(&EditorPanel::onMouseMove, 
-																			  this, 
-																			  std::placeholders::_1,
-																			  std::placeholders::_2))),
-		listenOnMouseMove(false) {
+		optionalMouseMotionListenerHandle() {
 	setFlag(USE_SCISSOR,true);
 	setFlag(SELECTABLE,true);
 	setFlag(BORDER,true);
@@ -78,7 +75,7 @@ EditorPanel::EditorPanel(GUI_Manager & _gui,flag_t _flags/*=0*/) :
 
 //! (dtor)
 EditorPanel::~EditorPanel() {
-	getGUI().removeGlobalMouseMotionListener(std::move(mouseMotionListenerHandle));
+	stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
 	getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
 }
 
@@ -102,12 +99,9 @@ void EditorPanel::doDisplay(const Geometry::Rect & region) {
 
 //! ---|> MouseMotionListener
 bool EditorPanel::onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent){
-	if(!listenOnMouseMove) {
-		return false;
-	}
 	switch(state){
 		case CLICK_SELECTING:{
-			listenOnMouseMove = false;
+			stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
 			return false;
 		}
 		case DRAG_SELECTING:{
@@ -222,12 +216,12 @@ void EditorPanel::rectSelect_start(const Vec2 & pos){
 	state=DRAG_SELECTING;
 	dragStartPos=pos;
 	dragPos=pos;
-	listenOnMouseMove = true;
+	startListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle, &EditorPanel::onMouseMove, this);
 }
 
 void EditorPanel::rectSelect_break(){
 	state=CLICK_SELECTING;
-	listenOnMouseMove = false;
+	stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
 }
 
 void EditorPanel::rectSelect_finish(const Vec2 & pos){
@@ -259,7 +253,7 @@ void EditorPanel::rectSelect_finish(const Vec2 & pos){
 	}
 
 	state=CLICK_SELECTING;
-	listenOnMouseMove = false;
+	stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
 	if(_markingChanged)
 		getGUI().componentDataChanged(this,dataId_marking);
 }
@@ -268,7 +262,7 @@ void EditorPanel::move_start(const Vec2 & pos){
 	state=MOVING;
 	dragStartPos=pos;
 	dragPos=pos;
-	listenOnMouseMove = true;
+	startListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle, &EditorPanel::onMouseMove, this);
 }
 
 void EditorPanel::move_execute(const Vec2 & delta){
@@ -280,7 +274,7 @@ void EditorPanel::move_execute(const Vec2 & delta){
 
 void EditorPanel::move_break(const Vec2 & pos){
 	state=CLICK_SELECTING;
-	listenOnMouseMove = false;
+	stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
 	for(const auto & markedChild : getMarkedChildren()) {
 		markedChild->moveRel(dragStartPos - pos);
 	}
@@ -290,7 +284,7 @@ void EditorPanel::move_break(const Vec2 & pos){
 
 void EditorPanel::move_finish(){
 	state=CLICK_SELECTING;
-	listenOnMouseMove = false;
+	stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
 }
 
 
