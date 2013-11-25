@@ -344,10 +344,8 @@ bool GUI_Manager::handleMouseButton(const Util::UI::ButtonEvent & buttonEvent) {
 		if(componentIt == mouseButtonListener.cend()) {
 			continue;
 		}
-		for(auto butIt = componentIt->second.getElements().crbegin(); 
-				butIt != componentIt->second.getElements().crend();
-				++butIt) {
-			if(!((*butIt)(c.get(), buttonEvent))) {
+		for(const auto & handleMouseButtonFun : componentIt->second.getElementsCopy()) {
+			if(!(handleMouseButtonFun(c.get(), buttonEvent))) {
 				continue;
 			}
 
