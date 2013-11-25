@@ -61,7 +61,7 @@ class ScrollableContainer: public Container {
 		bool listenOnMouseMove;
 
 		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
-		listenerResult_t onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent);
+		bool onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent);
 };
 }
 #endif // GUI_ScrollableContainer_H

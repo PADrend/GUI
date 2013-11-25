@@ -115,7 +115,7 @@ class TreeView: public Container {
 
 		bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
 		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
-		listenerResult_t onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent);
+		bool onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent);
 
 		Geometry::Vec2 currentMousePos;
 

@@ -118,28 +118,28 @@ struct TabTitlePanel : public Container {
 		return false;
 	}
 
-	listenerResult_t onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
+	bool onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
 		if(!listenOnMouseMove) {
-			return LISTENER_EVENT_NOT_CONSUMED;
+			return false;
 		}
 		if (!isActive() || motionEvent.buttonMask == Util::UI::MASK_NO_BUTTON) {
 			listenOnMouseMove = false;
-			return LISTENER_EVENT_NOT_CONSUMED;
+			return false;
 		}
 		const Geometry::Vec2 absPos = Geometry::Vec2(motionEvent.x, motionEvent.y);
 		TabTitlePanel * ttp=dynamic_cast<TabTitlePanel *>(getGUI().getComponentAtPos(absPos));
 		if (ttp) {// replace another tab
 			if ( ttp==this)
-				return LISTENER_EVENT_CONSUMED;
+				return true;
 			TabbedPanel * tp=ttp->myTab.getTabbedPanel();
-			if (tp==nullptr)   return LISTENER_EVENT_CONSUMED;
+			if (tp==nullptr)   return true;
 			if ( tp!=myTab.getTabbedPanel() ) {
 				TabbedPanel * oldTabbedPanel=myTab.getTabbedPanel();
 				tp->addContent(&myTab);
 				tp->recalculateTabTitlePositions();
 				oldTabbedPanel->recalculateTabTitlePositions();
 				myTab.makeActiveTab();
-				return LISTENER_EVENT_CONSUMED;
+				return true;
 			}
 
 			if (myTab.getPrev() != ttp->getTab()) {
@@ -150,23 +150,23 @@ struct TabTitlePanel : public Container {
 			}
 			tp->recalculateTabTitlePositions();
 			myTab.makeActiveTab();
-			return LISTENER_EVENT_CONSUMED;
+			return true;
 		}
 
 		TabbedPanel * tp=dynamic_cast<TabbedPanel *>(getGUI().getComponentAtPos(absPos));
 		if (tp==nullptr)
-			return LISTENER_EVENT_CONSUMED;
+			return true;
 //                    tp->insertTab(&myTab,0);
 		TabbedPanel * oldTabbedPanel=myTab.getTabbedPanel();
 		if (oldTabbedPanel==tp)
-			return LISTENER_EVENT_CONSUMED;
+			return true;
 
 		tp->addContent(&myTab);
 		tp->recalculateTabTitlePositions();
 		oldTabbedPanel->recalculateTabTitlePositions();
 		myTab.makeActiveTab();
 
-		return LISTENER_EVENT_CONSUMED;
+		return true;
 	}
 
 	//! ---|> Component

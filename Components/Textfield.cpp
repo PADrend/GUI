@@ -349,17 +349,17 @@ bool Textfield::onMouseButton(Component * /*component*/, const Util::UI::ButtonE
 }
 
 //! ---|> MouseMotionListener
-listenerResult_t Textfield::onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent){
+bool Textfield::onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent){
 	if(!listenOnMouseMove) {
-		return LISTENER_EVENT_NOT_CONSUMED;
+		return false;
 	}
 	if (!(motionEvent.buttonMask & Util::UI::MASK_MOUSE_BUTTON_LEFT) || isLocked()) {
 		listenOnMouseMove = false;
-		return LISTENER_EVENT_NOT_CONSUMED;
+		return false;
 	}
 	const Geometry::Vec2 localPos = Geometry::Vec2(motionEvent.x, motionEvent.y) - getAbsPosition();
 	setCursorPos(getCursorPositionFromCoordinate(localPos), true);
-	return LISTENER_EVENT_CONSUMED;
+	return true;
 }
 
 

@@ -119,7 +119,7 @@ class MouseCursorHandler {
 					if(!cursorLockedByButton) {
 						activateCursor(std::move(queryHoverComponentMouseCursor(Geometry::Vec2(motionEvent.x, motionEvent.y))));
 					}
-					return LISTENER_EVENT_NOT_CONSUMED;
+					return false;
 				})) {
 			activateCursor(nullptr);
 		}
@@ -180,10 +180,10 @@ class TooltipHandler : public Component {
 			return nullptr;
 		}
 
-		listenerResult_t onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
+		bool onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
 			const Geometry::Vec2 absPos(motionEvent.x, motionEvent.y);
 			if(lastMousePos == absPos) {
-				return LISTENER_EVENT_NOT_CONSUMED;
+				return false;
 			}
 			lastMousePos = absPos;
 			activeComponent = findTooltitComponent(absPos);
@@ -211,7 +211,7 @@ class TooltipHandler : public Component {
 					WARN("unexpected case in switch statement");
 			}
 //                std::cout <<  startingTime <<"; ";
-			return LISTENER_EVENT_NOT_CONSUMED;
+			return false;
 		}
 		// ---|> FrameListener
 		void onFrame(float timeSecs) {
@@ -310,7 +310,7 @@ bool GUI_Manager::isShiftPressed() const {
 //! (internal)
 bool GUI_Manager::handleMouseMovement(const Util::UI::MotionEvent & motionEvent){
 	for(const auto & handleMouseMoveFun : globalMouseMotionListener.getElements()) {
-		if(handleMouseMoveFun(nullptr, motionEvent) & LISTENER_EVENT_CONSUMED) {
+		if(handleMouseMoveFun(nullptr, motionEvent)) {
 			return true;
 		}
 	}

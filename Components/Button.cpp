@@ -172,7 +172,7 @@ void Button::action(){
 	getGUI().componentActionPerformed(this,actionName);
 }
 
-listenerResult_t Button::onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent) {
+bool Button::onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent) {
 	const Geometry::Vec2 absPos(motionEvent.x, motionEvent.y);
 	if(!isLocked() && !hover && coversAbsPosition(absPos)) {
 		hover=true;
@@ -184,14 +184,14 @@ listenerResult_t Button::onMouseMove(Component * component, const Util::UI::Moti
 		}
 
 		// markForRepaint()
-		return LISTENER_EVENT_CONSUMED;
+		return true;
 	} else if(!isLocked() && hover && !coversAbsPosition(absPos)) {
 		hover=false;
 		invalidateRegion();
 		// markForRepaint()
-		return LISTENER_EVENT_CONSUMED;
+		return true;
 	}
-	return LISTENER_EVENT_NOT_CONSUMED;
+	return false;
 }
 
 void Button::setColor(const Util::Color4ub & color){ // deprecated!!!!!!

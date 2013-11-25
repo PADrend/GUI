@@ -63,17 +63,17 @@ class SliderMarker:public Component {
 		return true;
 	}
 
-	listenerResult_t onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
+	bool onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
 		if(!listenOnMouseMove) {
-			return LISTENER_EVENT_NOT_CONSUMED;
+			return false;
 		}
 		if (!isActive() || motionEvent.buttonMask == Util::UI::MASK_NO_BUTTON) {
 			listenOnMouseMove = false;
-			return LISTENER_EVENT_NOT_CONSUMED;
+			return false;
 		}
 		const Geometry::Vec2 localPos = Geometry::Vec2(motionEvent.x, motionEvent.y) - slider.getAbsPosition();
 		slider.updateDataFromPos(localPos);
-		return LISTENER_EVENT_CONSUMED;
+		return true;
 	}
 
 	//! ---|> Component

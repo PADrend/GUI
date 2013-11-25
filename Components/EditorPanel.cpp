@@ -101,20 +101,20 @@ void EditorPanel::doDisplay(const Geometry::Rect & region) {
 }
 
 //! ---|> MouseMotionListener
-listenerResult_t EditorPanel::onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent){
+bool EditorPanel::onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent){
 	if(!listenOnMouseMove) {
-		return LISTENER_EVENT_NOT_CONSUMED;
+		return false;
 	}
 	switch(state){
 		case CLICK_SELECTING:{
 			listenOnMouseMove = false;
-			return LISTENER_EVENT_NOT_CONSUMED;
+			return false;
 		}
 		case DRAG_SELECTING:{
 			if(!(motionEvent.buttonMask & Util::UI::MASK_MOUSE_BUTTON_LEFT)) {
 				state=CLICK_SELECTING;
 				// rectSelect_break(); // cant remove mouseListener inside onMouseMove
-				return LISTENER_EVENT_NOT_CONSUMED;
+				return false;
 			}
 			dragPos = Geometry::Vec2(motionEvent.x, motionEvent.y) - getAbsPosition();
 			break;
@@ -131,7 +131,7 @@ listenerResult_t EditorPanel::onMouseMove(Component * /*component*/, const Util:
 			WARN("unexpected case in switch statement");
 
 	}
-	return LISTENER_EVENT_NOT_CONSUMED;
+	return false;
 }
 
 static const Util::StringIdentifier dataId_marking("marking");

@@ -59,17 +59,17 @@ struct TitlePanel : public Container {
 		}
 		return true;
 	}
-	listenerResult_t onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
+	bool onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
 		if(!listenOnMouseMove) {
-			return LISTENER_EVENT_NOT_CONSUMED;
+			return false;
 		}
 		if (!isActive() || !(motionEvent.buttonMask & Util::UI::MASK_MOUSE_BUTTON_LEFT)) {
 			listenOnMouseMove = false;
-			return LISTENER_EVENT_NOT_CONSUMED;
+			return false;
 		}
 		const Geometry::Vec2 currentMousePos(motionEvent.x, motionEvent.y);
 		window.setPosition(currentMousePos + dragOffset);
-		return LISTENER_EVENT_CONSUMED;
+		return true;
 	}
 };
 
@@ -119,13 +119,13 @@ struct ResizePanel : public Component{
 		select();
 		listenOnMouseMove = true;
 	}
-	listenerResult_t onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
+	bool onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
 		if(!listenOnMouseMove) {
-			return LISTENER_EVENT_NOT_CONSUMED;
+			return false;
 		}
 		if (!isActive() || !(motionEvent.buttonMask & Util::UI::MASK_MOUSE_BUTTON_LEFT)) {
 			listenOnMouseMove = false;
-			return LISTENER_EVENT_NOT_CONSUMED;
+			return false;
 		}
 		Geometry::Rect r = window.getRect();
 		if(changeX > 0) {
@@ -145,7 +145,7 @@ struct ResizePanel : public Component{
 		r.setHeight(std::max(r.getHeight(), getGUI().getGlobalValue(PROPERTY_WINDOW_TITLEBAR_HEIGHT)));
 		window.setRect(r);
 
-		return LISTENER_EVENT_CONSUMED;
+		return true;
 	}
 };
 
@@ -163,7 +163,7 @@ struct AutoMinimizer {
 		win.getGUI().removeGlobalMouseMotionListener(std::move(mouseMotionListenerHandle));
 	}
 
-	listenerResult_t onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
+	bool onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
 		if(motionEvent.buttonMask == Util::UI::MASK_NO_BUTTON) {
 			bool inside=win.getAbsRect().changeSizeCentered(40,40).contains(motionEvent.x, motionEvent.y);
 			if(inside && win.isMinimized()){
@@ -172,7 +172,7 @@ struct AutoMinimizer {
 				win.minimize();
 			}
 		}
-		return LISTENER_EVENT_NOT_CONSUMED;
+		return false;
 	}
 };
 

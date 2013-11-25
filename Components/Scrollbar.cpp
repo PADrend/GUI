@@ -64,13 +64,13 @@ class ScrollMarker : public Component {
 		return true;
 	}
 
-	listenerResult_t onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
+	bool onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
 		if(!listenOnMouseMove) {
-			return LISTENER_EVENT_NOT_CONSUMED;
+			return false;
 		}
 		if (!isActive() || motionEvent.buttonMask == Util::UI::MASK_NO_BUTTON) {
 			listenOnMouseMove = false;
-			return LISTENER_EVENT_NOT_CONSUMED;
+			return false;
 		}
 		const float p = myScrollbar.isVertical() ? motionEvent.y : motionEvent.x;
 		if(catchDragStartPos){
@@ -82,7 +82,7 @@ class ScrollMarker : public Component {
 										((myScrollbar.isVertical() ? myScrollbar.getHeight() : myScrollbar.getWidth())-myScrollbar.getMarkerSize())) + dragStartScroll ) ;
 		
 		}
-		return LISTENER_EVENT_CONSUMED;
+		return true;
 	}
 	void startDragging(){
 		activate();

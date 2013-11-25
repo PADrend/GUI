@@ -125,14 +125,14 @@ bool Splitter::onMouseButton(Component * /*component*/, const Util::UI::ButtonEv
 	return false;
 }
 
-listenerResult_t Splitter::onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
+bool Splitter::onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
 	if(!listenOnMouseMove) {
-		return LISTENER_EVENT_NOT_CONSUMED;
+		return false;
 	}
 	if( !hasParent() || getPrev()==nullptr || getNext()==nullptr || !(motionEvent.buttonMask & Util::UI::MASK_MOUSE_BUTTON_LEFT)) {
 		unselect();
 		listenOnMouseMove = false;
-		return LISTENER_EVENT_CONSUMED;
+		return true;
 	}
 	if(direction == VERTICAL) {
 		getPrev()->setWidth(std::max(0.0f, std::min(getPrev()->getWidth() + motionEvent.deltaX, getParent()->getWidth() - getWidth())));
@@ -143,7 +143,7 @@ listenerResult_t Splitter::onMouseMove(Component * /*component*/, const Util::UI
 	getPrev()->invalidateLayout();
 	getNext()->invalidateLayout();
 	getParent()->invalidateLayout();
-	return LISTENER_EVENT_CONSUMED;
+	return true;
 }
 
 }

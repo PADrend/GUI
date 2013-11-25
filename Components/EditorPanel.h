@@ -48,7 +48,7 @@ class EditorPanel: public Container {
 		virtual void doDisplay(const Geometry::Rect & region) override;
 
 		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
-		listenerResult_t onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent);
+		bool onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent);
 
 		Geometry::Vec2 dragStartPos;
 		Geometry::Vec2 dragPos;

@@ -16,6 +16,7 @@
 #include "ComponentPropertyIds.h"
 #include "Scrollbar.h"
 #include <Util/UI/Event.h>
+#include <algorithm>
 #include <functional>
 #include <iostream>
 
@@ -515,16 +516,16 @@ bool TreeView::onMouseButton(Component * /*component*/, const Util::UI::ButtonEv
 	}
 }
 
-listenerResult_t TreeView::onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
+bool TreeView::onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
 	if(!listenOnMouseMove) {
-		return LISTENER_EVENT_NOT_CONSUMED;
+		return false;
 	}
 	if(!(motionEvent.buttonMask & Util::UI::MASK_MOUSE_BUTTON_MIDDLE)) {
 		listenOnMouseMove = false;
-		return LISTENER_EVENT_NOT_CONSUMED;
+		return false;
 	}
 	scroll(motionEvent.deltaY * -2.0);
-	return LISTENER_EVENT_CONSUMED;
+	return true;
 }
 
 void TreeView::scroll(float amount) {

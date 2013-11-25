@@ -512,21 +512,21 @@ bool Textarea::onMouseButton(Component * /*component*/, const Util::UI::ButtonEv
 	return false;
 }
 
-listenerResult_t Textarea::onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
+bool Textarea::onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
 	if(!listenOnMouseMove) {
-		return LISTENER_EVENT_NOT_CONSUMED;
+		return false;
 	}
 	if((motionEvent.buttonMask & Util::UI::MASK_MOUSE_BUTTON_LEFT) && !isLocked()) {
 		const Geometry::Vec2 localPos = Geometry::Vec2(motionEvent.x, motionEvent.y) - getAbsPosition();
 		moveCursor(processor->textPosToCursor(*this,localPos+scrollPos), true);
-		return LISTENER_EVENT_CONSUMED;
+		return true;
 	}else if((motionEvent.buttonMask & Util::UI::MASK_MOUSE_BUTTON_MIDDLE)) {
 		const Geometry::Vec2 delta(motionEvent.deltaX, motionEvent.deltaY);
 		scrollTo( getScrollPos() - delta*2.0 );
-		return LISTENER_EVENT_CONSUMED;
+		return true;
 	}
 	listenOnMouseMove = false;
-	return LISTENER_EVENT_NOT_CONSUMED;
+	return false;
 }
 
 //! ---|> Component

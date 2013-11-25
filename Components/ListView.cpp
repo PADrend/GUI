@@ -301,17 +301,17 @@ bool ListView::onMouseButton(Component * /*component*/, const Util::UI::ButtonEv
 	}
 }
 
-listenerResult_t ListView::onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
+bool ListView::onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
 	if(!listenOnMouseMove) {
-		return LISTENER_EVENT_NOT_CONSUMED;
+		return false;
 	}
 	if (!(motionEvent.buttonMask & Util::UI::MASK_MOUSE_BUTTON_MIDDLE)) {
 		listenOnMouseMove = false;
-		return LISTENER_EVENT_NOT_CONSUMED;
+		return false;
 	}
 	const Geometry::Vec2 delta(motionEvent.deltaX, motionEvent.deltaY);
 	setScrollingPosition(scrollPos - delta * 2.0);
-	return LISTENER_EVENT_CONSUMED;
+	return true;
 }
 
 bool ListView::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {

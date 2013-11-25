@@ -63,7 +63,7 @@ class Textarea: public Container {
 
 		bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
 		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
-		listenerResult_t onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent);
+		bool onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent);
 
 		range_t _insertText(const cursor_t & pos,const std::string & s);
 		void markForConsolidation(size_t line1,size_t line2){
