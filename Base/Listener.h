@@ -51,7 +51,7 @@ typedef std::function<void (Component *)> HandleDataChangeFun;
  * Type of functions reacting on the end of a frame. The function receives the
  * time since the start of the program in seconds as parameter.
  */
-typedef std::function<void (float)> FrameListenerFun;
+typedef std::function<void (double)> FrameListenerFun;
 
 /**
  * Type of functions reacting on global key events. The function receives the

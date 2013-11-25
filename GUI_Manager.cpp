@@ -214,7 +214,7 @@ class TooltipHandler : public Component {
 			return false;
 		}
 		// ---|> FrameListener
-		void onFrame(float timeSecs) {
+		void onFrame(double timeSecs) {
 			if(mode==INACTIVE){
 				return;
 			}else if(mode==SEARCHING && timeSecs-startingTime > 0.250){
@@ -500,14 +500,14 @@ void GUI_Manager::display(){
 		const std::vector<FrameListenerFun> listenerListCopy(frameListener.getElements().cbegin(),
 															 frameListener.getElements().cend()); 
 
-		const float t = Util::Timer::now();
+		const double time = Util::Timer::now();
 		for(const auto & fun : listenerListCopy) {
-			fun(t);
+			fun(time);
 		}
 
 		//! key repetition \note !!! This is not the proper place to do this, as this may introduce side effects !!!!
-		if(keyRepeatInfo.get()!=nullptr && keyRepeatInfo->first<t){
-			keyRepeatInfo->first = t+getGlobalValue(PROPERTY_KEY_REPEAT_DELAY_2);
+		if(keyRepeatInfo.get()!=nullptr && keyRepeatInfo->first < time){
+			keyRepeatInfo->first = time + getGlobalValue(PROPERTY_KEY_REPEAT_DELAY_2);
 			handleKeyEvent(keyRepeatInfo->second);
 		}
 	}

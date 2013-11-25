@@ -64,7 +64,7 @@ void Menu::doDisplay(const Geometry::Rect & region) {
 	displayChildren(region,true);
 }
 
-static void onFrame(Menu & menu, float /*timeSecs*/) {
+static void onFrame(Menu & menu, double /*timeSecs*/) {
 	// check if the menu should be closed
 	if(menu.getGUI().getActiveComponent() != &menu && menu.hasParent()) {
 		bool menuFound = false;
