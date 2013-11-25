@@ -13,7 +13,6 @@
 
 #include "Container.h"
 #include "../Base/Listener.h"
-#include "../GUI_Manager.h"
 #include <memory>
 
 namespace GUI {

@@ -13,7 +13,6 @@
 
 #include "Component.h"
 #include "../Base/Listener.h"
-#include "../GUI_Manager.h"
 
 namespace GUI{
 

@@ -11,7 +11,6 @@
 #include "FlowLayouter.h"
 #include "../../Components/Container.h"
 #include "../../Components/LayoutHelper.h"
-#include "../../GUI_Manager.h"
 #include <iostream>
 
 // ------------------------------------------------------------------------------

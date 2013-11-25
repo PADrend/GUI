@@ -14,7 +14,6 @@
 #include "Component.h"
 #include "../Base/Listener.h"
 #include "../Base/Fonts/AbstractFont.h"
-#include "../GUI_Manager.h"
 #include <array>
 
 namespace GUI {

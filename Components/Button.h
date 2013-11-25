@@ -14,7 +14,6 @@
 #include "Container.h"
 #include "Label.h"
 #include "../Base/Listener.h"
-#include "../GUI_Manager.h"
 
 namespace GUI {
 /***
