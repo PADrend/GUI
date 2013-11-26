@@ -1,6 +1,6 @@
 /*
 	This file is part of the GUI library.
-	Copyright (C) 2008-2012 Benjamin Eikel <benjamin@eikel.org>
+	Copyright (C) 2008-2013 Benjamin Eikel <benjamin@eikel.org>
 	Copyright (C) 2008-2012 Claudius Jähn <claudius@uni-paderborn.de>
 	Copyright (C) 2008-2012 Ralf Petring <ralf@petring.net>
 	
@@ -10,11 +10,6 @@
 */
 #ifndef GUI_H
 #define GUI_H
-
-namespace GUI{
-
-}
-#define GUI_VERSION "0.2.8"
 
 #include "Components/Component.h"
 #include "Components/Container.h"
