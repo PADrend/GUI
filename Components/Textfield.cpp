@@ -19,10 +19,14 @@
 namespace GUI {
 
 //! (ctor)
-Textfield::Textfield(GUI_Manager & _gui,const std::string & _text,std::string _dataName,flag_t _flags/*=0*/):
-		Component(_gui,_flags),
+Textfield::Textfield(GUI_Manager & _gui, const std::string & _text, flag_t _flags) :
+		Component(_gui, _flags),
 		textRef(nullptr),
-		selectionStart(0),selectionEnd(0),backupText(""),cursorPos(0),scrollPos(0),dataName(std::move(_dataName)),
+		selectionStart(0),
+		selectionEnd(0),
+		backupText(),
+		cursorPos(0),
+		scrollPos(0),
 		keyListenerHandle(_gui.addKeyListener(this, std::bind(&Textfield::onKeyEvent, 
 															  this, 
 															  std::placeholders::_1))),
@@ -370,7 +374,7 @@ bool Textfield::onUnselect() {
 		/* if componentDataChanged(...) issues a recursive call to onUnselect, 
 			componentDataChanged(...) should be called only once: */
 		backupText = getText(); 
-		getGUI().componentDataChanged(this,dataName);
+		getGUI().componentDataChanged(this);
 	}
 
 	return true;
@@ -418,7 +422,7 @@ void Textfield::setCurrentOptionIndex(int index){
 		setCursorPos(text.length());
 	}
 	if(oldText!=getText() || oldIndex!=index)
-		getGUI().componentDataChanged(this,dataName);
+		getGUI().componentDataChanged(this);
 
 	selectionStart=selectionEnd=-1;
 }

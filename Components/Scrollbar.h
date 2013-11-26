@@ -26,7 +26,7 @@ class Scrollbar : public Container {
 		// flags
 		static const flag_t VERTICAL=1<<24;
 
-		Scrollbar(GUI_Manager & gui,Util::StringIdentifier dataName,flag_t flags=0);
+		Scrollbar(GUI_Manager & gui, flag_t flags = 0);
 		virtual ~Scrollbar();
 
 		int getMarkerSize()const;
@@ -54,7 +54,6 @@ class Scrollbar : public Container {
 		uint32_t scrollPos;
 
 		Util::WeakPointer<Component> marker;
-		Util::StringIdentifier dataName;
 
 		MouseButtonListenerHandle mouseButtonListenerHandle;
 };

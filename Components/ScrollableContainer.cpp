@@ -22,10 +22,6 @@
 // ------------------------------------------------------------------------------
 namespace GUI {
 
-
-static const Util::StringIdentifier dataId_verticallScrollPos("scroll");
-
-
 //! (ctor)
 ScrollableContainer::ScrollableContainer(GUI_Manager & _gui,flag_t _flags/*=0*/) :
 		Container(_gui,_flags),
@@ -79,7 +75,7 @@ void ScrollableContainer::doLayout() {
 		}
 	}else{
 		if(vScrollBar.isNull()){
-			vScrollBar=new Scrollbar(getGUI(),dataId_verticallScrollPos,Scrollbar::VERTICAL);
+			vScrollBar=new Scrollbar(getGUI(), Scrollbar::VERTICAL);
 			optionalScrollBarListener.reset(new DataChangeListenerHandle(getGUI().addDataChangeListener(
 												vScrollBar.get(),
 												[this](Component *) {

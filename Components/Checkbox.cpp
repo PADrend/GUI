@@ -19,7 +19,7 @@ namespace GUI {
 
 //! (ctor)
 Checkbox::Checkbox(GUI_Manager & _gui,bool _checked,const std::string & _text,flag_t _flags/*=0*/)
-		:Container(_gui,Geometry::Rect(0,0,16,16),_flags),boolValueRef(nullptr),intValueRef(nullptr),intBitMask(0),value(_checked),dataName(""),
+		:Container(_gui,Geometry::Rect(0,0,16,16),_flags),boolValueRef(nullptr),intValueRef(nullptr),intBitMask(0),value(_checked),
 		keyListenerHandle(_gui.addKeyListener(this, std::bind(&Checkbox::onKeyEvent, 
 															  this, 
 															  std::placeholders::_1))),
@@ -164,7 +164,7 @@ void Checkbox::setValueRef(unsigned int * _intValueRef,unsigned int _intBitMask)
 //! ---o
 void Checkbox::action(){
 	setChecked(!isChecked());
-	getGUI().componentDataChanged(this,dataName);
+	getGUI().componentDataChanged(this);
 }
 
 

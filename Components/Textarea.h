@@ -81,7 +81,6 @@ class Textarea: public Container {
 		uint32_t lineHeight;
 		cursor_t cursor;
 		cursor_t selectionStart;
-		std::string dataName;
 		bool dataChanged;
 		std::pair<size_t,size_t> linesToConsolidate;
 		Util::Reference<TextareaTextProcessor> processor;

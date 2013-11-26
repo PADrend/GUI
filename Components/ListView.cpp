@@ -21,9 +21,6 @@
 #include <iostream>
 
 namespace GUI {
-	
-static const Util::StringIdentifier dataId_scrollPos("scroll");
-static const Util::StringIdentifier dataId_marking("ListViewMarking");
 
 const ListView::flag_t ListView::AT_LEAST_ONE_MARKING = 1 << 24;
 const ListView::flag_t ListView::AT_MOST_ONE_MARKING = 1 << 25;
@@ -134,7 +131,7 @@ void ListView::doLayout() {
 		clientArea->setWidth(getWidth());
 	} else {
 		if(scrollBar.isNull()){
-			scrollBar = new Scrollbar(getGUI(), dataId_scrollPos, Scrollbar::VERTICAL);
+			scrollBar = new Scrollbar(getGUI(), Scrollbar::VERTICAL);
 			optionalScrollBarListener.reset(new DataChangeListenerHandle(getGUI().addDataChangeListener(
 												scrollBar.get(),
 												[this](Component *) {
@@ -458,7 +455,7 @@ bool ListView::doRemoveMarking(Component * c, bool forced) {
 
 //! ---o
 void ListView::markingChanged() {
-	getGUI().componentDataChanged(this, dataId_marking); //dataName
+	getGUI().componentDataChanged(this);
 }
 
 //! (internal)

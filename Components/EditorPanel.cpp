@@ -128,8 +128,6 @@ bool EditorPanel::onMouseMove(Component * /*component*/, const Util::UI::MotionE
 	return false;
 }
 
-static const Util::StringIdentifier dataId_marking("marking");
-
 bool EditorPanel::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) {
 	if(buttonEvent.pressed && getGUI().isCtrlPressed()) {
 		if(buttonEvent.button == Util::UI::MOUSE_WHEEL_UP) {
@@ -168,7 +166,7 @@ bool EditorPanel::onMouseButton(Component * /*component*/, const Util::UI::Butto
 					if(!getGUI().isShiftPressed())
 						unmarkAll();
 					markChild(child);
-					getGUI().componentDataChanged(this,dataId_marking);
+					getGUI().componentDataChanged(this);
 					move_start(localPos);
 					return true;
 				}
@@ -179,7 +177,7 @@ bool EditorPanel::onMouseButton(Component * /*component*/, const Util::UI::Butto
 			}else if(buttonEvent.button == Util::UI::MOUSE_BUTTON_RIGHT) {
 				if(!getMarkedChildren().empty()){
 					unmarkAll();
-					getGUI().componentDataChanged(this,dataId_marking);
+					getGUI().componentDataChanged(this);
 				}
 				return true;
 			}
@@ -255,7 +253,7 @@ void EditorPanel::rectSelect_finish(const Vec2 & pos){
 	state=CLICK_SELECTING;
 	stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
 	if(_markingChanged)
-		getGUI().componentDataChanged(this,dataId_marking);
+		getGUI().componentDataChanged(this);
 }
 
 void EditorPanel::move_start(const Vec2 & pos){
@@ -309,7 +307,7 @@ void EditorPanel::unmarkAll(){
 }
 
 void EditorPanel::markingChanged(){
-	getGUI().componentDataChanged(this,dataId_marking);
+	getGUI().componentDataChanged(this);
 }
 
 }

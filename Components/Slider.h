@@ -27,7 +27,7 @@ class Slider : public Container {
 		static const flag_t SHOW_VALUE=1<<25;
 		static const flag_t SLIDER_BUTTONS=1<<26;
 
-		Slider(GUI_Manager & gui,const Geometry::Rect & r,float left,float right,int steps,Util::StringIdentifier  dataName,flag_t flags=0);
+		Slider(GUI_Manager & gui, const Geometry::Rect & r, float left, float right, int steps, flag_t flags = 0);
 		virtual ~Slider();
 
 		void setRange(float left,float right,int steps);
@@ -75,8 +75,6 @@ class Slider : public Container {
 		Util::WeakPointer<Component> sliderMarker;
 		Util::WeakPointer<Button> button1;
 		Util::WeakPointer<Button> button2;
-
-		Util::StringIdentifier dataName;
 
 		KeyListenerHandle keyListenerHandle;
 		MouseButtonListenerHandle mouseButtonListenerHandle;

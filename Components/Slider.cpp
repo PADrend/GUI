@@ -79,9 +79,9 @@ class SliderMarker:public Component {
 // ----------------------------------------------------
 
 //! (ctor)
-Slider::Slider(GUI_Manager & _gui,const Geometry::Rect & _r,float left,float right,int steps,Util::StringIdentifier _dataName,flag_t _flags/*=0*/):
+Slider::Slider(GUI_Manager & _gui, const Geometry::Rect & _r, float left, float right, int steps, flag_t _flags):
 		Container(_gui,_r,_flags),
-		markerSize(6),value(0),floatValueRef(nullptr),dataName(std::move(_dataName)),
+		markerSize(6),value(0),floatValueRef(nullptr),
 		keyListenerHandle(_gui.addKeyListener(this, std::bind(&Slider::onKeyEvent, 
 															  this, 
 															  std::placeholders::_1))),
@@ -334,7 +334,7 @@ void Slider::setRelMarkerSize(const float relMarkerSize){
 
 //! ---o
 void Slider::dataUpdated() {
-	getGUI().componentDataChanged(this,dataName);
+	getGUI().componentDataChanged(this);
 }
 
 }

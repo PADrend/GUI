@@ -604,7 +604,7 @@ void GUI_Manager::componentActionPerformed(Component * c, const Util::StringIden
 	}
 }
 
-void GUI_Manager::componentDataChanged(Component * component, const Util::StringIdentifier & actionName) {
+void GUI_Manager::componentDataChanged(Component * component) {
 	// Inform component's data change listener
 	const auto componentIt = dataChangeListener.find(component);
 	if(componentIt != dataChangeListener.cend()) {
@@ -897,8 +897,8 @@ Panel * GUI_Manager::createPanel(flag_t flags/*=0*/){
 }
 
 //! [factory] Slider
-Slider * GUI_Manager::createSlider(const Geometry::Rect & r,float left/*=0*/,float right/*=1*/,int steps/*=10*/,const std::string & dataName/*=""*/,flag_t flags/*=0*/){
-	return new Slider(*this,r,left,right,steps,dataName,flags);
+Slider * GUI_Manager::createSlider(const Geometry::Rect & r,float left/*=0*/,float right/*=1*/,int steps/*=10*/,flag_t flags/*=0*/){
+	return new Slider(*this,r,left,right,steps,flags);
 }
 
 //! [factory] Splitter
@@ -924,7 +924,7 @@ Textarea * GUI_Manager::createTextarea(const std::string &text/*=""*/,flag_t fla
 }
 //! [factory] TextField
 Textfield * GUI_Manager::createTextfield(const std::string &text/*=""*/,flag_t flags/*=0*/){
-	return new Textfield(*this,text,"",flags);
+	return new Textfield(*this,text,flags);
 }
 
 //! [factory] TreeView

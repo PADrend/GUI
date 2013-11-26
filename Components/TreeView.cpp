@@ -23,8 +23,6 @@
 
 namespace GUI {
 
-static const Util::StringIdentifier dataId_scrollPos("scroll");
-
 //! TV_ScrollAnimation ---|> AnimationHandler
 class TV_ScrollAnimation:public AnimationHandler{
 	public:
@@ -359,7 +357,7 @@ TreeView::~TreeView() {
 void TreeView::doLayout() {
 	if(root->getHeight()>=getHeight()){
 		if(scrollBar.isNull()){
-			scrollBar = new Scrollbar(getGUI(),dataId_scrollPos,Scrollbar::VERTICAL);
+			scrollBar = new Scrollbar(getGUI(), Scrollbar::VERTICAL);
 			scrollBar->setExtLayout( 	ExtLayouter::POS_X_ABS|ExtLayouter::REFERENCE_X_RIGHT|ExtLayouter::ALIGN_X_RIGHT|
 											ExtLayouter::POS_Y_ABS|ExtLayouter::REFERENCE_Y_TOP|ExtLayouter::ALIGN_Y_TOP |
 											ExtLayouter::WIDTH_ABS|ExtLayouter::HEIGHT_ABS,
@@ -617,7 +615,7 @@ std::vector<Component*> TreeView::getMarkedComponents(){
 
 
 void TreeView::markingChanged(){
-	getGUI().componentDataChanged(this,actionName);
+	getGUI().componentDataChanged(this);
 }
 
 //! ---|> Container

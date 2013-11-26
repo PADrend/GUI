@@ -24,7 +24,7 @@ namespace GUI {
 class Textfield: public Component {
 		PROVIDES_TYPE_NAME(Textfield)
 	public:
-		Textfield(GUI_Manager & gui,const std::string &text="",std::string dataName="",flag_t flags=0);
+		Textfield(GUI_Manager & gui, const std::string & text = "", flag_t flags = 0);
 		virtual ~Textfield();
 
 		void setTextRef(std::string * newTextRef) 		{	textRef=newTextRef;	}
@@ -52,7 +52,6 @@ class Textfield: public Component {
 		std::string backupText;
 		int cursorPos;
 		int scrollPos;
-		std::string dataName;
 
 		KeyListenerHandle keyListenerHandle;
 		MouseButtonListenerHandle mouseButtonListenerHandle;

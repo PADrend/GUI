@@ -35,9 +35,6 @@ class Checkbox : public Container {
 		void setText(const std::string & text);
 		std::string getText()const;
 
-		void setDataName(const Util::StringIdentifier & s) 	{	dataName = s;	}
-		Util::StringIdentifier getDataName()const 			{	return dataName;	}
-
 		void setFont(AbstractFont * newFont) 				{	textLabel->setFont(newFont);	}
 		void setTextStyle(unsigned int style) 				{	textLabel->setTextStyle(style);	}
 
@@ -53,7 +50,6 @@ class Checkbox : public Container {
 		unsigned int * intValueRef;
 		unsigned int intBitMask;
 		bool value;
-		Util::StringIdentifier dataName;
 
 		KeyListenerHandle keyListenerHandle;
 		MouseButtonListenerHandle mouseButtonListenerHandle;

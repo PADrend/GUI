@@ -158,13 +158,13 @@ public:
 
 // -----------------------------------------------------------------
 
-static const Util::StringIdentifier dataId_scrollPos("scroll");
-
 //! (ctor)
-Textarea::Textarea(GUI_Manager & _gui,flag_t _flags):
-		Container(_gui,_flags),
+Textarea::Textarea(GUI_Manager & _gui, flag_t _flags):
+		Container(_gui, _flags),
 		lineHeight(15),
-		selectionStart(std::make_pair(0,std::string::npos)), dataName("text"),dataChanged(false),activeTextUpdateIndex(0),
+		selectionStart(std::make_pair(0, std::string::npos)),
+		dataChanged(false),
+		activeTextUpdateIndex(0),
 		keyListenerHandle(_gui.addKeyListener(this, std::bind(&Textarea::onKeyEvent, 
 															  this, 
 															  std::placeholders::_1))),
@@ -534,7 +534,7 @@ bool Textarea::onUnselect() {
 	stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
 	if(dataChanged) { 
 		dataChanged = false;
-		getGUI().componentDataChanged(this,dataName);
+		getGUI().componentDataChanged(this);
 	}
 
 	return true;
@@ -575,7 +575,7 @@ void Textarea::updateScrollPos(){
 //	std::cout << "MaxScrollPos"<<maxScrollPos<<"\n";
 	if(maxScrollPos>0){
 		if(scrollBar.isNull()){
-			scrollBar = new Scrollbar(getGUI(), dataId_scrollPos, Scrollbar::VERTICAL);
+			scrollBar = new Scrollbar(getGUI(), Scrollbar::VERTICAL);
 			optionalScrollBarListener.reset(new DataChangeListenerHandle(getGUI().addDataChangeListener(
 												scrollBar.get(),
 												[this](Component *) {

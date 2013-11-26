@@ -95,9 +95,9 @@ class ScrollMarker : public Component {
 // ----------------------------------------------------
 
 //! (ctor)
-Scrollbar::Scrollbar(GUI_Manager & _gui,Util::StringIdentifier _dataName,flag_t _flags/*=0*/):
-		Container(_gui,Geometry::Rect(),_flags),
-		maxScrollPos(1),scrollPos(0),dataName(std::move(_dataName)),
+Scrollbar::Scrollbar(GUI_Manager & _gui, flag_t _flags):
+		Container(_gui, Geometry::Rect(), _flags),
+		maxScrollPos(1),scrollPos(0),
 		mouseButtonListenerHandle(_gui.addMouseButtonListener(this, std::bind(&Scrollbar::onMouseButton, 
 																			  this, 
 																			  std::placeholders::_1,
@@ -194,7 +194,7 @@ float Scrollbar::getMarkerPosFromScrollPos(float _scrollPos)const {
 
 void Scrollbar::updateScrollPos(const int32_t f) {
 	setScrollPos( std::min( maxScrollPos, static_cast<uint32_t>(std::max(static_cast<int32_t>(0),f)) ));
-	getGUI().componentDataChanged(this,dataName.toString());
+	getGUI().componentDataChanged(this);
 }
 
 }

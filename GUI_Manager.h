@@ -302,7 +302,7 @@ class GUI_Manager {
 
 
 		void componentActionPerformed(Component *c,const Util::StringIdentifier & actionName);
-		void componentDataChanged(Component *c,const Util::StringIdentifier & actionName);
+		void componentDataChanged(Component * c);
 		void componentDestruction(const Component * component);
 
 		bool isCtrlPressed() const;
@@ -340,7 +340,7 @@ class GUI_Manager {
 		Menu * createMenu(flag_t flags=0);
 		NextColumn * createNextColumn(float additionalSpacing=0.0f);
 		NextRow * createNextRow(float additionalSpacing=0.0f);
-		Slider * createSlider(const Geometry::Rect & r,float left=0,float right=1,int steps=10,const std::string & dataName="",flag_t flags=0);
+		Slider * createSlider(const Geometry::Rect & r,float left=0,float right=1,int steps=10,flag_t flags=0);
 		Splitter * createVSplitter(flag_t flags=0);
 		Splitter * createHSplitter(flag_t flags=0);
 		TabbedPanel * createTabbedPanel(flag_t flags=0);
