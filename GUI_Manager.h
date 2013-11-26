@@ -204,6 +204,9 @@ class GUI_Manager {
 			const auto it = componentDestructionListener.find(component);
 			if(it != componentDestructionListener.cend()) {
 				it->second.unregisterElement(std::move(handle));
+				if(it->second.getElements().empty()) {
+					componentDestructionListener.erase(it);
+				}
 			}
 		}
 
@@ -218,6 +221,9 @@ class GUI_Manager {
 			const auto it = dataChangeListener.find(component);
 			if(it != dataChangeListener.cend()) {
 				it->second.unregisterElement(std::move(handle));
+				if(it->second.getElements().empty()) {
+					dataChangeListener.erase(it);
+				}
 			}
 		}
 		DataChangeListenerHandle addGlobalDataChangeListener(HandleDataChangeFun fun) {
@@ -250,6 +256,9 @@ class GUI_Manager {
 			const auto it = keyListener.find(component);
 			if(it != keyListener.cend()) {
 				it->second.unregisterElement(std::move(handle));
+				if(it->second.getElements().empty()) {
+					keyListener.erase(it);
+				}
 			}
 		}
 
@@ -264,6 +273,9 @@ class GUI_Manager {
 			const auto it = mouseButtonListener.find(component);
 			if(it != mouseButtonListener.cend()) {
 				it->second.unregisterElement(std::move(handle));
+				if(it->second.getElements().empty()) {
+					mouseButtonListener.erase(it);
+				}
 			}
 		}
 		MouseButtonListenerHandle addGlobalMouseButtonListener(HandleMouseButtonFun fun) {
@@ -286,6 +298,9 @@ class GUI_Manager {
 			const auto it = mouseClickListener.find(component);
 			if(it != mouseClickListener.cend()) {
 				it->second.unregisterElement(std::move(handle));
+				if(it->second.getElements().empty()) {
+					mouseClickListener.erase(it);
+				}
 			}
 		}
 
