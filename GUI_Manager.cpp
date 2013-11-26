@@ -92,9 +92,6 @@ std::string GUI_Manager::getStringFromClipboard() const {
 
 // ----------
 // ---- MouseCursor
-/**
- * MouseCursorHandler ---|> MouseMotionListener,FrameListener
- */
 class MouseCursorHandler {
 	private:
 		GUI_Manager & gui;
@@ -146,7 +143,6 @@ class MouseCursorHandler {
 // ----------
 // ---- Tooltip
 /**
- * TooltipHandler ---|> MouseMotionListener,FrameListener
  * \todo move TooltipHandler to Overlay
  */
 class TooltipHandler : public Component {
@@ -157,6 +153,7 @@ class TooltipHandler : public Component {
 		enum mode_t{
 			SEARCHING,ACTIVE,INACTIVE
 		} mode;
+		FrameListenerHandle frameListenerHandle;
 		MouseMotionListenerHandle mouseMotionListenerHandle;
 	public:
 
@@ -164,12 +161,16 @@ class TooltipHandler : public Component {
 			Component(_gui),
 			startingTime(0),
 			mode(SEARCHING),
+			frameListenerHandle(_gui.addFrameListener(std::bind(&TooltipHandler::onFrame,
+																this,
+																std::placeholders::_1))),
 			mouseMotionListenerHandle(_gui.addGlobalMouseMotionListener(std::bind(&TooltipHandler::onMouseMove, 
 																				  this, 
 																				  std::placeholders::_1,
 																				  std::placeholders::_2))) {
 		}
 		virtual ~TooltipHandler() {
+			getGUI().removeFrameListener(std::move(frameListenerHandle));
 			getGUI().removeGlobalMouseMotionListener(std::move(mouseMotionListenerHandle));
 		}
 
@@ -214,7 +215,6 @@ class TooltipHandler : public Component {
 //                std::cout <<  startingTime <<"; ";
 			return false;
 		}
-		// ---|> FrameListener
 		void onFrame(double timeSecs) {
 			if(mode==INACTIVE){
 				return;
@@ -276,8 +276,7 @@ class TooltipHandler : public Component {
 GUI_Manager::GUI_Manager(Util::UI::EventContext & context) : 
 	eventContext(context), window(nullptr), debugMode(0),
 	lazyRendering(false), style(new StyleManager),
-	tooltipHandler(new TooltipHandler(*this)),
-	tooltipFrameListener(addFrameListener(std::bind(&TooltipHandler::onFrame, tooltipHandler.get(), std::placeholders::_1))) {
+	tooltipHandler(new TooltipHandler(*this)) {
 	globalContainer=new GlobalContainer(*this,Rect(0,0,1280,1024));
 	globalContainer->setMouseCursorProperty(PROPERTY_MOUSECURSOR_DEFAULT);
 
@@ -291,7 +290,6 @@ GUI_Manager::~GUI_Manager() {
 	cleanup();
 	setActiveComponent(nullptr);
 	globalContainer=nullptr;
-	removeFrameListener(std::move(tooltipFrameListener));
 }
 
 Rect GUI_Manager::getScreenRect()const{

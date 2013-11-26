@@ -407,7 +407,6 @@ class GUI_Manager {
 	//	@{
 	private:
 		std::unique_ptr<TooltipHandler> tooltipHandler;
-		FrameListenerHandle tooltipFrameListener;
 	//	@}
 
 };
