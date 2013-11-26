@@ -48,23 +48,22 @@ class Checkbox : public Container {
 		virtual void doLayout() override;
 
 	private:
-		// ---|> Component
-		virtual void doDisplay(const Geometry::Rect & region) override;
-
-		bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
-		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
-
-		KeyListenerHandle keyListenerHandle;
-		MouseButtonListenerHandle mouseButtonListenerHandle;
-		MouseClickListenerHandle mouseClickListenerHandle;
-
-	protected:
 		Util::WeakPointer<Label> textLabel;
 		bool * boolValueRef;
 		unsigned int * intValueRef;
 		unsigned int intBitMask;
 		bool value;
 		Util::StringIdentifier dataName;
+
+		KeyListenerHandle keyListenerHandle;
+		MouseButtonListenerHandle mouseButtonListenerHandle;
+		MouseClickListenerHandle mouseClickListenerHandle;
+		
+		// ---|> Component
+		virtual void doDisplay(const Geometry::Rect & region) override;
+
+		bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
+		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
 };
 }
 #endif // GUI_Checkbox_H
