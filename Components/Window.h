@@ -12,7 +12,7 @@
 #define GUI_WINDOW_H
 
 #include "Container.h"
-#include "../Base/Listener.h"
+#include "../Base/ListenerHelper.h"
 #include <memory>
 
 namespace GUI {
@@ -102,8 +102,8 @@ class Window : public Container {
 
 		std::unique_ptr<AutoMinimizer> autoMinimizer;
 
-		KeyListenerHandle keyListenerHandle;
-		MouseButtonListenerHandle mouseButtonListenerHandle;
+		KeyListener keyListener;
+		MouseButtonListener mouseButtonListener;
 };
 }
 #endif // GUI_WINDOW_H

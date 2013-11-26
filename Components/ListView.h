@@ -12,7 +12,7 @@
 #define GUI_ListView_H
 
 #include "Container.h"
-#include "../Base/Listener.h"
+#include "../Base/ListenerHelper.h"
 #include <memory>
 #include <set>
 #include <vector>
@@ -135,9 +135,9 @@ public:
 	//! @name Event handling
 	//	@{
 	private:
-		KeyListenerHandle keyListenerHandle;
-		MouseButtonListenerHandle mouseButtonListenerHandle;
-		std::unique_ptr<MouseMotionListenerHandle> optionalMouseMotionListenerHandle;
+		KeyListener keyListener;
+		MouseButtonListener mouseButtonListener;
+		OptionalMouseMotionListener optionalMouseMotionListener;
 
 		bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
 		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);

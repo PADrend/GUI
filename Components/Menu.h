@@ -12,7 +12,7 @@
 #define GUI_MENU_H
 
 #include "Container.h"
-#include "../Base/Listener.h"
+#include "../Base/ListenerHelper.h"
 #include <memory>
 
 namespace GUI {
@@ -41,8 +41,8 @@ class Menu: public Container {
 		bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
 		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
 
-		KeyListenerHandle keyListenerHandle;
-		MouseButtonListenerHandle mouseButtonListenerHandle;
+		KeyListener keyListener;
+		MouseButtonListener mouseButtonListener;
 		std::unique_ptr<FrameListenerHandle> optionalFrameListener;
 
 	public:

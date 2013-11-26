@@ -12,7 +12,7 @@
 #define GUI_SPLITTER_H
 
 #include "Component.h"
-#include "../Base/Listener.h"
+#include "../Base/ListenerHelper.h"
 
 namespace GUI{
 
@@ -36,8 +36,8 @@ class Splitter: public Component {
 	private:
 		const splittingDirection_t direction;
 
-		MouseButtonListenerHandle mouseButtonListenerHandle;
-		std::unique_ptr<MouseMotionListenerHandle> optionalMouseMotionListenerHandle;
+		MouseButtonListener mouseButtonListener;
+		OptionalMouseMotionListener optionalMouseMotionListener;
 
 		// ---|> Component
 		virtual void doDisplay(const Geometry::Rect & region) override;

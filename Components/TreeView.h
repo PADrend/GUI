@@ -13,7 +13,7 @@
 
 #include "Container.h"
 #include "Label.h"
-#include "../Base/Listener.h"
+#include "../Base/ListenerHelper.h"
 #include <memory>
 
 namespace GUI {
@@ -74,7 +74,7 @@ class TreeView: public Container {
 				void setTreeView( TreeView * myTreeView);
 				TreeView * myTreeView;
 				bool marked;
-				MouseButtonListenerHandle mouseButtonListenerHandle;
+				MouseButtonListener mouseButtonListener;
 
 				void unmarkSubtree(Component * root)const;
 		};
@@ -127,9 +127,9 @@ class TreeView: public Container {
 		Util::WeakPointer<Scrollbar> scrollBar;
 		std::unique_ptr<DataChangeListenerHandle> optionalScrollBarListener;
 
-		KeyListenerHandle keyListenerHandle;
-		MouseButtonListenerHandle mouseButtonListenerHandle;
-		std::unique_ptr<MouseMotionListenerHandle> optionalMouseMotionListenerHandle;
+		KeyListener keyListener;
+		MouseButtonListener mouseButtonListener;
+		OptionalMouseMotionListener optionalMouseMotionListener;
 };
 }
 #endif // GUI_TreeView_H

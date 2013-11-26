@@ -26,11 +26,8 @@ namespace GUI {
 ScrollableContainer::ScrollableContainer(GUI_Manager & _gui,flag_t _flags/*=0*/) :
 		Container(_gui,_flags),
 		contentContainer(new Container(_gui)),
-		mouseButtonListenerHandle(_gui.addMouseButtonListener(this, std::bind(&ScrollableContainer::onMouseButton, 
-																			  this, 
-																			  std::placeholders::_1,
-																			  std::placeholders::_2))),
-		optionalMouseMotionListenerHandle() {
+		mouseButtonListener(createMouseButtonListener(_gui, this, &ScrollableContainer::onMouseButton)),
+		optionalMouseMotionListener(createOptionalMouseMotionListener(_gui, this, &ScrollableContainer::onMouseMove)) {
 	_addChild(contentContainer.get());
 	contentContainer->setFlag(IS_CLIENT_AREA,true);
 	setFlag(USE_SCISSOR,true);
@@ -43,9 +40,6 @@ ScrollableContainer::~ScrollableContainer() {
 										  std::move(*optionalScrollBarListener.get()));
 		optionalScrollBarListener.reset();
 	}
-	stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
-	getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
-
 }
 
 //! ---|> Component
@@ -117,9 +111,9 @@ bool ScrollableContainer::onMouseButton(Component * /*component*/, const Util::U
 		if(maxScrollPos.x()<=0 && maxScrollPos.y()<=0)
 			return false;
 		else if(buttonEvent.pressed){
-			startListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle, &ScrollableContainer::onMouseMove, this);
+			optionalMouseMotionListener.enable();
 		} else {// !pressed
-			stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
+			optionalMouseMotionListener.disable();
 		}
 		return true;
 	}
@@ -129,7 +123,7 @@ bool ScrollableContainer::onMouseButton(Component * /*component*/, const Util::U
 
 bool ScrollableContainer::onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
 	if(!(motionEvent.buttonMask & Util::UI::MASK_MOUSE_BUTTON_MIDDLE)) {
-		stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
+		optionalMouseMotionListener.disable();
 		return false;
 	}
 	const Geometry::Vec2 delta(motionEvent.deltaX, motionEvent.deltaY);

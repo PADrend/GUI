@@ -55,10 +55,7 @@ class TV_ScrollAnimation:public AnimationHandler{
 TreeView::TreeViewEntry::TreeViewEntry(GUI_Manager & _gui,TreeView * _treeView,Component * c/*=nullptr*/,flag_t _flags/*=0*/):
 		Container(_gui,_flags),
 		myTreeView(_treeView),marked(false),
-		mouseButtonListenerHandle(_gui.addMouseButtonListener(this, std::bind(&TreeViewEntry::onMouseButton, 
-																			  this, 
-																			  std::placeholders::_1,
-																			  std::placeholders::_2))) {
+		mouseButtonListener(createMouseButtonListener(_gui, this, &TreeViewEntry::onMouseButton)) {
 	if(c) {
 		Container::_insertAfter(c,getLastChild());
 	}
@@ -66,7 +63,6 @@ TreeView::TreeViewEntry::TreeViewEntry(GUI_Manager & _gui,TreeView * _treeView,C
 
 //! (TreeView::TreeViewEntry] [dtor)
 TreeView::TreeViewEntry::~TreeViewEntry() {
-	getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
 	myTreeView = nullptr;
 }
 
@@ -323,14 +319,9 @@ void TreeView::TreeViewEntry::unmarkSubtree(Component * subroot)const{
 TreeView::TreeView(GUI_Manager & _gui,const Geometry::Rect & _r,const std::string & _actionName,flag_t _flags/*=0*/) :
 		Container(_gui,_r,_flags),
 		actionName(_actionName),root(new TreeViewEntry(_gui,this)),scrollPos(0),multiSelect(true),scrollBar(nullptr),
-		keyListenerHandle(_gui.addKeyListener(this, std::bind(&TreeView::onKeyEvent, 
-															  this, 
-															  std::placeholders::_1))),
-		mouseButtonListenerHandle(_gui.addMouseButtonListener(this, std::bind(&TreeView::onMouseButton, 
-																			  this, 
-																			  std::placeholders::_1,
-																			  std::placeholders::_2))),
-		optionalMouseMotionListenerHandle() {
+		keyListener(createKeyListener(_gui, this, &TreeView::onKeyEvent)),
+		mouseButtonListener(createMouseButtonListener(_gui, this, &TreeView::onMouseButton)),
+		optionalMouseMotionListener(createOptionalMouseMotionListener(_gui, this, &TreeView::onMouseMove)) {
 	setFlag(SELECTABLE,true);
 
 	_addChild(root.get());
@@ -346,9 +337,6 @@ TreeView::~TreeView() {
 										  std::move(*optionalScrollBarListener.get()));
 		optionalScrollBarListener.reset();
 	}
-	stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
-	getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
-	getGUI().removeKeyListener(this, std::move(keyListenerHandle));
 	// destroy root
 	root = nullptr;
 }
@@ -490,9 +478,9 @@ void TreeView::clearContents() {
 bool TreeView::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) {
 	if(buttonEvent.button == Util::UI::MOUSE_BUTTON_MIDDLE && scrollBar.isNotNull()) {
 		if(buttonEvent.pressed) {
-			startListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle, &TreeView::onMouseMove, this);
+			optionalMouseMotionListener.enable();
 		} else {// !pressed
-			stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
+			optionalMouseMotionListener.disable();
 		}
 		return true;
 	} else if(buttonEvent.pressed && buttonEvent.button == Util::UI::MOUSE_WHEEL_UP) {
@@ -514,7 +502,7 @@ bool TreeView::onMouseButton(Component * /*component*/, const Util::UI::ButtonEv
 
 bool TreeView::onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
 	if(!(motionEvent.buttonMask & Util::UI::MASK_MOUSE_BUTTON_MIDDLE)) {
-		stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
+		optionalMouseMotionListener.disable();
 		return false;
 	}
 	scroll(motionEvent.deltaY * -2.0);

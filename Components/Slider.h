@@ -12,7 +12,7 @@
 #define GUI_Slider_H
 
 #include "Container.h"
-#include "../Base/Listener.h"
+#include "../Base/ListenerHelper.h"
 
 namespace GUI {
 class Button;
@@ -76,8 +76,8 @@ class Slider : public Container {
 		Util::WeakPointer<Button> button1;
 		Util::WeakPointer<Button> button2;
 
-		KeyListenerHandle keyListenerHandle;
-		MouseButtonListenerHandle mouseButtonListenerHandle;
+		KeyListener keyListener;
+		MouseButtonListener mouseButtonListener;
 };
 }
 #endif // GUI_Slider_H

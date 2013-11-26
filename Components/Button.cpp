@@ -36,24 +36,17 @@ Button::Button(GUI_Manager & _gui,flag_t _flags/*=0*/) :
 		switchedOn(false),
 		hover(false),
 		actionListener(),
-		keyListenerHandle(_gui.addKeyListener(this, std::bind(&Button::onKeyEvent, 
-															  this, 
-															  std::placeholders::_1))),
-		mouseButtonListenerHandle(_gui.addMouseButtonListener(this, std::bind(&Button::onMouseButton, 
-																			  this, 
-																			  std::placeholders::_1,
-																			  std::placeholders::_2))),
-		mouseClickListenerHandle(_gui.addMouseClickListener(	this,
-																[this](Component *, unsigned int, const Geometry::Vec2 &) {
-																	if(!isLocked()) {
-																		action();
-																	}
-																	return true;
-																})),
-		mouseMotionListenerHandle(_gui.addGlobalMouseMotionListener(std::bind(&Button::onMouseMove, 
-																			  this, 
-																			  std::placeholders::_1,
-																			  std::placeholders::_2))) {
+		keyListener(createKeyListener(_gui, this, &Button::onKeyEvent)),
+		mouseButtonListener(createMouseButtonListener(_gui, this, &Button::onMouseButton)),
+		mouseClickListener(createMouseClickListener(_gui,
+													this,
+													[this](Component *, unsigned int, const Geometry::Vec2 &) {
+														if(!isLocked()) {
+															action();
+														}
+														return true;
+													})),
+		mouseMotionListener(createMouseMotionListener(_gui, this, &Button::onMouseMove)) {
 	setFlag(SELECTABLE,true);
 
 	// create Label
@@ -64,12 +57,7 @@ Button::Button(GUI_Manager & _gui,flag_t _flags/*=0*/) :
 }
 
 //! (dtor)
-Button::~Button() {
-	getGUI().removeGlobalMouseMotionListener(std::move(mouseMotionListenerHandle));
-	getGUI().removeMouseClickListener(this, std::move(mouseClickListenerHandle));
-	getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
-	getGUI().removeKeyListener(this, std::move(keyListenerHandle));
-}
+Button::~Button() = default;
 
 //! ---|> Component
 void Button::doDisplay(const Geometry::Rect & region){

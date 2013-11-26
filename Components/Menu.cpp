@@ -19,13 +19,8 @@ namespace GUI {
 //! (ctor)
 Menu::Menu(GUI_Manager & _gui, flag_t _flags) :
 	Container(_gui, _flags),
-	keyListenerHandle(_gui.addKeyListener(this, std::bind(&Menu::onKeyEvent, 
-														  this, 
-														  std::placeholders::_1))),
-	mouseButtonListenerHandle(_gui.addMouseButtonListener(this, std::bind(&Menu::onMouseButton, 
-																		  this, 
-																		  std::placeholders::_1,
-																		  std::placeholders::_2))) {
+	keyListener(createKeyListener(_gui, this, &Menu::onKeyEvent)),
+	mouseButtonListener(createMouseButtonListener(_gui, this, &Menu::onMouseButton)) {
 	disable();
 	setFlag(ALWAYS_ON_TOP,true);
 	addProperty(new UseColorProperty(PROPERTY_TEXT_COLOR,PROPERTY_MENU_TEXT_COLOR));
@@ -34,8 +29,6 @@ Menu::Menu(GUI_Manager & _gui, flag_t _flags) :
 
 //! (dtor)
 Menu::~Menu() {
-	getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
-	getGUI().removeKeyListener(this, std::move(keyListenerHandle));
 	if(optionalFrameListener) {
 		getGUI().removeFrameListener(std::move(*optionalFrameListener.get()));
 		optionalFrameListener.reset();

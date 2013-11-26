@@ -13,7 +13,7 @@
 
 #include "Container.h"
 #include "LayoutHelper.h"
-#include "../Base/Listener.h"
+#include "../Base/ListenerHelper.h"
 #include "../Base/Layouters/FlowLayouter.h"
 #include <iostream>
 #include <memory>
@@ -55,8 +55,8 @@ class ScrollableContainer: public Container {
 		std::unique_ptr<DataChangeListenerHandle> optionalScrollBarListener;
 		Geometry::Vec2 scrollPos;
 		Geometry::Vec2 maxScrollPos;
-		MouseButtonListenerHandle mouseButtonListenerHandle;
-		std::unique_ptr<MouseMotionListenerHandle> optionalMouseMotionListenerHandle;
+		MouseButtonListener mouseButtonListener;
+		OptionalMouseMotionListener optionalMouseMotionListener;
 
 		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
 		bool onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent);

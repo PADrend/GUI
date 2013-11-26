@@ -69,14 +69,9 @@ ListView::ListView(GUI_Manager & _gui, flag_t _flags/*=0*/) :
 	Container(_gui, _flags),
 	entryHeight(getGUI().getGlobalValue(PROPERTY_LISTVIEW_DEFAULT_ENTRY_HEIGHT)),
 	clientArea(new ListViewClientArea(_gui, *this)), cursor(0),
-	keyListenerHandle(_gui.addKeyListener(this, std::bind(&ListView::onKeyEvent, 
-														  this, 
-														  std::placeholders::_1))),
-	mouseButtonListenerHandle(_gui.addMouseButtonListener(clientArea.get(), std::bind(&ListView::onMouseButton, 
-																					  this, 
-																					  std::placeholders::_1,
-																					  std::placeholders::_2))),
-	optionalMouseMotionListenerHandle(),
+	keyListener(createKeyListener(_gui, this, &ListView::onKeyEvent)),
+	mouseButtonListener(createMouseButtonListener(_gui, this, &ListView::onMouseButton)),
+	optionalMouseMotionListener(createOptionalMouseMotionListener(_gui, this, &ListView::onMouseMove)),
 	initialMarkingIndex(0) {
 
 	clientArea->setFlag(IS_CLIENT_AREA, true);
@@ -97,9 +92,6 @@ ListView::~ListView() {
 										  std::move(*optionalScrollBarListener.get()));
 		optionalScrollBarListener.reset();
 	}
-	stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
-	getGUI().removeMouseButtonListener(clientArea.get(), std::move(mouseButtonListenerHandle));
-	getGUI().removeKeyListener(this, std::move(keyListenerHandle));
 }
 
 //! ---|> Component
@@ -265,9 +257,9 @@ bool ListView::onMouseButton(Component * /*component*/, const Util::UI::ButtonEv
 		if(maxScrollPos.x() <= 0 && maxScrollPos.y() <= 0)
 			return false;
 		else if(buttonEvent.pressed) {
-			startListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle, &ListView::onMouseMove, this);
+			optionalMouseMotionListener.enable();
 		} else {// !pressed
-			stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
+			optionalMouseMotionListener.disable();
 		}
 		return true;
 	} else if(buttonEvent.button == Util::UI::MOUSE_BUTTON_LEFT && buttonEvent.pressed) {
@@ -297,7 +289,7 @@ bool ListView::onMouseButton(Component * /*component*/, const Util::UI::ButtonEv
 
 bool ListView::onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
 	if (!(motionEvent.buttonMask & Util::UI::MASK_MOUSE_BUTTON_MIDDLE)) {
-		stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
+		optionalMouseMotionListener.disable();
 		return false;
 	}
 	const Geometry::Vec2 delta(motionEvent.deltaX, motionEvent.deltaY);

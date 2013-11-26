@@ -61,11 +61,8 @@ static FillLayouter * getDefaultLayouter(){
 //! (ctor)
 EditorPanel::EditorPanel(GUI_Manager & _gui,flag_t _flags/*=0*/) :
 		Container(_gui,_flags), state(CLICK_SELECTING),
-		mouseButtonListenerHandle(_gui.addMouseButtonListener(this, std::bind(&EditorPanel::onMouseButton, 
-																			  this, 
-																			  std::placeholders::_1,
-																			  std::placeholders::_2))),
-		optionalMouseMotionListenerHandle() {
+		mouseButtonListener(createMouseButtonListener(_gui, this, &EditorPanel::onMouseButton)),
+		optionalMouseMotionListener(createOptionalMouseMotionListener(_gui, this, &EditorPanel::onMouseMove)) {
 	setFlag(USE_SCISSOR,true);
 	setFlag(SELECTABLE,true);
 	setFlag(BORDER,true);
@@ -74,10 +71,7 @@ EditorPanel::EditorPanel(GUI_Manager & _gui,flag_t _flags/*=0*/) :
 
 
 //! (dtor)
-EditorPanel::~EditorPanel() {
-	stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
-	getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
-}
+EditorPanel::~EditorPanel() = default;
 
 //! ---|> Component
 void EditorPanel::doDisplay(const Geometry::Rect & region) {
@@ -101,7 +95,7 @@ void EditorPanel::doDisplay(const Geometry::Rect & region) {
 bool EditorPanel::onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent){
 	switch(state){
 		case CLICK_SELECTING:{
-			stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
+			optionalMouseMotionListener.disable();
 			return false;
 		}
 		case DRAG_SELECTING:{
@@ -214,12 +208,12 @@ void EditorPanel::rectSelect_start(const Vec2 & pos){
 	state=DRAG_SELECTING;
 	dragStartPos=pos;
 	dragPos=pos;
-	startListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle, &EditorPanel::onMouseMove, this);
+	optionalMouseMotionListener.enable();
 }
 
 void EditorPanel::rectSelect_break(){
 	state=CLICK_SELECTING;
-	stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
+	optionalMouseMotionListener.disable();
 }
 
 void EditorPanel::rectSelect_finish(const Vec2 & pos){
@@ -251,7 +245,7 @@ void EditorPanel::rectSelect_finish(const Vec2 & pos){
 	}
 
 	state=CLICK_SELECTING;
-	stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
+	optionalMouseMotionListener.disable();
 	if(_markingChanged)
 		getGUI().componentDataChanged(this);
 }
@@ -260,7 +254,7 @@ void EditorPanel::move_start(const Vec2 & pos){
 	state=MOVING;
 	dragStartPos=pos;
 	dragPos=pos;
-	startListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle, &EditorPanel::onMouseMove, this);
+	optionalMouseMotionListener.enable();
 }
 
 void EditorPanel::move_execute(const Vec2 & delta){
@@ -272,7 +266,7 @@ void EditorPanel::move_execute(const Vec2 & delta){
 
 void EditorPanel::move_break(const Vec2 & pos){
 	state=CLICK_SELECTING;
-	stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
+	optionalMouseMotionListener.disable();
 	for(const auto & markedChild : getMarkedChildren()) {
 		markedChild->moveRel(dragStartPos - pos);
 	}
@@ -282,7 +276,7 @@ void EditorPanel::move_break(const Vec2 & pos){
 
 void EditorPanel::move_finish(){
 	state=CLICK_SELECTING;
-	stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
+	optionalMouseMotionListener.disable();
 }
 
 

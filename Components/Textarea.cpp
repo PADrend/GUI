@@ -165,14 +165,9 @@ Textarea::Textarea(GUI_Manager & _gui, flag_t _flags):
 		selectionStart(std::make_pair(0, std::string::npos)),
 		dataChanged(false),
 		activeTextUpdateIndex(0),
-		keyListenerHandle(_gui.addKeyListener(this, std::bind(&Textarea::onKeyEvent, 
-															  this, 
-															  std::placeholders::_1))),
-		mouseButtonListenerHandle(_gui.addMouseButtonListener(this, std::bind(&Textarea::onMouseButton, 
-																			  this, 
-																			  std::placeholders::_1,
-																			  std::placeholders::_2))),
-		optionalMouseMotionListenerHandle() {
+		keyListener(createKeyListener(_gui, this, &Textarea::onKeyEvent)),
+		mouseButtonListener(createMouseButtonListener(_gui, this, &Textarea::onMouseButton)),
+		optionalMouseMotionListener(createOptionalMouseMotionListener(_gui, this, &Textarea::onMouseMove)) {
 	fontReference = getGUI().getActiveFont(PROPERTY_DEFAULT_FONT);
 	setFlag(SELECTABLE,true);
 	setFlag(USE_SCISSOR,true);
@@ -188,9 +183,6 @@ Textarea::~Textarea() {
 										  std::move(*optionalScrollBarListener.get()));
 		optionalScrollBarListener.reset();
 	}
-	stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
-	getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
-	getGUI().removeKeyListener(this, std::move(keyListenerHandle));
 }
 
 //! ---|> Component
@@ -495,9 +487,9 @@ bool Textarea::onMouseButton(Component * /*component*/, const Util::UI::ButtonEv
 		const Geometry::Vec2 localPos = Geometry::Vec2(buttonEvent.x, buttonEvent.y) - getAbsPosition();
 		if(buttonEvent.button == Util::UI::MOUSE_BUTTON_LEFT) {
 			moveCursor(processor->textPosToCursor(*this,localPos+scrollPos), getGUI().isShiftPressed());
-			startListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle, &Textarea::onMouseMove, this);
+			optionalMouseMotionListener.enable();
 		}else if(buttonEvent.button == Util::UI::MOUSE_BUTTON_MIDDLE) {
-			stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
+			optionalMouseMotionListener.disable();
 		}else if(buttonEvent.button == Util::UI::MOUSE_WHEEL_UP ) { // scroll
 			scrollTo( getScrollPos()-Geometry::Vec2(0,3.0f*lineHeight) );
 		}else if(buttonEvent.button == Util::UI::MOUSE_WHEEL_DOWN) { // scroll
@@ -520,7 +512,7 @@ bool Textarea::onMouseMove(Component * /*component*/, const Util::UI::MotionEven
 		scrollTo( getScrollPos() - delta*2.0 );
 		return true;
 	}
-	stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
+	optionalMouseMotionListener.disable();
 	return false;
 }
 
@@ -531,7 +523,7 @@ bool Textarea::onSelect() {
 
 //! ---|> Component
 bool Textarea::onUnselect() {
-	stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
+	optionalMouseMotionListener.disable();
 	if(dataChanged) { 
 		dataChanged = false;
 		getGUI().componentDataChanged(this);

@@ -12,7 +12,7 @@
 #define GUI_TEXTFIELD_H
 
 #include "Component.h"
-#include "../Base/Listener.h"
+#include "../Base/ListenerHelper.h"
 #include "../Base/Fonts/AbstractFont.h"
 #include <array>
 
@@ -53,9 +53,9 @@ class Textfield: public Component {
 		int cursorPos;
 		int scrollPos;
 
-		KeyListenerHandle keyListenerHandle;
-		MouseButtonListenerHandle mouseButtonListenerHandle;
-		std::unique_ptr<MouseMotionListenerHandle> optionalMouseMotionListenerHandle;
+		KeyListener keyListener;
+		MouseButtonListener mouseButtonListener;
+		OptionalMouseMotionListener optionalMouseMotionListener;
 
 		Geometry::Vec2 getCursorCoordinate(int cursorPos);
 		int getCursorPositionFromCoordinate(const Geometry::Vec2 & pos);

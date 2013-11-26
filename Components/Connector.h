@@ -12,7 +12,7 @@
 #define GUI_Connector_H
 
 #include "Container.h"
-#include "../Base/Listener.h"
+#include "../Base/ListenerHelper.h"
 
 namespace GUI {
 /***

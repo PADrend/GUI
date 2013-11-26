@@ -13,7 +13,7 @@
 
 #include "Container.h"
 #include "Label.h"
-#include "../Base/Listener.h"
+#include "../Base/ListenerHelper.h"
 
 namespace GUI {
 /***
@@ -51,10 +51,10 @@ class Checkbox : public Container {
 		unsigned int intBitMask;
 		bool value;
 
-		KeyListenerHandle keyListenerHandle;
-		MouseButtonListenerHandle mouseButtonListenerHandle;
-		MouseClickListenerHandle mouseClickListenerHandle;
-		
+		KeyListener keyListener;
+		MouseButtonListener mouseButtonListener;
+		MouseClickListener mouseClickListener;
+
 		// ---|> Component
 		virtual void doDisplay(const Geometry::Rect & region) override;
 

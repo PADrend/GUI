@@ -12,7 +12,7 @@
 #include "../GUI_Manager.h"
 #include "../Base/AbstractShape.h"
 #include "../Base/Draw.h"
-#include "../Base/Listener.h"
+#include "../Base/ListenerHelper.h"
 #include "../Base/ListenerHelper.h"
 #include "../Base/Properties.h"
 #include "ComponentPropertyIds.h"
@@ -27,26 +27,17 @@ namespace GUI {
  **/
 struct TabTitlePanel : public Container {
 	TabbedPanel::Tab & myTab;
-	KeyListenerHandle keyListenerHandle;
-	MouseButtonListenerHandle mouseButtonListenerHandle;
-	std::unique_ptr<MouseMotionListenerHandle> optionalMouseMotionListenerHandle;
+	KeyListener keyListener;
+	MouseButtonListener mouseButtonListener;
+	OptionalMouseMotionListener optionalMouseMotionListener;
 	TabTitlePanel(GUI_Manager & _gui,TabbedPanel::Tab & tab) :
 			Container(_gui), myTab(tab),
-			keyListenerHandle(_gui.addKeyListener(this, std::bind(&TabTitlePanel::onKeyEvent, 
-																  this, 
-																  std::placeholders::_1))),
-			mouseButtonListenerHandle(_gui.addMouseButtonListener(this, std::bind(&TabTitlePanel::onMouseButton, 
-																			  this, 
-																			  std::placeholders::_1,
-																			  std::placeholders::_2))),
-			optionalMouseMotionListenerHandle() {
+			keyListener(createKeyListener(_gui, this, &TabTitlePanel::onKeyEvent)),
+			mouseButtonListener(createMouseButtonListener(_gui, this, &TabTitlePanel::onMouseButton)),
+			optionalMouseMotionListener(createOptionalMouseMotionListener(_gui, this, &TabTitlePanel::onMouseMove)) {
 		setFlag(SELECTABLE,true);
 	}
-	virtual ~TabTitlePanel() {
-		stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
-		getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
-		getGUI().removeKeyListener(this, std::move(keyListenerHandle));
-	}
+	virtual ~TabTitlePanel() = default;
 	TabbedPanel::Tab * getTab()const {
 		return &myTab;
 	}
@@ -108,7 +99,7 @@ struct TabTitlePanel : public Container {
 			getGUI().setActiveComponent(this);
 			select();
 			myTab.makeActiveTab();
-			startListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle, &TabTitlePanel::onMouseMove, this);
+			optionalMouseMotionListener.enable();
 			return true;
 		}
 		return false;
@@ -116,7 +107,7 @@ struct TabTitlePanel : public Container {
 
 	bool onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
 		if (!isActive() || motionEvent.buttonMask == Util::UI::MASK_NO_BUTTON) {
-			stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
+			optionalMouseMotionListener.disable();
 			return false;
 		}
 		const Geometry::Vec2 absPos = Geometry::Vec2(motionEvent.x, motionEvent.y);

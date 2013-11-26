@@ -11,7 +11,7 @@
 #include "Scrollbar.h"
 #include "../GUI_Manager.h"
 #include "../Base/AbstractShape.h"
-#include "../Base/Listener.h"
+#include "../Base/ListenerHelper.h"
 #include "../Base/ListenerHelper.h"
 #include "ComponentPropertyIds.h"
 #include "Button.h"
@@ -28,24 +28,18 @@ class ScrollMarker : public Component {
 		float dragStartScroll;
 		bool catchDragStartPos;
 
-		MouseButtonListenerHandle mouseButtonListenerHandle;
-		std::unique_ptr<MouseMotionListenerHandle> optionalMouseMotionListenerHandle;
+		MouseButtonListener mouseButtonListener;
+		OptionalMouseMotionListener optionalMouseMotionListener;
 
 	public:
 	//! (ctor)
 	ScrollMarker(GUI_Manager & _gui,Scrollbar & _myScrollbar):
 			Component(_gui),myScrollbar(_myScrollbar),
-			mouseButtonListenerHandle(_gui.addMouseButtonListener(this, std::bind(&ScrollMarker::onMouseButton, 
-																				  this, 
-																				  std::placeholders::_1,
-																				  std::placeholders::_2))),
-			optionalMouseMotionListenerHandle() {
+			mouseButtonListener(createMouseButtonListener(_gui, this, &ScrollMarker::onMouseButton)),
+			optionalMouseMotionListener(createOptionalMouseMotionListener(_gui, this, &ScrollMarker::onMouseMove)) {
 	}
 	//! (ctor)
-	virtual ~ScrollMarker() {
-		stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
-		getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
-	}
+	virtual ~ScrollMarker() = default;
 
 	bool onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) {
 		if(buttonEvent.button == Util::UI::MOUSE_WHEEL_UP || buttonEvent.button == Util::UI::MOUSE_WHEEL_DOWN) {
@@ -62,7 +56,7 @@ class ScrollMarker : public Component {
 
 	bool onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
 		if (!isActive() || motionEvent.buttonMask == Util::UI::MASK_NO_BUTTON) {
-			stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
+			optionalMouseMotionListener.disable();
 			return false;
 		}
 		const float p = myScrollbar.isVertical() ? motionEvent.y : motionEvent.x;
@@ -79,7 +73,7 @@ class ScrollMarker : public Component {
 	}
 	void startDragging(){
 		activate();
-		startListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle, &ScrollMarker::onMouseMove, this);
+		optionalMouseMotionListener.enable();
 		catchDragStartPos = true;
 	}
 
@@ -98,19 +92,14 @@ class ScrollMarker : public Component {
 Scrollbar::Scrollbar(GUI_Manager & _gui, flag_t _flags):
 		Container(_gui, Geometry::Rect(), _flags),
 		maxScrollPos(1),scrollPos(0),
-		mouseButtonListenerHandle(_gui.addMouseButtonListener(this, std::bind(&Scrollbar::onMouseButton, 
-																			  this, 
-																			  std::placeholders::_1,
-																			  std::placeholders::_2))) {
+		mouseButtonListener(createMouseButtonListener(_gui, this, &Scrollbar::onMouseButton)) {
 	setFlag(SELECTABLE,true);
 
 	marker=new ScrollMarker(getGUI(),*this);
 	_addChild(marker.get());
 }
 
-Scrollbar::~Scrollbar() {
-	getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
-}
+Scrollbar::~Scrollbar() = default;
 
 //! ---|> Component
 void Scrollbar::doLayout(){

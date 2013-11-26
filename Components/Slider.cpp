@@ -12,7 +12,7 @@
 #include "../GUI_Manager.h"
 #include "../Base/AbstractShape.h"
 #include "../Base/Draw.h"
-#include "../Base/Listener.h"
+#include "../Base/ListenerHelper.h"
 #include "../Base/ListenerHelper.h"
 #include "ComponentPropertyIds.h"
 #include "Button.h"
@@ -26,25 +26,19 @@ namespace GUI{
  **/
 class SliderMarker:public Component {
 	Slider & slider;
-	MouseButtonListenerHandle mouseButtonListenerHandle;
+	MouseButtonListener mouseButtonListener;
 
 	public:
-	std::unique_ptr<MouseMotionListenerHandle> optionalMouseMotionListenerHandle;
+	OptionalMouseMotionListener optionalMouseMotionListener;
 	//! (ctor)
 	SliderMarker(GUI_Manager & _gui,Slider & _slider) :
 			Component(_gui),
 			slider(_slider),
-			mouseButtonListenerHandle(_gui.addMouseButtonListener(this, std::bind(&SliderMarker::onMouseButton, 
-																				  this, 
-																				  std::placeholders::_1,
-																				  std::placeholders::_2))),
-			optionalMouseMotionListenerHandle() {
+			mouseButtonListener(createMouseButtonListener(_gui, this, &SliderMarker::onMouseButton)),
+			optionalMouseMotionListener(createOptionalMouseMotionListener(_gui, this, &SliderMarker::onMouseMove)) {
 	}
 	//! (ctor)
-	virtual ~SliderMarker() {
-		stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
-		getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
-	}
+	virtual ~SliderMarker() = default;
 
 	bool onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) {
 		if(buttonEvent.button == Util::UI::MOUSE_WHEEL_UP || buttonEvent.button == Util::UI::MOUSE_WHEEL_DOWN) {
@@ -54,7 +48,7 @@ class SliderMarker:public Component {
 			select();
 			if (buttonEvent.button == Util::UI::MOUSE_BUTTON_LEFT) {
 				getGUI().setActiveComponent(this);
-				startListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle, &SliderMarker::onMouseMove, this);
+				optionalMouseMotionListener.enable();
 			}
 		}
 		return true;
@@ -62,7 +56,7 @@ class SliderMarker:public Component {
 
 	bool onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
 		if (!isActive() || motionEvent.buttonMask == Util::UI::MASK_NO_BUTTON) {
-			stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
+			optionalMouseMotionListener.disable();
 			return false;
 		}
 		const Geometry::Vec2 localPos = Geometry::Vec2(motionEvent.x, motionEvent.y) - slider.getAbsPosition();
@@ -82,13 +76,8 @@ class SliderMarker:public Component {
 Slider::Slider(GUI_Manager & _gui, const Geometry::Rect & _r, float left, float right, int steps, flag_t _flags):
 		Container(_gui,_r,_flags),
 		markerSize(6),value(0),floatValueRef(nullptr),
-		keyListenerHandle(_gui.addKeyListener(this, std::bind(&Slider::onKeyEvent, 
-															  this, 
-															  std::placeholders::_1))),
-		mouseButtonListenerHandle(_gui.addMouseButtonListener(this, std::bind(&Slider::onMouseButton, 
-																			  this, 
-																			  std::placeholders::_1,
-																			  std::placeholders::_2))) {
+		keyListener(createKeyListener(_gui, this, &Slider::onKeyEvent)),
+		mouseButtonListener(createMouseButtonListener(_gui, this, &Slider::onMouseButton)) {
 	setRange(left,right,steps);
 	setFlag(SELECTABLE,true);
 
@@ -115,10 +104,7 @@ Slider::Slider(GUI_Manager & _gui, const Geometry::Rect & _r, float left, float 
 }
 
 //! (dtor)
-Slider::~Slider() {
-	getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
-	getGUI().removeKeyListener(this, std::move(keyListenerHandle));
-}
+Slider::~Slider() = default;
 
 //! ---|> Component
 void Slider::doLayout(){
@@ -214,7 +200,7 @@ bool Slider::onMouseButton(Component * /*component*/, const Util::UI::ButtonEven
 			updateDataFromPos(localPos);
 			sliderMarker->activate();
 			SliderMarker * s=dynamic_cast<SliderMarker *>(sliderMarker.get());
-			startListeningOnMouseMove(getGUI(), s->optionalMouseMotionListenerHandle, &SliderMarker::onMouseMove, s);
+			s->optionalMouseMotionListener.enable();
 		}else if(buttonEvent.button == Util::UI::MOUSE_WHEEL_UP) {
 			updateData(getValue()+stepWidth);
 		}else if(buttonEvent.button == Util::UI::MOUSE_WHEEL_DOWN) {

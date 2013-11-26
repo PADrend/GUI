@@ -27,14 +27,9 @@ Textfield::Textfield(GUI_Manager & _gui, const std::string & _text, flag_t _flag
 		backupText(),
 		cursorPos(0),
 		scrollPos(0),
-		keyListenerHandle(_gui.addKeyListener(this, std::bind(&Textfield::onKeyEvent, 
-															  this, 
-															  std::placeholders::_1))),
-		mouseButtonListenerHandle(_gui.addMouseButtonListener(this, std::bind(&Textfield::onMouseButton, 
-																			  this, 
-																			  std::placeholders::_1,
-																			  std::placeholders::_2))),
-		optionalMouseMotionListenerHandle(),
+		keyListener(createKeyListener(_gui, this, &Textfield::onKeyEvent)),
+		mouseButtonListener(createMouseButtonListener(_gui, this, &Textfield::onMouseButton)),
+		optionalMouseMotionListener(createOptionalMouseMotionListener(_gui, this, &Textfield::onMouseMove)),
 		currentOptionIndex(-1) {
 	fontReference = getGUI().getActiveFont(PROPERTY_DEFAULT_FONT);
 	setText(_text);
@@ -46,11 +41,7 @@ Textfield::Textfield(GUI_Manager & _gui, const std::string & _text, flag_t _flag
 }
 
 //! (dtor)
-Textfield::~Textfield() {
-	stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
-	getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
-	getGUI().removeKeyListener(this, std::move(keyListenerHandle));
-}
+Textfield::~Textfield() = default;
 
 //! ---|> Component
 void Textfield::doDisplay(const Geometry::Rect & /*region*/) {
@@ -335,7 +326,7 @@ bool Textfield::onMouseButton(Component * /*component*/, const Util::UI::ButtonE
 		select();
 		if (buttonEvent.button == Util::UI::MOUSE_BUTTON_LEFT) {
 			setCursorPos(getCursorPositionFromCoordinate(localPos), getGUI().isShiftPressed());
-			startListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle, &Textfield::onMouseMove, this);
+			optionalMouseMotionListener.enable();
 		}else if(buttonEvent.button == Util::UI::MOUSE_WHEEL_UP && hasOptions()) {
 			setCurrentOptionIndex( (countOptions()+getCurrentOptionIndex()-1) % countOptions());
 		}else if(buttonEvent.button == Util::UI::MOUSE_WHEEL_DOWN && hasOptions()) {
@@ -351,7 +342,7 @@ bool Textfield::onMouseButton(Component * /*component*/, const Util::UI::ButtonE
 
 bool Textfield::onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent){
 	if (!(motionEvent.buttonMask & Util::UI::MASK_MOUSE_BUTTON_LEFT) || isLocked()) {
-		stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
+		optionalMouseMotionListener.disable();
 		return false;
 	}
 	const Geometry::Vec2 localPos = Geometry::Vec2(motionEvent.x, motionEvent.y) - getAbsPosition();
@@ -368,7 +359,7 @@ bool Textfield::onSelect() {
 
 //! ---|> Component
 bool Textfield::onUnselect() {
-	stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
+	optionalMouseMotionListener.disable();
 
 	if (backupText!=getText()) { // TODO: use changed flag
 		/* if componentDataChanged(...) issues a recursive call to onUnselect, 

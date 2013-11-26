@@ -12,7 +12,7 @@
 #define GUI_Scrollbar_H
 
 #include "Container.h"
-#include "../Base/Listener.h"
+#include "../Base/ListenerHelper.h"
 
 namespace GUI {
 class Button;
@@ -55,7 +55,7 @@ class Scrollbar : public Container {
 
 		Util::WeakPointer<Component> marker;
 
-		MouseButtonListenerHandle mouseButtonListenerHandle;
+		MouseButtonListener mouseButtonListener;
 };
 }
 #endif // GUI_Scrollbar_H

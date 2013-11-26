@@ -12,7 +12,7 @@
 #define GUI_EditorPanel_H
 
 #include "Container.h"
-#include "../Base/Listener.h"
+#include "../Base/ListenerHelper.h"
 #include <set>
 
 namespace GUI {
@@ -52,8 +52,8 @@ class EditorPanel: public Container {
 		Geometry::Vec2 dragStartPos;
 		Geometry::Vec2 dragPos;
 
-		MouseButtonListenerHandle mouseButtonListenerHandle;
-		std::unique_ptr<MouseMotionListenerHandle> optionalMouseMotionListenerHandle;
+		MouseButtonListener mouseButtonListener;
+		OptionalMouseMotionListener optionalMouseMotionListener;
 
 		void rectSelect_start(const Geometry::Vec2 & pos);
 		void rectSelect_break();

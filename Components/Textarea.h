@@ -12,7 +12,7 @@
 #define GUI_TEXTAREA_H
 
 #include "Container.h"
-#include "../Base/Listener.h"
+#include "../Base/ListenerHelper.h"
 #include "../Base/Fonts/AbstractFont.h"
 #include <array>
 #include <memory>
@@ -125,9 +125,9 @@ class Textarea: public Container {
 		std::vector<TextUpdate> commands;
 		size_t activeTextUpdateIndex;
 		
-		KeyListenerHandle keyListenerHandle;
-		MouseButtonListenerHandle mouseButtonListenerHandle;
-		std::unique_ptr<MouseMotionListenerHandle> optionalMouseMotionListenerHandle;
+		KeyListener keyListener;
+		MouseButtonListener mouseButtonListener;
+		OptionalMouseMotionListener optionalMouseMotionListener;
 	//	\}
 };
 //! (internal)

@@ -13,7 +13,7 @@
 
 #include "Container.h"
 #include "Label.h"
-#include "../Base/Listener.h"
+#include "../Base/ListenerHelper.h"
 
 namespace GUI {
 /***
@@ -57,10 +57,10 @@ class Button : public Container {
 		bool switchedOn;
 		bool hover;
 		HandleActionFun actionListener;
-		KeyListenerHandle keyListenerHandle;
-		MouseButtonListenerHandle mouseButtonListenerHandle;
-		MouseClickListenerHandle mouseClickListenerHandle;
-		MouseMotionListenerHandle mouseMotionListenerHandle;
+		KeyListener keyListener;
+		MouseButtonListener mouseButtonListener;
+		MouseClickListener mouseClickListener;
+		MouseMotionListener mouseMotionListener;
 };
 }
 #endif // GUI_Button_H

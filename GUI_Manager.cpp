@@ -96,20 +96,19 @@ class MouseCursorHandler {
 	private:
 		GUI_Manager & gui;
 		bool cursorLockedByButton;
-		MouseButtonListenerHandle mouseButtonListenerHandle;
-		MouseMotionListenerHandle mouseMotionListenerHandle;
+		MouseButtonListener mouseButtonListener;
+		MouseMotionListener mouseMotionListener;
 	public:
-		
 		MouseCursorHandler(GUI_Manager & _gui) :
 			gui(_gui),
 			cursorLockedByButton(false),
-			mouseButtonListenerHandle(_gui.addGlobalMouseButtonListener(
+			mouseButtonListener(createGlobalMouseButtonListener(_gui,
 				[this](Component *, const Util::UI::ButtonEvent & buttonEvent) {
 					activateCursor(std::move(queryHoverComponentMouseCursor(Geometry::Vec2(buttonEvent.x, buttonEvent.y))));
 					cursorLockedByButton = buttonEvent.pressed;
 					return false;
 				})),
-			mouseMotionListenerHandle(_gui.addGlobalMouseMotionListener(
+			mouseMotionListener(createMouseMotionListener(_gui,
 				[this](Component *, const Util::UI::MotionEvent & motionEvent) {
 					// If mouse button is pressed, cursor should not be changed,
 					// because the position can be outside component and would
@@ -121,11 +120,6 @@ class MouseCursorHandler {
 				})) {
 			activateCursor(nullptr);
 		}
-		~MouseCursorHandler() {
-			gui.removeGlobalMouseMotionListener(std::move(mouseMotionListenerHandle));
-			gui.removeGlobalMouseButtonListener(std::move(mouseButtonListenerHandle));
-		}
-		
 		std::shared_ptr<Util::UI::Cursor> queryHoverComponentMouseCursor(const Vec2 & absPos)const{
 			for(Component * c=gui.getComponentAtPos(absPos);c!=nullptr;c=c->getParent()){
 				if(c->hasMouseCursorProperty())
@@ -154,7 +148,7 @@ class TooltipHandler : public Component {
 			SEARCHING,ACTIVE,INACTIVE
 		} mode;
 		FrameListenerHandle frameListenerHandle;
-		MouseMotionListenerHandle mouseMotionListenerHandle;
+		MouseMotionListener mouseMotionListener;
 	public:
 
 		TooltipHandler(GUI_Manager & _gui) : 
@@ -164,14 +158,10 @@ class TooltipHandler : public Component {
 			frameListenerHandle(_gui.addFrameListener(std::bind(&TooltipHandler::onFrame,
 																this,
 																std::placeholders::_1))),
-			mouseMotionListenerHandle(_gui.addGlobalMouseMotionListener(std::bind(&TooltipHandler::onMouseMove, 
-																				  this, 
-																				  std::placeholders::_1,
-																				  std::placeholders::_2))) {
+			mouseMotionListener(createMouseMotionListener(_gui, this, &TooltipHandler::onMouseMove)) {
 		}
 		virtual ~TooltipHandler() {
 			getGUI().removeFrameListener(std::move(frameListenerHandle));
-			getGUI().removeGlobalMouseMotionListener(std::move(mouseMotionListenerHandle));
 		}
 
 		Component * findTooltitComponent(const Vec2 & pos)const{

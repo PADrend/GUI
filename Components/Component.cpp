@@ -11,7 +11,7 @@
 #include "Component.h"
 
 #include "ComponentPropertyIds.h"
-#include "../Base/Listener.h"
+#include "../Base/ListenerHelper.h"
 #include "../Base/Draw.h"
 #include "../Base/Layouters/ExtLayouter.h"
 #include "../GUI_Manager.h"
