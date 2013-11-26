@@ -25,7 +25,6 @@ class Button : public Container {
 	public:
 		static const flag_t FLAT_BUTTON=1<<24;
 		static const flag_t HOVER_BUTTON=1<<25;
-		static const Util::StringIdentifier ACTION_Button_click;
 				
 		Button(GUI_Manager & gui,flag_t flags=0);
 		virtual ~Button();
@@ -33,9 +32,7 @@ class Button : public Container {
 		void setText(const std::string & text);
 		std::string getText()const;
 
-		Util::StringIdentifier getActionName()const 	{	return actionName;	}
 		bool isSwitchedOn()const 						{	return switchedOn;	}
-		void setActionName(const Util::StringIdentifier & n) 	{	actionName = n;	}
 		void setSwitch(bool b) 							{	switchedOn=b;	}
 		void setFont(AbstractFont * newFont)			{   textLabel->setFont(newFont);	}
 		void setActionListener(HandleActionFun fun) {
@@ -57,14 +54,13 @@ class Button : public Container {
 
 	protected:
 		Util::WeakPointer<Label> textLabel;
-		Util::StringIdentifier actionName;
 		bool switchedOn;
 		bool hover;
 		HandleActionFun actionListener;
+		KeyListenerHandle keyListenerHandle;
 		MouseButtonListenerHandle mouseButtonListenerHandle;
 		MouseClickListenerHandle mouseClickListenerHandle;
 		MouseMotionListenerHandle mouseMotionListenerHandle;
-		KeyListenerHandle keyListenerHandle;
 };
 }
 #endif // GUI_Button_H

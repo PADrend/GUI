@@ -19,8 +19,6 @@
 #include <iostream>
 
 namespace GUI {
-	
-const Util::StringIdentifier Button::ACTION_Button_click("Button_click");
 
 static ExtLayouter * getDefaultLabelLayouter(){
 	static Util::Reference<ExtLayouter> l;
@@ -35,7 +33,6 @@ static ExtLayouter * getDefaultLabelLayouter(){
 //! (ctor)
 Button::Button(GUI_Manager & _gui,flag_t _flags/*=0*/) :
 		Container(_gui,_flags),
-		actionName(ACTION_Button_click),
 		switchedOn(false),
 		hover(false),
 		actionListener(),
@@ -164,15 +161,15 @@ std::string Button::getText()const{
 //! ---o
 void Button::action(){
 	//  try own action listener
-	if(actionListener && actionListener(this, actionName)) {
+	if(actionListener && actionListener(this, Util::StringIdentifier())) {
 		return;
 	}
 
 	// then use the global listener
-	getGUI().componentActionPerformed(this,actionName);
+	getGUI().componentActionPerformed(this, Util::StringIdentifier());
 }
 
-bool Button::onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent) {
+bool Button::onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
 	const Geometry::Vec2 absPos(motionEvent.x, motionEvent.y);
 	if(!isLocked() && !hover && coversAbsPosition(absPos)) {
 		hover=true;
