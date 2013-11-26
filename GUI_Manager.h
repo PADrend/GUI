@@ -14,7 +14,6 @@
 #include "Base/Listener.h"
 #include "Components/Component.h"
 #include <Util/Graphics/Color.h>
-#include <Util/IO/FileName.h>
 #include <Util/Registry.h>
 
 #include <list>
@@ -24,6 +23,7 @@
 // Forward declarations
 namespace Util {
 class Bitmap;
+class FileName;
 namespace UI {
 union Event;
 struct ButtonEvent;

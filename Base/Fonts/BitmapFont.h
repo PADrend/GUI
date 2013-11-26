@@ -14,10 +14,12 @@
 #include "../ImageData.h"
 #include "AbstractFont.h"
 #include <Geometry/Rect.h>
-#include <Util/IO/FileName.h>
 
 #include <unordered_map>
 
+namespace Util {
+class FileName;
+}
 namespace GUI {
 
 /***

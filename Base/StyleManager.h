@@ -17,7 +17,6 @@
 #include <Util/Macros.h>
 
 #include <Util/Serialization/Serialization.h>
-#include <Util/IO/FileName.h>
 
 #include <cstdint>
 #include <stack>

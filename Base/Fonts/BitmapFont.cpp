@@ -14,6 +14,7 @@
 #include <Util/Graphics/Bitmap.h>
 #include <Util/Graphics/FontRenderer.h>
 #include <Util/Graphics/PixelAccessor.h>
+#include <Util/IO/FileName.h>
 #include <Util/StringUtils.h>
 
 using namespace Geometry;
