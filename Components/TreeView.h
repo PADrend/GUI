@@ -129,8 +129,7 @@ class TreeView: public Container {
 
 		KeyListenerHandle keyListenerHandle;
 		MouseButtonListenerHandle mouseButtonListenerHandle;
-		MouseMotionListenerHandle mouseMotionListenerHandle;
-		bool listenOnMouseMove;
+		std::unique_ptr<MouseMotionListenerHandle> optionalMouseMotionListenerHandle;
 };
 }
 #endif // GUI_TreeView_H

@@ -13,6 +13,7 @@
 #include "../Base/AbstractShape.h"
 #include "../Base/Draw.h"
 #include "../Base/Listener.h"
+#include "../Base/ListenerHelper.h"
 #include "../Base/Properties.h"
 #include "ComponentPropertyIds.h"
 #include "Window.h"
@@ -28,8 +29,7 @@ struct TabTitlePanel : public Container {
 	TabbedPanel::Tab & myTab;
 	KeyListenerHandle keyListenerHandle;
 	MouseButtonListenerHandle mouseButtonListenerHandle;
-	MouseMotionListenerHandle mouseMotionListenerHandle;
-	bool listenOnMouseMove;
+	std::unique_ptr<MouseMotionListenerHandle> optionalMouseMotionListenerHandle;
 	TabTitlePanel(GUI_Manager & _gui,TabbedPanel::Tab & tab) :
 			Container(_gui), myTab(tab),
 			keyListenerHandle(_gui.addKeyListener(this, std::bind(&TabTitlePanel::onKeyEvent, 
@@ -39,15 +39,11 @@ struct TabTitlePanel : public Container {
 																			  this, 
 																			  std::placeholders::_1,
 																			  std::placeholders::_2))),
-			mouseMotionListenerHandle(_gui.addGlobalMouseMotionListener(std::bind(&TabTitlePanel::onMouseMove, 
-																				  this, 
-																				  std::placeholders::_1,
-																				  std::placeholders::_2))),
-			listenOnMouseMove(false) {
+			optionalMouseMotionListenerHandle() {
 		setFlag(SELECTABLE,true);
 	}
 	virtual ~TabTitlePanel() {
-		getGUI().removeGlobalMouseMotionListener(std::move(mouseMotionListenerHandle));
+		stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
 		getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
 		getGUI().removeKeyListener(this, std::move(keyListenerHandle));
 	}
@@ -112,18 +108,15 @@ struct TabTitlePanel : public Container {
 			getGUI().setActiveComponent(this);
 			select();
 			myTab.makeActiveTab();
-			listenOnMouseMove = true;
+			startListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle, &TabTitlePanel::onMouseMove, this);
 			return true;
 		}
 		return false;
 	}
 
 	bool onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
-		if(!listenOnMouseMove) {
-			return false;
-		}
 		if (!isActive() || motionEvent.buttonMask == Util::UI::MASK_NO_BUTTON) {
-			listenOnMouseMove = false;
+			stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
 			return false;
 		}
 		const Geometry::Vec2 absPos = Geometry::Vec2(motionEvent.x, motionEvent.y);

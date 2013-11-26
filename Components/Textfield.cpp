@@ -11,6 +11,7 @@
 #include "Textfield.h"
 #include "../GUI_Manager.h"
 #include "../Base/Draw.h"
+#include "../Base/ListenerHelper.h"
 #include "ComponentPropertyIds.h"
 #include <Util/UI/Event.h>
 #include <Util/Timer.h>
@@ -29,11 +30,7 @@ Textfield::Textfield(GUI_Manager & _gui,const std::string & _text,std::string _d
 																			  this, 
 																			  std::placeholders::_1,
 																			  std::placeholders::_2))),
-		mouseMotionListenerHandle(_gui.addGlobalMouseMotionListener(std::bind(&Textfield::onMouseMove, 
-																			  this, 
-																			  std::placeholders::_1,
-																			  std::placeholders::_2))),
-		listenOnMouseMove(false),
+		optionalMouseMotionListenerHandle(),
 		currentOptionIndex(-1) {
 	fontReference = getGUI().getActiveFont(PROPERTY_DEFAULT_FONT);
 	setText(_text);
@@ -46,7 +43,7 @@ Textfield::Textfield(GUI_Manager & _gui,const std::string & _text,std::string _d
 
 //! (dtor)
 Textfield::~Textfield() {
-	getGUI().removeGlobalMouseMotionListener(std::move(mouseMotionListenerHandle));
+	stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
 	getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
 	getGUI().removeKeyListener(this, std::move(keyListenerHandle));
 }
@@ -334,7 +331,7 @@ bool Textfield::onMouseButton(Component * /*component*/, const Util::UI::ButtonE
 		select();
 		if (buttonEvent.button == Util::UI::MOUSE_BUTTON_LEFT) {
 			setCursorPos(getCursorPositionFromCoordinate(localPos), getGUI().isShiftPressed());
-			listenOnMouseMove = true;
+			startListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle, &Textfield::onMouseMove, this);
 		}else if(buttonEvent.button == Util::UI::MOUSE_WHEEL_UP && hasOptions()) {
 			setCurrentOptionIndex( (countOptions()+getCurrentOptionIndex()-1) % countOptions());
 		}else if(buttonEvent.button == Util::UI::MOUSE_WHEEL_DOWN && hasOptions()) {
@@ -348,13 +345,9 @@ bool Textfield::onMouseButton(Component * /*component*/, const Util::UI::ButtonE
 
 }
 
-//! ---|> MouseMotionListener
 bool Textfield::onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent){
-	if(!listenOnMouseMove) {
-		return false;
-	}
 	if (!(motionEvent.buttonMask & Util::UI::MASK_MOUSE_BUTTON_LEFT) || isLocked()) {
-		listenOnMouseMove = false;
+		stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
 		return false;
 	}
 	const Geometry::Vec2 localPos = Geometry::Vec2(motionEvent.x, motionEvent.y) - getAbsPosition();
@@ -371,7 +364,7 @@ bool Textfield::onSelect() {
 
 //! ---|> Component
 bool Textfield::onUnselect() {
-	listenOnMouseMove = false;
+	stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
 
 	if (backupText!=getText()) { // TODO: use changed flag
 		/* if componentDataChanged(...) issues a recursive call to onUnselect, 

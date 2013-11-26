@@ -12,6 +12,7 @@
 #include "../GUI_Manager.h"
 #include "../Base/AbstractShape.h"
 #include "../Base/Listener.h"
+#include "../Base/ListenerHelper.h"
 #include "ComponentPropertyIds.h"
 #include "Button.h"
 #include <Util/UI/Event.h>
@@ -28,8 +29,7 @@ class ScrollMarker : public Component {
 		bool catchDragStartPos;
 
 		MouseButtonListenerHandle mouseButtonListenerHandle;
-		MouseMotionListenerHandle mouseMotionListenerHandle;
-		bool listenOnMouseMove;
+		std::unique_ptr<MouseMotionListenerHandle> optionalMouseMotionListenerHandle;
 
 	public:
 	//! (ctor)
@@ -39,15 +39,11 @@ class ScrollMarker : public Component {
 																				  this, 
 																				  std::placeholders::_1,
 																				  std::placeholders::_2))),
-			mouseMotionListenerHandle(_gui.addGlobalMouseMotionListener(std::bind(&ScrollMarker::onMouseMove, 
-																				  this, 
-																				  std::placeholders::_1,
-																				  std::placeholders::_2))),
-			listenOnMouseMove(false) {
+			optionalMouseMotionListenerHandle() {
 	}
 	//! (ctor)
 	virtual ~ScrollMarker() {
-		getGUI().removeGlobalMouseMotionListener(std::move(mouseMotionListenerHandle));
+		stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
 		getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
 	}
 
@@ -65,11 +61,8 @@ class ScrollMarker : public Component {
 	}
 
 	bool onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
-		if(!listenOnMouseMove) {
-			return false;
-		}
 		if (!isActive() || motionEvent.buttonMask == Util::UI::MASK_NO_BUTTON) {
-			listenOnMouseMove = false;
+			stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
 			return false;
 		}
 		const float p = myScrollbar.isVertical() ? motionEvent.y : motionEvent.x;
@@ -86,7 +79,7 @@ class ScrollMarker : public Component {
 	}
 	void startDragging(){
 		activate();
-		listenOnMouseMove = true;
+		startListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle, &ScrollMarker::onMouseMove, this);
 		catchDragStartPos = true;
 	}
 

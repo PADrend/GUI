@@ -12,6 +12,7 @@
 #include "../GUI_Manager.h"
 #include "../Base/AbstractShape.h"
 #include "../Base/AnimationHandler.h"
+#include "../Base/ListenerHelper.h"
 #include "../Base/Layouters/ExtLayouter.h"
 #include "ComponentPropertyIds.h"
 #include "Scrollbar.h"
@@ -331,10 +332,7 @@ TreeView::TreeView(GUI_Manager & _gui,const Geometry::Rect & _r,const std::strin
 																			  this, 
 																			  std::placeholders::_1,
 																			  std::placeholders::_2))),
-		mouseMotionListenerHandle(_gui.addGlobalMouseMotionListener(std::bind(&TreeView::onMouseMove, 
-																			  this, 
-																			  std::placeholders::_1,
-																			  std::placeholders::_2))) {
+		optionalMouseMotionListenerHandle() {
 	setFlag(SELECTABLE,true);
 
 	_addChild(root.get());
@@ -350,7 +348,7 @@ TreeView::~TreeView() {
 										  std::move(*optionalScrollBarListener.get()));
 		optionalScrollBarListener.reset();
 	}
-	getGUI().removeGlobalMouseMotionListener(std::move(mouseMotionListenerHandle));
+	stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
 	getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
 	getGUI().removeKeyListener(this, std::move(keyListenerHandle));
 	// destroy root
@@ -494,9 +492,9 @@ void TreeView::clearContents() {
 bool TreeView::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) {
 	if(buttonEvent.button == Util::UI::MOUSE_BUTTON_MIDDLE && scrollBar.isNotNull()) {
 		if(buttonEvent.pressed) {
-			listenOnMouseMove = true;
+			startListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle, &TreeView::onMouseMove, this);
 		} else {// !pressed
-			listenOnMouseMove = false;
+			stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
 		}
 		return true;
 	} else if(buttonEvent.pressed && buttonEvent.button == Util::UI::MOUSE_WHEEL_UP) {
@@ -517,11 +515,8 @@ bool TreeView::onMouseButton(Component * /*component*/, const Util::UI::ButtonEv
 }
 
 bool TreeView::onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
-	if(!listenOnMouseMove) {
-		return false;
-	}
 	if(!(motionEvent.buttonMask & Util::UI::MASK_MOUSE_BUTTON_MIDDLE)) {
-		listenOnMouseMove = false;
+		stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
 		return false;
 	}
 	scroll(motionEvent.deltaY * -2.0);

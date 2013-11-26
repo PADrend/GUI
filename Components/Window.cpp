@@ -10,9 +10,10 @@
 */
 #include "Window.h"
 #include "../GUI_Manager.h"
-#include "../Base/Draw.h"
-#include "../Base/AnimationHandler.h"
 #include "../Base/Layouters/ExtLayouter.h"
+#include "../Base/AnimationHandler.h"
+#include "../Base/Draw.h"
+#include "../Base/ListenerHelper.h"
 #include "../Base/Properties.h"
 #include "ComponentPropertyIds.h"
 #include "Button.h"
@@ -29,8 +30,7 @@ struct TitlePanel : public Container {
 	Window & window;
 	Geometry::Vec2 dragOffset;
 	MouseButtonListenerHandle mouseButtonListenerHandle;
-	MouseMotionListenerHandle mouseMotionListenerHandle;
-	bool listenOnMouseMove;
+	std::unique_ptr<MouseMotionListenerHandle> optionalMouseMotionListenerHandle;
 	TitlePanel(Window & win) :
 		Container(win.getGUI()),
 		window(win),
@@ -38,14 +38,10 @@ struct TitlePanel : public Container {
 																					  this, 
 																					  std::placeholders::_1,
 																					  std::placeholders::_2))),
-		mouseMotionListenerHandle(win.getGUI().addGlobalMouseMotionListener(std::bind(&TitlePanel::onMouseMove, 
-																					  this, 
-																					  std::placeholders::_1,
-																					  std::placeholders::_2))),
-		listenOnMouseMove(false) {
+		optionalMouseMotionListenerHandle() {
 	}
 	virtual ~TitlePanel(){
-		getGUI().removeGlobalMouseMotionListener(std::move(mouseMotionListenerHandle));
+		stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
 		getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
 	}
 	bool onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) {
@@ -54,17 +50,14 @@ struct TitlePanel : public Container {
 		activate();
 		getGUI().selectFirst(&window);
 		if(buttonEvent.button == Util::UI::MOUSE_BUTTON_LEFT) {
-			listenOnMouseMove = true;
+			startListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle, &TitlePanel::onMouseMove, this);
 			dragOffset = window.getPosition() - Geometry::Vec2(buttonEvent.x, buttonEvent.y);
 		}
 		return true;
 	}
 	bool onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
-		if(!listenOnMouseMove) {
-			return false;
-		}
 		if (!isActive() || !(motionEvent.buttonMask & Util::UI::MASK_MOUSE_BUTTON_LEFT)) {
-			listenOnMouseMove = false;
+			stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
 			return false;
 		}
 		const Geometry::Vec2 currentMousePos(motionEvent.x, motionEvent.y);
@@ -78,8 +71,7 @@ struct ResizePanel : public Component{
 	Window & window;
 	int changeX, changeY;
 	MouseButtonListenerHandle mouseButtonListenerHandle;
-	MouseMotionListenerHandle mouseMotionListenerHandle;
-	bool listenOnMouseMove;
+	std::unique_ptr<MouseMotionListenerHandle> optionalMouseMotionListenerHandle;
 	ResizePanel(Window & win) :
 		Component(win.getGUI()),
 		window(win),
@@ -87,14 +79,10 @@ struct ResizePanel : public Component{
 																					  this, 
 																					  std::placeholders::_1,
 																					  std::placeholders::_2))),
-		mouseMotionListenerHandle(win.getGUI().addGlobalMouseMotionListener(std::bind(&ResizePanel::onMouseMove, 
-																					  this, 
-																					  std::placeholders::_1,
-																					  std::placeholders::_2))),
-		listenOnMouseMove(false) {
+		optionalMouseMotionListenerHandle() {
 	}
 	virtual ~ResizePanel() {
-		getGUI().removeGlobalMouseMotionListener(std::move(mouseMotionListenerHandle));
+		stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
 		getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
 	}
 
@@ -117,14 +105,11 @@ struct ResizePanel : public Component{
 		changeY = y;
 		activate();
 		select();
-		listenOnMouseMove = true;
+		startListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle, &ResizePanel::onMouseMove, this);
 	}
 	bool onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
-		if(!listenOnMouseMove) {
-			return false;
-		}
 		if (!isActive() || !(motionEvent.buttonMask & Util::UI::MASK_MOUSE_BUTTON_LEFT)) {
-			listenOnMouseMove = false;
+			stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
 			return false;
 		}
 		Geometry::Rect r = window.getRect();

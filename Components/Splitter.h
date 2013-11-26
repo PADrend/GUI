@@ -37,8 +37,7 @@ class Splitter: public Component {
 		const splittingDirection_t direction;
 
 		MouseButtonListenerHandle mouseButtonListenerHandle;
-		MouseMotionListenerHandle mouseMotionListenerHandle;
-		bool listenOnMouseMove;
+		std::unique_ptr<MouseMotionListenerHandle> optionalMouseMotionListenerHandle;
 
 		// ---|> Component
 		virtual void doDisplay(const Geometry::Rect & region) override;

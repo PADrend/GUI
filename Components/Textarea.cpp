@@ -10,10 +10,11 @@
 */
 #include "Textarea.h"
 #include "../GUI_Manager.h"
-#include "../Base/Draw.h"
-#include "Scrollbar.h"
-#include "ComponentPropertyIds.h"
 #include "../Base/Layouters/ExtLayouter.h"
+#include "../Base/Draw.h"
+#include "../Base/ListenerHelper.h"
+#include "ComponentPropertyIds.h"
+#include "Scrollbar.h"
 
 #include <Util/UI/Event.h>
 #include <Util/Timer.h>
@@ -171,10 +172,7 @@ Textarea::Textarea(GUI_Manager & _gui,flag_t _flags):
 																			  this, 
 																			  std::placeholders::_1,
 																			  std::placeholders::_2))),
-		mouseMotionListenerHandle(_gui.addGlobalMouseMotionListener(std::bind(&Textarea::onMouseMove, 
-																			  this, 
-																			  std::placeholders::_1,
-																			  std::placeholders::_2))) {
+		optionalMouseMotionListenerHandle() {
 	fontReference = getGUI().getActiveFont(PROPERTY_DEFAULT_FONT);
 	setFlag(SELECTABLE,true);
 	setFlag(USE_SCISSOR,true);
@@ -190,7 +188,7 @@ Textarea::~Textarea() {
 										  std::move(*optionalScrollBarListener.get()));
 		optionalScrollBarListener.reset();
 	}
-	getGUI().removeGlobalMouseMotionListener(std::move(mouseMotionListenerHandle));
+	stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
 	getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
 	getGUI().removeKeyListener(this, std::move(keyListenerHandle));
 }
@@ -497,9 +495,9 @@ bool Textarea::onMouseButton(Component * /*component*/, const Util::UI::ButtonEv
 		const Geometry::Vec2 localPos = Geometry::Vec2(buttonEvent.x, buttonEvent.y) - getAbsPosition();
 		if(buttonEvent.button == Util::UI::MOUSE_BUTTON_LEFT) {
 			moveCursor(processor->textPosToCursor(*this,localPos+scrollPos), getGUI().isShiftPressed());
-			listenOnMouseMove = true;
+			startListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle, &Textarea::onMouseMove, this);
 		}else if(buttonEvent.button == Util::UI::MOUSE_BUTTON_MIDDLE) {
-			listenOnMouseMove = false;
+			stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
 		}else if(buttonEvent.button == Util::UI::MOUSE_WHEEL_UP ) { // scroll
 			scrollTo( getScrollPos()-Geometry::Vec2(0,3.0f*lineHeight) );
 		}else if(buttonEvent.button == Util::UI::MOUSE_WHEEL_DOWN) { // scroll
@@ -513,9 +511,6 @@ bool Textarea::onMouseButton(Component * /*component*/, const Util::UI::ButtonEv
 }
 
 bool Textarea::onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
-	if(!listenOnMouseMove) {
-		return false;
-	}
 	if((motionEvent.buttonMask & Util::UI::MASK_MOUSE_BUTTON_LEFT) && !isLocked()) {
 		const Geometry::Vec2 localPos = Geometry::Vec2(motionEvent.x, motionEvent.y) - getAbsPosition();
 		moveCursor(processor->textPosToCursor(*this,localPos+scrollPos), true);
@@ -525,7 +520,7 @@ bool Textarea::onMouseMove(Component * /*component*/, const Util::UI::MotionEven
 		scrollTo( getScrollPos() - delta*2.0 );
 		return true;
 	}
-	listenOnMouseMove = false;
+	stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
 	return false;
 }
 
@@ -536,7 +531,7 @@ bool Textarea::onSelect() {
 
 //! ---|> Component
 bool Textarea::onUnselect() {
-	listenOnMouseMove = false;
+	stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
 	if(dataChanged) { 
 		dataChanged = false;
 		getGUI().componentDataChanged(this,dataName);

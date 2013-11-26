@@ -11,6 +11,7 @@
 #include "ScrollableContainer.h"
 #include "../GUI_Manager.h"
 #include "../Base/AnimationHandler.h"
+#include "../Base/ListenerHelper.h"
 #include "../Base/Layouters/ExtLayouter.h"
 #include "Scrollbar.h"
 #include "ComponentPropertyIds.h"
@@ -33,12 +34,7 @@ ScrollableContainer::ScrollableContainer(GUI_Manager & _gui,flag_t _flags/*=0*/)
 																			  this, 
 																			  std::placeholders::_1,
 																			  std::placeholders::_2))),
-		mouseMotionListenerHandle(_gui.addGlobalMouseMotionListener(std::bind(&ScrollableContainer::onMouseMove, 
-																			  this, 
-																			  std::placeholders::_1,
-																			  std::placeholders::_2))),
-		listenOnMouseMove(false) {
-
+		optionalMouseMotionListenerHandle() {
 	_addChild(contentContainer.get());
 	contentContainer->setFlag(IS_CLIENT_AREA,true);
 	setFlag(USE_SCISSOR,true);
@@ -51,7 +47,7 @@ ScrollableContainer::~ScrollableContainer() {
 										  std::move(*optionalScrollBarListener.get()));
 		optionalScrollBarListener.reset();
 	}
-	getGUI().removeGlobalMouseMotionListener(std::move(mouseMotionListenerHandle));
+	stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
 	getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
 
 }
@@ -125,9 +121,9 @@ bool ScrollableContainer::onMouseButton(Component * /*component*/, const Util::U
 		if(maxScrollPos.x()<=0 && maxScrollPos.y()<=0)
 			return false;
 		else if(buttonEvent.pressed){
-			listenOnMouseMove = true;
+			startListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle, &ScrollableContainer::onMouseMove, this);
 		} else {// !pressed
-			listenOnMouseMove = false;
+			stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
 		}
 		return true;
 	}
@@ -136,11 +132,8 @@ bool ScrollableContainer::onMouseButton(Component * /*component*/, const Util::U
 }
 
 bool ScrollableContainer::onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
-	if(!listenOnMouseMove) {
-		return false;
-	}
 	if(!(motionEvent.buttonMask & Util::UI::MASK_MOUSE_BUTTON_MIDDLE)) {
-		listenOnMouseMove = false;
+		stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
 		return false;
 	}
 	const Geometry::Vec2 delta(motionEvent.deltaX, motionEvent.deltaY);

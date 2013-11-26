@@ -11,6 +11,7 @@
 #include "Splitter.h"
 #include "../GUI_Manager.h"
 #include "../Base/AbstractShape.h"
+#include "../Base/ListenerHelper.h"
 #include "../Base/Layouters/ExtLayouter.h"
 #include "ComponentPropertyIds.h"
 #include "Container.h"
@@ -28,11 +29,7 @@ Splitter::Splitter(GUI_Manager & _gui,splittingDirection_t _direction,flag_t _fl
 																			  this, 
 																			  std::placeholders::_1,
 																			  std::placeholders::_2))),
-		mouseMotionListenerHandle(_gui.addGlobalMouseMotionListener(std::bind(&Splitter::onMouseMove, 
-																			  this, 
-																			  std::placeholders::_1,
-																			  std::placeholders::_2))),
-		listenOnMouseMove(false) {
+		optionalMouseMotionListenerHandle() {
 	if( direction == HORIZONTAL){
 		setExtLayout(
 			ExtLayouter::WIDTH_REL|ExtLayouter::HEIGHT_ABS,
@@ -47,7 +44,7 @@ Splitter::Splitter(GUI_Manager & _gui,splittingDirection_t _direction,flag_t _fl
 
 //! (dtor)
 Splitter::~Splitter() {
-	getGUI().removeGlobalMouseMotionListener(std::move(mouseMotionListenerHandle));
+	stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
 	getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
 }
 
@@ -114,11 +111,11 @@ bool Splitter::onMouseButton(Component * /*component*/, const Util::UI::ButtonEv
 	if(buttonEvent.button == Util::UI::MOUSE_BUTTON_LEFT) {
 		if(buttonEvent.pressed && !isSelected()) {
 			select();
-			listenOnMouseMove = true;
+			startListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle, &Splitter::onMouseMove, this);
 			return true;
 		} else if(!buttonEvent.pressed && isSelected()) {
 			unselect();
-			listenOnMouseMove = false;
+			stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
 			return true;
 		}
 	}
@@ -126,12 +123,9 @@ bool Splitter::onMouseButton(Component * /*component*/, const Util::UI::ButtonEv
 }
 
 bool Splitter::onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
-	if(!listenOnMouseMove) {
-		return false;
-	}
 	if( !hasParent() || getPrev()==nullptr || getNext()==nullptr || !(motionEvent.buttonMask & Util::UI::MASK_MOUSE_BUTTON_LEFT)) {
 		unselect();
-		listenOnMouseMove = false;
+		stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
 		return true;
 	}
 	if(direction == VERTICAL) {

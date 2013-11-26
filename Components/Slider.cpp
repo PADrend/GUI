@@ -13,9 +13,11 @@
 #include "../Base/AbstractShape.h"
 #include "../Base/Draw.h"
 #include "../Base/Listener.h"
+#include "../Base/ListenerHelper.h"
 #include "ComponentPropertyIds.h"
 #include "Button.h"
 #include <Util/UI/Event.h>
+#include <memory>
 
 namespace GUI{
 
@@ -25,10 +27,9 @@ namespace GUI{
 class SliderMarker:public Component {
 	Slider & slider;
 	MouseButtonListenerHandle mouseButtonListenerHandle;
-	MouseMotionListenerHandle mouseMotionListenerHandle;
 
 	public:
-	bool listenOnMouseMove;
+	std::unique_ptr<MouseMotionListenerHandle> optionalMouseMotionListenerHandle;
 	//! (ctor)
 	SliderMarker(GUI_Manager & _gui,Slider & _slider) :
 			Component(_gui),
@@ -37,15 +38,11 @@ class SliderMarker:public Component {
 																				  this, 
 																				  std::placeholders::_1,
 																				  std::placeholders::_2))),
-			mouseMotionListenerHandle(_gui.addGlobalMouseMotionListener(std::bind(&SliderMarker::onMouseMove, 
-																				  this, 
-																				  std::placeholders::_1,
-																				  std::placeholders::_2))),
-			listenOnMouseMove(false) {
+			optionalMouseMotionListenerHandle() {
 	}
 	//! (ctor)
 	virtual ~SliderMarker() {
-		getGUI().removeGlobalMouseMotionListener(std::move(mouseMotionListenerHandle));
+		stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
 		getGUI().removeMouseButtonListener(this, std::move(mouseButtonListenerHandle));
 	}
 
@@ -57,18 +54,15 @@ class SliderMarker:public Component {
 			select();
 			if (buttonEvent.button == Util::UI::MOUSE_BUTTON_LEFT) {
 				getGUI().setActiveComponent(this);
-				listenOnMouseMove = true;
+				startListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle, &SliderMarker::onMouseMove, this);
 			}
 		}
 		return true;
 	}
 
 	bool onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
-		if(!listenOnMouseMove) {
-			return false;
-		}
 		if (!isActive() || motionEvent.buttonMask == Util::UI::MASK_NO_BUTTON) {
-			listenOnMouseMove = false;
+			stopListeningOnMouseMove(getGUI(), optionalMouseMotionListenerHandle);
 			return false;
 		}
 		const Geometry::Vec2 localPos = Geometry::Vec2(motionEvent.x, motionEvent.y) - slider.getAbsPosition();
@@ -220,7 +214,7 @@ bool Slider::onMouseButton(Component * /*component*/, const Util::UI::ButtonEven
 			updateDataFromPos(localPos);
 			sliderMarker->activate();
 			SliderMarker * s=dynamic_cast<SliderMarker *>(sliderMarker.get());
-			s->listenOnMouseMove = true;
+			startListeningOnMouseMove(getGUI(), s->optionalMouseMotionListenerHandle, &SliderMarker::onMouseMove, s);
 		}else if(buttonEvent.button == Util::UI::MOUSE_WHEEL_UP) {
 			updateData(getValue()+stepWidth);
 		}else if(buttonEvent.button == Util::UI::MOUSE_WHEEL_DOWN) {

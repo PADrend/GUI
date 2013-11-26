@@ -56,8 +56,7 @@ class Textfield: public Component {
 
 		KeyListenerHandle keyListenerHandle;
 		MouseButtonListenerHandle mouseButtonListenerHandle;
-		MouseMotionListenerHandle mouseMotionListenerHandle;
-		bool listenOnMouseMove;
+		std::unique_ptr<MouseMotionListenerHandle> optionalMouseMotionListenerHandle;
 
 		Geometry::Vec2 getCursorCoordinate(int cursorPos);
 		int getCursorPositionFromCoordinate(const Geometry::Vec2 & pos);

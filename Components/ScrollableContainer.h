@@ -56,8 +56,7 @@ class ScrollableContainer: public Container {
 		Geometry::Vec2 scrollPos;
 		Geometry::Vec2 maxScrollPos;
 		MouseButtonListenerHandle mouseButtonListenerHandle;
-		MouseMotionListenerHandle mouseMotionListenerHandle;
-		bool listenOnMouseMove;
+		std::unique_ptr<MouseMotionListenerHandle> optionalMouseMotionListenerHandle;
 
 		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
 		bool onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent);

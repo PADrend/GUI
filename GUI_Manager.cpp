@@ -31,10 +31,11 @@
 #include "Components/TreeView.h"
 #include "Components/Window.h"
 
+#include "Base/AnimationHandler.h"
 #include "Base/Draw.h"
 #include "Base/ImageData.h"
+#include "Base/ListenerHelper.h"
 #include "Base/StyleManager.h"
-#include "Base/AnimationHandler.h"
 #include "Style/Style.h"
 #include "Style/Colors.h" // \todo remove this!
 

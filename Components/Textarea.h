@@ -128,8 +128,7 @@ class Textarea: public Container {
 		
 		KeyListenerHandle keyListenerHandle;
 		MouseButtonListenerHandle mouseButtonListenerHandle;
-		MouseMotionListenerHandle mouseMotionListenerHandle;
-		bool listenOnMouseMove;
+		std::unique_ptr<MouseMotionListenerHandle> optionalMouseMotionListenerHandle;
 	//	\}
 };
 //! (internal)
