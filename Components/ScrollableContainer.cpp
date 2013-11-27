@@ -117,7 +117,7 @@ bool ScrollableContainer::onMouseButton(Component * /*component*/, const Util::U
 		}
 		return true;
 	}
-	return true;
+	return false;
 
 }
 
