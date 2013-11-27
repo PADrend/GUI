@@ -168,6 +168,24 @@ void Textfield::setCursorPos(int _cursorPos,bool _shift) {
 //	scrollPos(0.0f),
 }
 
+static int getPrevCursorPos(const std::string & str,int cursor){
+	if(cursor<=1 || str.empty())
+		return 0;
+	if(cursor>static_cast<int>(str.length())) cursor = str.length();
+	--cursor;
+	uint8_t c = static_cast<uint8_t>(str[cursor]);
+	while( c>=128 && c<=191 && cursor>0){ // search for first byte of multi byte characters
+		--cursor;
+		c = static_cast<uint8_t>(str[cursor]);
+	}
+	return cursor;
+}
+
+static int getNextCursorPos(const std::string & str,int cursor){
+	cursor =  cursor + Util::StringUtils::readUTF8Codepoint(str,cursor).second;
+	return cursor > static_cast<int>(str.length()) ? str.length() : cursor;
+}
+
 bool Textfield::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {
 	if(!keyEvent.pressed)
 		return true;
@@ -187,11 +205,10 @@ bool Textfield::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {
 		return false;
 
 	} else if (keyEvent.key == Util::UI::KEY_RIGHT ) {
-		if (cursorPos<static_cast<int>(getText().length()))
-			setCursorPos(cursorPos+1,_shift);
+		setCursorPos(getNextCursorPos(getText(),cursorPos),_shift);
 	} else if (keyEvent.key == Util::UI::KEY_LEFT) {
 		if (cursorPos>0)
-			setCursorPos(cursorPos-1,_shift);
+			setCursorPos(getPrevCursorPos(getText(),cursorPos),_shift);
 	} else if (keyEvent.key == Util::UI::KEY_END) {
 		setCursorPos(getText().length(),_shift);
 	} else if (keyEvent.key == Util::UI::KEY_HOME) {
@@ -206,7 +223,9 @@ bool Textfield::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {
 				eraseText(leftSelect(),selectionLength());
 			}
 		} else {
-			eraseText(cursorPos,1);
+			const int bytesToDelete = getNextCursorPos(getText(),cursorPos) - cursorPos;
+			if(bytesToDelete>0)
+				eraseText(cursorPos,bytesToDelete);
 		}
 	} else if (keyEvent.key == Util::UI::KEY_BACKSPACE) {
 		if (isTextSelected()) {
@@ -218,9 +237,12 @@ bool Textfield::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {
 				eraseText(leftSelect(),selectionLength());
 			}
 
-		} else if (cursorPos>0) {
-			cursorPos--;
-			eraseText(cursorPos,1);
+		} else {
+			const int bytesToDelete = cursorPos - getPrevCursorPos(getText(),cursorPos);
+			if(bytesToDelete>0){
+				setCursorPos( cursorPos-bytesToDelete );
+				eraseText(cursorPos,bytesToDelete);
+			}
 		}
 	} else if (keyEvent.key == Util::UI::KEY_ESCAPE) {
 		text=backupText;
@@ -279,7 +301,7 @@ bool Textfield::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {
 		else
 			setCurrentOptionIndex(0);
 	}
-	else if (keyEvent.str[0] >= 32) {
+	else if(keyEvent.str[0] >= 32 || keyEvent.str[0]<0) { // ascii or utf8 character
 		const bool autoCompletion = hasOptions() &&
 				(!isTextSelected() || (selectionEnd==cursorPos && selectionStart==static_cast<int>(getText().length())));
 
@@ -289,10 +311,15 @@ bool Textfield::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {
 			setCursorPos(l);
 			selectionStart=selectionEnd=-1;
 		}
+		std::string codePoint;
+		for(uint8_t p = 0;p<4&&keyEvent.str[p]!=0;++p)
+			codePoint += keyEvent.str[p];
+		
+		
 		std::string t(getText());
-		t.insert(cursorPos, keyEvent.str, 1);
+		t.insert(cursorPos, codePoint);
 		setText(t);
-		setCursorPos(cursorPos+1);
+		setCursorPos(cursorPos+codePoint.length());
 
 		// auto completion
 		if(autoCompletion) {
@@ -306,7 +333,6 @@ bool Textfield::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {
 
 
 		}
-
 	}
 	return true;
 }

@@ -36,6 +36,24 @@
 */
 namespace GUI {
 
+static int getPrevCursorPos(const std::string & str,int cursor){
+	if(cursor<=1 || str.empty())
+		return 0;
+	if(cursor>static_cast<int>(str.length())) cursor = str.length();
+	--cursor;
+	uint8_t c = static_cast<uint8_t>(str[cursor]);
+	while( c>=128 && c<=191 && cursor>0){ // search for first byte of multi byte characters
+		--cursor;
+		c = static_cast<uint8_t>(str[cursor]);
+	}
+	return cursor;
+}
+
+static int getNextCursorPos(const std::string & str,int cursor){
+	cursor =  cursor + Util::StringUtils::readUTF8Codepoint(str,cursor).second;
+	return cursor > static_cast<int>(str.length()) ? str.length() : cursor;
+}
+
 // -----------------------------------------------------------------
 //! (internal)
 class SimpleTextProcessor : public TextareaTextProcessor{
@@ -137,9 +155,12 @@ public:
 		const size_t lineNr = std::min( static_cast<size_t>(textPos.y() / ta._getLineHeight()), ta.getNumberOfLines()-1);
 		const std::string & line = ta.getLine(lineNr);
 		
-		for(size_t l=1;l<line.length(); ++l) {
-			if( Draw::getTextSize(line.substr(0,l),ta._getActiveFont()).x() >= textPos.x())
-				return std::make_pair(lineNr,l-1);
+		int cursor = 0;
+		while( cursor<static_cast<int>(line.length()) ){
+			const int next = getNextCursorPos(line,cursor);
+			if( Draw::getTextSize(line.substr(0,next),ta._getActiveFont()).x() >= textPos.x())
+				return std::make_pair(lineNr,cursor);
+			cursor = next;
 		}
 		return std::make_pair(lineNr,line.length());
 	}
@@ -246,7 +267,7 @@ void Textarea::moveCursor(const cursor_t & c,bool updateSelection){
 }
 
 void Textarea::scrollTo(const Geometry::Vec2 & p){
-	const Geometry::Vec2 newScroll(std::max(0.0f,p.x()),std::max(0.0f,std::min(getTextHeight()-getHeight(),p.y())));
+	const Geometry::Vec2 newScroll(std::max(0.0f,std::floor(p.x())),std::max(0.0f,std::min(getTextHeight()-getHeight(),std::floor(p.y()))));
 	if(newScroll!=scrollPos){
 		scrollPos = newScroll;
 		if(scrollBar.isNotNull())
@@ -290,6 +311,7 @@ std::string Textarea::getText(const range_t & r)const{
 		return result.str();
 	}
 }
+
 Textarea::cursor_t Textarea::_deleteText(const range_t & r){
 	auto pBegin = r.first;
 	const auto & pEnd = r.second;
@@ -345,7 +367,12 @@ Textarea::range_t Textarea::_insertText(const cursor_t & pos,const std::string &
 		endPos.second = p + s.length();
 	}else{
 		const std::string remainingLine = pos.second<getLine(pos.first).length() ? getLine(pos.first).substr(pos.second) : "";
-		lines.at(pos.first) = getLine(pos.first).substr(0,pos.second) + s.substr(0,sCursor);
+		{ // first line
+			std::string firstPart = s.substr(0,sCursor);
+			if(!firstPart.empty() && firstPart[firstPart.length()-1] == '\r') // remove superfluous \r (e.g. inserted into the clipboard by windows)
+				firstPart = firstPart.substr(0,firstPart.length()-1);
+			lines.at(pos.first) = getLine(pos.first).substr(0,pos.second) + firstPart;
+		}
 		sCursor += delimiterLen;
 		
 		std::vector<std::string> parts;
@@ -365,6 +392,11 @@ Textarea::range_t Textarea::_insertText(const cursor_t & pos,const std::string &
 			parts.emplace_back(remainingLine);
 			endPos.second = 0;
 		}
+		for(auto& line:parts){
+			if(!line.empty() && line[line.length()-1] == '\r') // remove superfluous \r (e.g. inserted into the clipboard by windows)
+				line = line.substr(0,line.length()-1);
+		}
+			
 		if(!parts.empty()){
 			lines.insert(std::next(lines.begin(),pos.first+1),parts.begin(),parts.end());
 			processor->onLinesInserted(*this,pos.first,parts.size());
@@ -374,6 +406,7 @@ Textarea::range_t Textarea::_insertText(const cursor_t & pos,const std::string &
 	markForConsolidation(pos.first,endPos.first);
 	return range(pos,endPos);
 }
+
 
 //! ---|> KeyListener
 bool Textarea::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {
@@ -397,13 +430,13 @@ bool Textarea::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {
 		executeTextUpdate( range(cursor, selectionStart), "\t" );
 	} else if(keyEvent.key == Util::UI::KEY_RIGHT ) {
 		if( !getLine(cursor.first).empty() && cursor.second<getLine(cursor.first).length() ){
-			moveCursor(std::make_pair(cursor.first,cursor.second+1),shiftPressed);
+			moveCursor(std::make_pair(cursor.first,getNextCursorPos(getLine(cursor.first),cursor.second)),shiftPressed);
 		}else if(cursor.first<lines.size()-1){
 			moveCursor(std::make_pair(cursor.first+1,0),shiftPressed);
 		}
 	} else if(keyEvent.key == Util::UI::KEY_LEFT) {
 		if(cursor.second>0 && !getLine(cursor.first).empty()){
-			moveCursor(std::make_pair(cursor.first, std::min(getLine(cursor.first).length(),cursor.second)-1),shiftPressed);
+			moveCursor(std::make_pair(cursor.first, getPrevCursorPos(getLine(cursor.first), std::min(getLine(cursor.first).length(),cursor.second))),shiftPressed);
 		}else if(cursor.first>0){
 			moveCursor(std::make_pair(cursor.first-1,getLine(cursor.first-1).length()),shiftPressed);
 		}
@@ -425,10 +458,12 @@ bool Textarea::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {
 		cursor_t pos2;
 		if(isTextSelected()) {
 			pos2 = selectionStart;
-		} else if(cursor.second+1<getLine(cursor.first).length()){
-			pos2 = std::make_pair(cursor.first,cursor.second+1);
-		}else{
-			pos2 = std::make_pair(cursor.first+1,0);
+		} else {
+			const int bytesToDelete = getNextCursorPos(getLine(cursor.first),cursor.second) - cursor.second;
+			if(bytesToDelete>0 && cursor.second+bytesToDelete<=getLine(cursor.first).length()) // delete single codepoint in this row
+				pos2 = std::make_pair(cursor.first,cursor.second+bytesToDelete);
+			else // remove line break
+				pos2 = std::make_pair(cursor.first+1,0);
 		}
 		executeTextUpdate(range(cursor, pos2), "");
 	} else if(keyEvent.key == Util::UI::KEY_BACKSPACE) {
@@ -436,7 +471,8 @@ bool Textarea::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {
 		if(isTextSelected()) {
 			pos2 = selectionStart;
 		} else if(cursor.second>0){
-			pos2 = std::make_pair(cursor.first,cursor.second-1);
+			const int bytesToDelete = cursor.second - getPrevCursorPos(getLine(cursor.first),cursor.second);
+			pos2 = std::make_pair(cursor.first,cursor.second-bytesToDelete);
 		} else if(cursor.first>0){
 			pos2 = std::make_pair(cursor.first-1,std::string::npos-1);
 		} else {
@@ -468,12 +504,15 @@ bool Textarea::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {
 ////        text=backupText;
 ////        moveCursor(0);
 ////    }
-	} else if(keyEvent.str[0] >= 32) {
-		
+	} else if( static_cast<uint8_t>(keyEvent.str[0]) >= 32) {
+		std::string codePoint;
+		for(uint8_t p = 0;p<4&&keyEvent.str[p]!=0;++p)
+			codePoint += keyEvent.str[p];
+			
 		if(!commands.empty() && commands.back().extendable && commands.back().getInsertionCursor()==cursor){
-			commands.back().extend(*this,std::string(keyEvent.str, 1));
+			commands.back().extend(*this,codePoint);
 		}else {
-			executeTextUpdate( range(cursor, selectionStart), std::string(keyEvent.str, 1));
+			executeTextUpdate( range(cursor, selectionStart), codePoint);
 			commands.back().extendable = true;
 		}
 	}
