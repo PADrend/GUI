@@ -167,14 +167,9 @@ bool Button::onMouseMove(Component * /*component*/, const Util::UI::MotionEvent 
 			select();
 			action();
 		}
-
-		// markForRepaint()
-		return true;
 	} else if(!isLocked() && hover && !coversAbsPosition(absPos)) {
 		hover=false;
 		invalidateRegion();
-		// markForRepaint()
-		return true;
 	}
 	return false;
 }
