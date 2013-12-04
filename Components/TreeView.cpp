@@ -275,7 +275,7 @@ void TreeView::TreeViewEntry::doLayout() {
 		c->setPosition(Geometry::Vec2(10,h));
 		h += static_cast<uint32_t>(c->getHeight());
 	}
-	setSize( getParent()->getWidth()-10,
+	setSize( getParent()->getWidth()-getPosition().x(),
 			(isCollapsed()&&getFirstChild()!=nullptr) ? 
 				getFirstChild()->getHeight() : h);
 }
