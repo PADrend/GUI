@@ -433,9 +433,15 @@ void Draw::draw3DRect(const Geometry::Rect & r,bool down,const Util::Color4ub & 
 	const Util::Color4ub & c2 = down ? Colors::DARK_COLOR   : Colors::BRIGHT_COLOR;
 
 	glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
+	
+	// assure sharp lines
+	const Geometry::Rect_i r2(r);
+	Geometry::Rect r3(r2);
+	r3.moveRel(0.5f,0.5f);
+	
 	const GLfloat vertices[] = {
-		r.getMinX(),r.getMaxY(),	r.getMaxX(),r.getMaxY(),	r.getMaxX(),r.getMaxY(),	r.getMaxX(),r.getMinY(),
-		r.getMaxX(),r.getMinY(),	r.getMinX(),r.getMinY(),	r.getMinX(),r.getMinY(),	r.getMinX(),r.getMaxY()
+		r3.getMinX(),r3.getMaxY(),	r3.getMaxX(),r3.getMaxY(),	r3.getMaxX(),r3.getMaxY(),	r3.getMaxX(),r3.getMinY(),
+		r3.getMaxX(),r3.getMinY(),	r3.getMinX(),r3.getMinY(),	r3.getMinX(),r3.getMinY(),	r3.getMinX(),r3.getMaxY()
 	};
 	const uint32_t colors[] = {
 		c1.getAsUInt(),		c1.getAsUInt(),		c1.getAsUInt(),		c1.getAsUInt(),
@@ -491,7 +497,10 @@ void Draw::drawLineRect(const Geometry::Rect & r,const Util::Color4ub & lineColo
 		glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 	}
 
-	const GLfloat vertices[] = {	r.getMinX(), r.getMinY(),	r.getMinX(), r.getMaxY(),	r.getMaxX(), r.getMaxY(),	r.getMaxX(), r.getMinY()	};
+	const GLfloat vertices[] = {	static_cast<int>(r.getMinX())+0.5f, static_cast<int>(r.getMinY())+0.5f,	
+									static_cast<int>(r.getMinX())+0.5f, static_cast<int>(r.getMaxY())+0.5f,	
+									static_cast<int>(r.getMaxX())+0.5f, static_cast<int>(r.getMaxY())+0.5f,	
+									static_cast<int>(r.getMaxX())+0.5f, static_cast<int>(r.getMinY())+0.5f	};
 	drawVertices(GL_LINE_LOOP, sizeof(vertices) / (sizeof(GLfloat)*2), vertices, lineColor);
 
 	if(blend)
@@ -516,8 +525,12 @@ void Draw::drawTab(const Geometry::Rect & r,const Util::Color4ub & lineColor, co
 	}
 	if (lineColor != Colors::NO_COLOR){
 		const GLfloat vertices[] = {
-			r.getMaxX(),r.getMaxY(),		r.getMaxX(),r.getMinY()+3,		r.getMaxX()-3,r.getMinY(),
-			r.getMinX()+3,r.getMinY(),		r.getMinX(),r.getMinY()+3,		r.getMinX(),r.getMaxY()
+			static_cast<int>(r.getMaxX())+0.5f,		static_cast<int>(r.getMaxY())+0.5f,		
+			static_cast<int>(r.getMaxX())+0.5f,		static_cast<int>(r.getMinY())+3.5f,
+			static_cast<int>(r.getMaxX())-2.5f,		static_cast<int>(r.getMinY())+0.5f,
+			static_cast<int>(r.getMinX())+3.5f,		static_cast<int>(r.getMinY())+0.5f,		
+			static_cast<int>(r.getMinX())+0.5f,		static_cast<int>(r.getMinY())+3.5f,		
+			static_cast<int>(r.getMinX())+0.5f,		static_cast<int>(r.getMaxY())+0.5f
 		};
 		drawVertices(GL_LINE_STRIP, sizeof(vertices) / (sizeof(GLfloat)*2), vertices, lineColor);
 	}

@@ -109,19 +109,23 @@ void Rounded3dRectShape::display(const Rect & rect,flag_t flags){
 		vertices.reserve(10*2);
 		colors.reserve(10);
 
+		const Geometry::Rect_i r2(rect);
+		Geometry::Rect r3(r2);
+		r3.moveRel(0.5f,0.5f);
+	
 		colors.insert(colors.end(),5,c1.getAsUInt());
-		vertices.push_back(rect.getMinX());				vertices.push_back(rect.getMaxY()-roundnessBL);
-		vertices.push_back(rect.getMinX()+roundnessBL);	vertices.push_back(rect.getMaxY());
-		vertices.push_back(rect.getMaxX()-roundnessBR);	vertices.push_back(rect.getMaxY());
-		vertices.push_back(rect.getMaxX());				vertices.push_back(rect.getMaxY()-roundnessBR);
-		vertices.push_back(rect.getMaxX());				vertices.push_back(rect.getMinY()+roundnessTR);
+		vertices.push_back(r3.getMinX());				vertices.push_back(r3.getMaxY()-roundnessBL);
+		vertices.push_back(r3.getMinX()+roundnessBL);	vertices.push_back(r3.getMaxY());
+		vertices.push_back(r3.getMaxX()-roundnessBR);	vertices.push_back(r3.getMaxY());
+		vertices.push_back(r3.getMaxX());				vertices.push_back(r3.getMaxY()-roundnessBR);
+		vertices.push_back(r3.getMaxX());				vertices.push_back(r3.getMinY()+roundnessTR);
 
 		colors.insert(colors.end(),5,c2.getAsUInt());
-		vertices.push_back(rect.getMaxX());				vertices.push_back(rect.getMinY()+roundnessTR);
-		vertices.push_back(rect.getMaxX()-roundnessTR);	vertices.push_back(rect.getMinY());
-		vertices.push_back(rect.getMinX()+roundnessTL);	vertices.push_back(rect.getMinY());
-		vertices.push_back(rect.getMinX());				vertices.push_back(rect.getMinY()+roundnessTL);
-		vertices.push_back(rect.getMinX());				vertices.push_back(rect.getMaxY()-roundnessBL);
+		vertices.push_back(r3.getMaxX());				vertices.push_back(r3.getMinY()+roundnessTR);
+		vertices.push_back(r3.getMaxX()-roundnessTR);	vertices.push_back(r3.getMinY());
+		vertices.push_back(r3.getMinX()+roundnessTL);	vertices.push_back(r3.getMinY());
+		vertices.push_back(r3.getMinX());				vertices.push_back(r3.getMinY()+roundnessTL);
+		vertices.push_back(r3.getMinX());				vertices.push_back(r3.getMaxY()-roundnessBL);
 		Draw::drawLine(vertices,colors,1.0);
 	}
 }
@@ -205,8 +209,8 @@ void StraightLineShape::displayLine(const std::vector<Geometry::Vec2> & points,f
 	std::vector<float> vertices;
 	vertices.reserve(points.size()*2);
 	for(auto & point : points){
-		vertices.push_back(point.x());
-		vertices.push_back(point.y());
+		vertices.push_back(static_cast<int>(point.x())+0.5f);
+		vertices.push_back(static_cast<int>(point.y())+0.5f);
 	}
 
 	std::vector<uint32_t> colors;
