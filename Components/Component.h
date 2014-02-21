@@ -221,9 +221,9 @@ class Component: public Util::AttributeProvider, public Util::ReferenceCounter<C
 		bool isAbsPosValid()const							{	return getFlag(ABS_POSITION_VALID);	}
 
 	public:
-		bool coversAbsPosition(const Geometry::Vec2 & p)	{	return coversLocalPos(p-getAbsPosition());	}
+		bool coversAbsPosition(const Geometry::Vec2 & p)	{	return coversLocalPosition(p-getAbsPosition());	}
 		// ---o
-		virtual bool coversLocalPos(const Geometry::Vec2 & localPos);
+		virtual bool coversLocalPosition(const Geometry::Vec2 & localPos);
 
 		Geometry::Vec2 getAbsPosition();
 		Geometry::Rect getAbsRect()							{	return Geometry::Rect(getAbsPosition(),relRect.getSize());	}

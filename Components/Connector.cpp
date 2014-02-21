@@ -78,7 +78,7 @@ void Connector::addConnectorPoint(){
 }
 
 //! ---|> Component
-bool Connector::coversLocalPos(const Geometry::Vec2 & pos){
+bool Connector::coversLocalPosition(const Geometry::Vec2 & pos){
 	if(!getLocalRect().changeSizeCentered(10,10).contains(pos))
 		return false;
 	Geometry::Vec2 p1;

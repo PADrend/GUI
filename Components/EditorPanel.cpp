@@ -149,13 +149,13 @@ bool EditorPanel::onMouseButton(Component * /*component*/, const Util::UI::Butto
 			if(buttonEvent.pressed && buttonEvent.button == Util::UI::MOUSE_BUTTON_LEFT) {
 				select();
 				for(const auto & markedChild : getMarkedChildren()) {
-					if(markedChild->coversLocalPos(localPos - markedChild->getPosition())) {
+					if(markedChild->coversLocalPosition(localPos - markedChild->getPosition())) {
 						move_start(localPos);
 						return true;
 					}
 				}
 				for(Component * child=getFirstChild();child!=nullptr;child=child->getNext()){
-					if(!child->coversLocalPos(localPos-child->getPosition()))
+					if(!child->coversLocalPosition(localPos-child->getPosition()))
 						continue;
 					if(!getGUI().isShiftPressed())
 						unmarkAll();

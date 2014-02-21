@@ -344,7 +344,7 @@ bool Component::isVisible()const {
 
 
 //! ---o
-bool Component::coversLocalPos(const Geometry::Vec2 & localPos){
+bool Component::coversLocalPosition(const Geometry::Vec2 & localPos){
 	return getLocalRect().contains(localPos);
 }
 
