@@ -30,6 +30,9 @@ class TabbedPanel : public Container {
 		class Tab : public Container {
 				PROVIDES_TYPE_NAME(Tab)
 			public:
+				static const Util::StringIdentifier ACTION_Tab_close;
+				static const Util::StringIdentifier ACTION_Tab_open;
+
 				Tab(GUI_Manager & gui,const std::string & title="",Container * clientArea=nullptr);
 				virtual ~Tab();
 

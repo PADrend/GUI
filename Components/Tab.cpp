@@ -22,6 +22,10 @@
 
 namespace GUI {
 
+const Util::StringIdentifier TabbedPanel::Tab::ACTION_Tab_close("ACTION_Tab_close");
+const Util::StringIdentifier TabbedPanel::Tab::ACTION_Tab_open("ACTION_Tab_open");
+
+
 /***
  **  TabTitlePanel ---|> Container ---|> Component
  **/
@@ -299,15 +303,20 @@ TabbedPanel::Tab * TabbedPanel::createTab(const std::string & name,Container * c
 }
 
 void TabbedPanel::setActiveTab(Tab * tab) {
-	if(activeTab && activeTab->getTabbedPanel()==this){
-		activeTab->clientArea()->disable();
-		activeTab->invalidateLayout();
-	}
-	activeTab=tab;
-	invalidateLayout();
-	if(activeTab) {
-		activeTab->clientArea()->enable();
-		activeTab->invalidateLayout();
+	if( tab!=activeTab){ 
+		if(activeTab && activeTab->getTabbedPanel()==this){
+			activeTab->clientArea()->disable();
+			activeTab->invalidateLayout();
+			getGUI().componentActionPerformed(activeTab, Tab::ACTION_Tab_close);
+			
+		}
+		activeTab = tab;
+		invalidateLayout();
+		if(activeTab) {
+			activeTab->clientArea()->enable();
+			activeTab->invalidateLayout();
+			getGUI().componentActionPerformed(activeTab, Tab::ACTION_Tab_open);
+		}
 	}
 	recalculateTabTitlePositions();
 }
