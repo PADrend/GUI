@@ -71,7 +71,7 @@ void main() {
 static void checkGLError(int line) {
 	GLenum errorFlag = glGetError();
 	for(int i=0;errorFlag != GL_NO_ERROR && i<10;++i){
-		std::cout << "OpenGL Error:"<<errorFlag<<"(Before line:"<<line<<")\n";
+		std::cout << "GUI/Draw: OpenGL Error:"<<errorFlag<<"(Before line:"<<line<<")\n";
 		errorFlag = glGetError();
 	}
 }
