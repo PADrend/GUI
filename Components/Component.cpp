@@ -39,8 +39,6 @@ Component::~Component() {
 	getGUI().componentDestruction(this);
 	removeExternalLayout();
 	removeAttributes();
-//    setShape(nullptr);
-//	setParent(nullptr,0);
 	//dtor
 }
 

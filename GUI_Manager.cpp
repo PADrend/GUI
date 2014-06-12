@@ -380,14 +380,14 @@ bool GUI_Manager::handleKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {
 	if(!keyEvent.pressed)
 		return false;
 	else if(keyEvent.key == Util::UI::KEY_TAB){
-		Component * selectedComponent=globalContainer->findSelectedComponent();
+		Component::Ref selectedComponent = globalContainer->findSelectedComponent();	// hold reference as unselecting may trigger destruction
 		if(selectedComponent && selectedComponent->hasParent()){
 			selectedComponent->getParent()->unselectSubtree();
 		}
 		if(isShiftPressed()){
-			selectPrev(selectedComponent);
+			selectPrev(selectedComponent.get());
 		}else{
-			selectNext(selectedComponent);
+			selectNext(selectedComponent.get());
 		}
 		return true;
 	}
@@ -519,9 +519,9 @@ void GUI_Manager::closeAllMenus(){
 
 void GUI_Manager::selectNext(Component * _c){
 	Component::Ref c=_c;
-	while(c.isNotNull()){
-		if(c->getNext()!=nullptr){
-			c=c->getNext();
+	while( c ){
+		if( c->getNext() ){
+			c = c->getNext();
 			if(selectFirst(c.get()))
 				break;
 		}else{
@@ -686,48 +686,54 @@ void GUI_Manager::cleanup(){
 // ---- animation handling
 
 void GUI_Manager::addAnimationHandler(AnimationHandler * h){
-	animationHandlerList.push_back(h);
+	animationHandlerList.emplace_back(h);
 	h->setStartTime( Util::Timer::now() );
 }
 
 //! (internal)
 void GUI_Manager::executeAnimations(){
-	float t=Util::Timer::now();
-	for(auto it=animationHandlerList.begin();
-			it!=animationHandlerList.end();) {
-		if( (*it)->animate(t) ){
-			(*it)->updateLastTime(t);
-			++it;
-		}else{
-			delete *it;
-			it = animationHandlerList.erase(it);
+	const float t = Util::Timer::now();
+	animationHandlerList_t animationHandlerList2;
+	animationHandlerList2.reserve( animationHandlerList.size() );
+	std::swap(animationHandlerList2,animationHandlerList);
+
+	while( !animationHandlerList2.empty() ){
+		std::unique_ptr<AnimationHandler> handler = std::move(animationHandlerList2.back());
+		animationHandlerList2.pop_back();
+		if( handler->animate(t) ){
+			handler->updateLastTime(t);
+			animationHandlerList.emplace_back( std::move(handler) );
 		}
 	}
 }
 
 //! (internal)
 void GUI_Manager::finishAnimations(Component * c){
-	for(auto it=animationHandlerList.begin();
-			it!=animationHandlerList.end();) {
-		if( (*it)->getComponent()==c ){
-			(*it)->finish();
-			delete *it;
-			it = animationHandlerList.erase(it);
+	animationHandlerList_t animationHandlerList2;
+	animationHandlerList2.reserve( animationHandlerList.size() );
+	std::swap(animationHandlerList2,animationHandlerList);	
+	
+	while( !animationHandlerList2.empty() ){
+		std::unique_ptr<AnimationHandler> handler = std::move(animationHandlerList2.back());
+		animationHandlerList2.pop_back();
+		if( handler->getComponent()==c ){
+			handler->finish();
 		}else{
-			++it;
+			animationHandlerList.emplace_back( std::move(handler) );
 		}
 	}
 }
 //! (internal)
 void GUI_Manager::stopAnimations(Component * c){
-	for(auto it=animationHandlerList.begin();
-			it!=animationHandlerList.end();) {
-		if( (*it)->getComponent()==c ){
-			delete *it;
-			it = animationHandlerList.erase(it);
-		}else{
-			++it;
-		}
+	animationHandlerList_t animationHandlerList2;
+	animationHandlerList2.reserve( animationHandlerList.size() );
+	std::swap(animationHandlerList2,animationHandlerList);	
+	
+	while( !animationHandlerList2.empty() ){
+		std::unique_ptr<AnimationHandler> handler = std::move(animationHandlerList2.back());
+		animationHandlerList2.pop_back();
+		if( handler->getComponent()!=c )
+			animationHandlerList.emplace_back( std::move(handler) );
 	}
 }
 

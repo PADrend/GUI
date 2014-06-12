@@ -122,8 +122,7 @@ class GUI_Manager {
 		void stopAnimations(Component * c);
 	private:
 		void executeAnimations();
-//		typedef std::list<Util::SinglePointer<AnimationHandler> > animationHandlerList_t; // BUG!
-		typedef std::list<AnimationHandler* > animationHandlerList_t;
+		typedef std::vector<std::unique_ptr<AnimationHandler>> animationHandlerList_t;
 		animationHandlerList_t animationHandlerList;
 	//	@}
 
