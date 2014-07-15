@@ -725,16 +725,12 @@ void Draw::uploadTexture(uint32_t textureId,uint32_t width,uint32_t height,const
 		throw std::invalid_argument("Draw::uploadTexture: Bitmap has unimplemented color format.");
 	}
 	GLenum glDataType;
-	switch( pixelFormat.getBytesPerComponent() ){
-		case 1:
-			glDataType = GL_UNSIGNED_BYTE;
-			break;
-		case 4:
-			glDataType = GL_FLOAT;
-			break;
-		default: {
-			throw std::invalid_argument("Draw::uploadTexture: Bitmap has invalid data format.");
-		}
+	if( pixelFormat.getValueType() == Util::TypeConstant::UINT8 ){
+		glDataType = GL_UNSIGNED_BYTE;
+	}else if( pixelFormat.getValueType() == Util::TypeConstant::FLOAT ){
+		glDataType = GL_FLOAT;
+	}else{
+		throw std::invalid_argument("Draw::uploadTexture: Bitmap has invalid data format.");
 	}
 
 	glBindTexture(GL_TEXTURE_2D,textureId);
