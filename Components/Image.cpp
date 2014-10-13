@@ -41,11 +41,13 @@ Image::Image(GUI_Manager & _gui,
 //! (dtor)
 Image::~Image() = default;
 
-//! ---|> Component
 void Image::doDisplay(const Geometry::Rect & /*region*/) {
+	enableLocalDisplayProperties();
+	displayDefaultShapes();	
 	data->enable();
 	Draw::drawTexturedRect(Geometry::Rect_i(getLocalRect()),Geometry::Rect(0,0,1,1),Colors::WHITE,true);
 	data->disable();
+	disableLocalDisplayProperties();
 }
 
 Util::Reference<Util::PixelAccessor> Image::createPixelAccessor() {

@@ -159,7 +159,7 @@ struct TabTitlePanel : public Container {
 
 	//! ---|> Component
 	void doDisplay(const Geometry::Rect & region) override {
-		Util::Reference<AbstractProperty> c;
+		Util::Reference<DisplayProperty> c;
 
 		if (myTab.isActiveTab()) {
 			Geometry::Rect rect=getLocalRect();
@@ -234,11 +234,14 @@ void TabbedPanel::Tab::doLayout() {
 
 //! [Tab] ---|> Component
 void TabbedPanel::Tab::doDisplay(const Geometry::Rect & region) {
+	enableLocalDisplayProperties();
+	displayDefaultShapes();			
 	if (clientAreaPanel->isEnabled()) {
 		Geometry::Rect r = clientAreaPanel->getLocalRect();
 		r.moveRel(clientAreaPanel->getPosition());
 		getGUI().displayShape(PROPERTY_TAB_BODY_SHAPE,r);
 	}
+	disableLocalDisplayProperties();
 	displayChildren(region);
 }
 

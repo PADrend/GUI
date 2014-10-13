@@ -10,6 +10,7 @@
 */
 #include "ListView.h"
 #include "../GUI_Manager.h"
+#include "../Base/StyleManager.h"
 #include "../Base/AnimationHandler.h"
 #include "../Base/ListenerHelper.h"
 #include "../Base/Layouters/ExtLayouter.h"
@@ -42,20 +43,27 @@ void ListView::ListViewClientArea::doLayout() {
 
 // ---|> Component
 void ListView::ListViewClientArea::doDisplay(const Geometry::Rect & region) {
+	enableLocalDisplayProperties();
+	displayDefaultShapes();	
+	auto markedEntryShape = getGUI().getStyleManager().getShape(PROPERTY_LISTVIEW_MARKED_ENTRY_SHAPE);
+	auto selectionRectShape = getGUI().getStyleManager().getShape(PROPERTY_SELECTION_RECT_SHAPE) ;
+	disableLocalDisplayProperties();
+	
 	const Geometry::Rect myRegion( region.isValid() ? getAbsRect().clipBy(region) : getAbsRect() );
 
 	const size_t numEntries(myListView.getNumVisibleEntries());
 	Geometry::Rect markerRect(0, 0, getWidth(), myListView.getEntryHeight());
 	Component * c = myListView.getEntry(myListView.getEntryIndexByPosition(myListView.getScrollPos()));
 	const Component * comp_cursor = myListView.getCursorEntry();
+	
 	for( size_t i = 0 ; i < numEntries && c != nullptr ; ++i, c = c->getNext() ) {
 		if(myListView.isMarked(c)) {
 			markerRect.setPosition(c->getPosition());
-			getGUI().displayShape(PROPERTY_LISTVIEW_MARKED_ENTRY_SHAPE, markerRect);
+			markedEntryShape->display(markerRect);
 		}
 		if(c == comp_cursor && myListView.isSelected()) {
 			markerRect.setPosition(c->getPosition());
-			getGUI().displayShape(PROPERTY_SELECTION_RECT_SHAPE, markerRect);
+			selectionRectShape->display(markerRect);
 		}
 		if(c->isEnabled() && myRegion.intersects(c->getAbsRect()))
 			c->display(region);
@@ -151,12 +159,19 @@ void ListView::doLayout() {
 
 //! ---|> Component
 void ListView::doDisplay(const Geometry::Rect & region) {
+	enableLocalDisplayProperties();
+	displayDefaultShapes();	
 	getGUI().displayShape(PROPERTY_LISTVIEW_SHAPE, getLocalRect(), 0);
+	auto shape_scrollableMarker = getGUI().getStyleManager().getShape(PROPERTY_SCROLLABLE_MARKER_TOP_SHAPE);
+	auto shape_bottomMarker = getGUI().getStyleManager().getShape(PROPERTY_SCROLLABLE_MARKER_BOTTOM_SHAPE);
+	
+	disableLocalDisplayProperties();
+	
 	displayChildren(region,true);
 	if(scrollPos.y()>0)
-		getGUI().displayShape(PROPERTY_SCROLLABLE_MARKER_TOP_SHAPE, getLocalRect(), 0);
+		shape_scrollableMarker->display( getLocalRect() );
 	if(scrollPos.y()<maxScrollPos.y())
-		getGUI().displayShape(PROPERTY_SCROLLABLE_MARKER_BOTTOM_SHAPE, getLocalRect(), 0);
+		shape_bottomMarker->display( getLocalRect() );
 }
 
 

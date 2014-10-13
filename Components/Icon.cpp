@@ -43,6 +43,9 @@ Icon::~Icon(){
 
 //! ---|> Component
 void Icon::doDisplay(const Geometry::Rect & /*region*/){
+	enableLocalDisplayProperties();
+	displayDefaultShapes();	
+
 	if(imageData.isNotNull() && imageData->enable()){
 		const size_t width = imageData->getBitmap()->getWidth();
 		const size_t height = imageData->getBitmap()->getHeight();
@@ -54,6 +57,7 @@ void Icon::doDisplay(const Geometry::Rect & /*region*/){
 	}else{
 		Draw::drawFilledRect(getLocalRect(),Colors::WHITE); // \todo Use Placeholder-shape
 	}
+	disableLocalDisplayProperties();
 }
 
 }

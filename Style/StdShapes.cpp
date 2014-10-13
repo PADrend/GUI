@@ -146,6 +146,23 @@ void ResizerShape::display(const Rect & rect,flag_t /*flag*/){
 	Draw::drawFilledRect(Rect(x + floorf(w*2.75f), y+ floorf(h*2.75f), w,h) ,color,blend);
 }//
 
+//! TriangleAtCornerShape ---|> AbstractShape
+void TriangleAtCornerShape::display(const Rect & rect,flag_t flags){
+	std::vector<float> vertices;
+	std::vector<uint32_t> colors;
+	vertices.reserve(3*2);
+	colors.reserve(3);
+
+	colors.insert(colors.end(),3, color.getAsUInt());
+
+	const Geometry::Vec2 corner = rect.getCorner(CORNER_XY);
+	vertices.push_back(corner.x());				vertices.push_back(corner.y());
+	vertices.push_back(corner.x());				vertices.push_back(corner.y()-size);
+	vertices.push_back(corner.x()-size);		vertices.push_back(corner.y());
+
+	Draw::drawTriangleFan(vertices,colors);
+}
+
 //! TriangleSelectorShape ---|> AbstractShape
 void TriangleSelectorShape::display(const Rect & rect,flag_t flags){
 	std::vector<float> vertices;

@@ -52,7 +52,10 @@ void Menu::doLayout() {
 
 //! ---|> Component
 void Menu::doDisplay(const Geometry::Rect & region) {
+	enableLocalDisplayProperties();
+	displayDefaultShapes();		
 	getGUI().displayShape(PROPERTY_MENU_SHAPE,getLocalRect());
+	disableLocalDisplayProperties();
 
 	displayChildren(region,true);
 }

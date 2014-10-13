@@ -30,6 +30,8 @@
 #include "Components/Image.h"
 #include "Components/TreeView.h"
 #include "Components/Window.h"
+#include "Components/ComponentTooltipFeature.h"
+#include "Components/ComponentHoverShapeFeature.h"
 
 #include "Base/AnimationHandler.h"
 #include "Base/Draw.h"
@@ -166,7 +168,7 @@ class TooltipHandler : public Component {
 
 		Component * findTooltitComponent(const Vec2 & pos)const{
 			for(Component * c=getGUI().getComponentAtPos(pos);c!=nullptr;c=c->getParent()){
-				if(c->hasTooltip())
+				if(hasComponentTooltip(*c))
 					return c;
 			}
 			return nullptr;
@@ -222,7 +224,7 @@ class TooltipHandler : public Component {
 			}
 
 
-			this->text=activeComponent->getTooltip();
+			this->text = getComponentTooltip(*activeComponent.get());
 			const Vec2 ttSize=Draw::getTextSize( text,getGUI().getActiveFont(PROPERTY_TOOLTIP_FONT) )+Vec2(8,8);
 
 
@@ -264,13 +266,14 @@ class TooltipHandler : public Component {
 
 //! (ctor)
 GUI_Manager::GUI_Manager(Util::UI::EventContext & context) : 
-	eventContext(context), window(nullptr), debugMode(0),
-	lazyRendering(false), style(new StyleManager),
-	mouseCursorHandler(new MouseCursorHandler(*this)),
-	tooltipHandler(new TooltipHandler(*this)) {
+		eventContext(context), window(nullptr), debugMode(0),
+		lazyRendering(false), style(new StyleManager),
+		mouseCursorHandler(new MouseCursorHandler(*this)),
+		tooltipHandler(new TooltipHandler(*this)){
 	globalContainer=new GlobalContainer(*this,Rect(0,0,1280,1024));
 	globalContainer->setMouseCursorProperty(PROPERTY_MOUSECURSOR_DEFAULT);
-
+	initHoverPropertyHandler(*this,*globalContainer.get());
+	
 	Style::initStyleManager(getStyleManager());
 }
 
@@ -762,10 +765,10 @@ AbstractFont * GUI_Manager::getDefaultFont(const propertyId_t id)const{
 float GUI_Manager::getGlobalValue(const propertyId_t id)const{
 	return getStyleManager().getGlobalValue(id);
 }
-void GUI_Manager::disableProperty(const Util::Reference<AbstractProperty> & p)const{
+void GUI_Manager::disableProperty(const Util::Reference<DisplayProperty> & p)const{
 	p->disable(getStyleManager());
 }
-void GUI_Manager::enableProperty(const Util::Reference<AbstractProperty> & p)const{
+void GUI_Manager::enableProperty(const Util::Reference<DisplayProperty> & p)const{
 	p->enable(getStyleManager());
 }
 

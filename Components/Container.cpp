@@ -161,8 +161,9 @@ void Container::displayChildren(const Geometry::Rect & region,bool useScissor/*=
 
 //! ---|> Component
 void Container::doDisplay(const Geometry::Rect & region) {
-//	if(hasShape())
-//		getShape()->display(getLocalRect());
+	enableLocalDisplayProperties();
+	displayDefaultShapes();	
+	disableLocalDisplayProperties();
 	displayChildren(region);
 }
 

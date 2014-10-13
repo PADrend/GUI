@@ -12,6 +12,7 @@
 #include "../GUI_Manager.h"
 #include "../Base/AnimationHandler.h"
 #include "../Base/ListenerHelper.h"
+#include "../Base/StyleManager.h"
 #include "../Base/Layouters/ExtLayouter.h"
 #include "Scrollbar.h"
 #include "ComponentPropertyIds.h"
@@ -44,15 +45,24 @@ ScrollableContainer::~ScrollableContainer() {
 
 //! ---|> Component
 void ScrollableContainer::doDisplay(const Geometry::Rect & region) {
+	enableLocalDisplayProperties();
+	displayDefaultShapes();		
+	auto scrollableMarker_top = scrollPos.y()>0 ? getGUI().getStyleManager().getShape(PROPERTY_SCROLLABLE_MARKER_TOP_SHAPE) : nullptr;
+	auto scrollableMarker_left = scrollPos.x()>0 ? getGUI().getStyleManager().getShape(PROPERTY_SCROLLABLE_MARKER_LEFT_SHAPE) : nullptr;
+	auto scrollableMarker_bottom = scrollPos.y()<maxScrollPos.y() ? getGUI().getStyleManager().getShape(PROPERTY_SCROLLABLE_MARKER_BOTTOM_SHAPE) : nullptr;
+	auto scrollableMarker_right = scrollPos.x()<maxScrollPos.x() ? getGUI().getStyleManager().getShape(PROPERTY_SCROLLABLE_MARKER_RIGHT_SHAPE) : nullptr;
+	disableLocalDisplayProperties();
+	
 	displayChildren(region,true);
-	if(scrollPos.y()>0)
-		getGUI().displayShape(PROPERTY_SCROLLABLE_MARKER_TOP_SHAPE, getLocalRect(), 0);
-	if(scrollPos.x()>0)
-		getGUI().displayShape(PROPERTY_SCROLLABLE_MARKER_LEFT_SHAPE, getLocalRect(), 0);
-	if(scrollPos.y()<maxScrollPos.y())
-		getGUI().displayShape(PROPERTY_SCROLLABLE_MARKER_BOTTOM_SHAPE, getLocalRect(), 0);
-	if(scrollPos.x()<maxScrollPos.x())
-		getGUI().displayShape(PROPERTY_SCROLLABLE_MARKER_RIGHT_SHAPE, getLocalRect(), 0);
+	
+	if(scrollableMarker_top)
+		scrollableMarker_top->display( getLocalRect() );
+	if(scrollableMarker_left)
+		scrollableMarker_left->display( getLocalRect() );
+	if(scrollableMarker_bottom)
+		scrollableMarker_bottom->display( getLocalRect() );
+	if(scrollableMarker_right)
+		scrollableMarker_right->display( getLocalRect() );
 }
 
 //! ---|> Component

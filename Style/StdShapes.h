@@ -111,6 +111,23 @@ class ResizerShape : public AbstractShape{
 };
 
 /***
+ **	TriangleAtCornerShape ---|> AbstractShape
+ **/
+class TriangleAtCornerShape : public AbstractShape{
+	public:
+		TriangleAtCornerShape(Util::Color4ub _color,float _size) :
+				color(std::move(_color)),size(_size)	{}
+		virtual ~TriangleAtCornerShape()	{}
+
+		// ---|> AbstractShape
+		virtual void display(const Geometry::Rect & rect,flag_t flag) override;
+		virtual AbstractShape * clone() override		{	return new TriangleAtCornerShape(*this);	}
+
+		Util::Color4ub color;
+		float size;
+};
+
+/***
  **	TriangleSelectorShape ---|> AbstractShape
  **/
 class TriangleSelectorShape : public AbstractShape{

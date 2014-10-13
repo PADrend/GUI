@@ -22,14 +22,14 @@ typedef std::string propertyName_t;
 class StyleManager;
 
 
-//! AbstractProperty
-class AbstractProperty : public Util::ReferenceCounter<AbstractProperty> {
-		PROVIDES_TYPE_NAME(AbstractProperty)
+//! DisplayProperty
+class DisplayProperty : public Util::ReferenceCounter<DisplayProperty> {
+		PROVIDES_TYPE_NAME(DisplayProperty)
 
 		propertyId_t propertyId;
 	public:
-		AbstractProperty(propertyId_t _propertyId) : propertyId(_propertyId) {}
-		virtual ~AbstractProperty() {}
+		DisplayProperty(propertyId_t _propertyId) : propertyId(_propertyId) {}
+		virtual ~DisplayProperty() {}
 
 		propertyId_t getPropertyId()const			{	return propertyId;	}
 

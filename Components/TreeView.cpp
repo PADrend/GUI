@@ -14,6 +14,7 @@
 #include "../Base/AnimationHandler.h"
 #include "../Base/ListenerHelper.h"
 #include "../Base/Layouters/ExtLayouter.h"
+#include "../Base/StyleManager.h"
 #include "ComponentPropertyIds.h"
 #include "Scrollbar.h"
 #include <Util/UI/Event.h>
@@ -73,16 +74,24 @@ void TreeView::TreeViewEntry::doDisplay(const Geometry::Rect & region) {
 			getAbsPosition().getY()>myTreeView->getAbsPosition().getY()+myTreeView->getHeight() )
 		return;
 
+	enableLocalDisplayProperties();
+	displayDefaultShapes();			
+	
 	if(isSelected())
 		getGUI().displayShape(PROPERTY_TREEVIEW_ENTRY_SELECTION_SHAPE,getLocalRect());
 
-	if(isMarked() && getFirstChild()!=nullptr) {
+	if(isMarked() && getFirstChild()) {
 		Geometry::Rect r=getFirstChild()->getLocalRect();
 		r.setWidth(myTreeView->getWidth());
 		getGUI().displayShape(PROPERTY_TREEVIEW_ENTRY_MARKING_SHAPE,r);
 	}
+	auto shape_activeIndentation = getGUI().getStyleManager().getShape(PROPERTY_TREEVIEW_ACTIVE_INDENTATION_SHAPE);
+	auto shape_passiveIndentation = getGUI().getStyleManager().getShape(PROPERTY_TREEVIEW_PASSIVE_INDENTATION_SHAPE);
+	auto shape_subgroup = getGUI().getStyleManager().getShape(PROPERTY_TREEVIEW_SUBROUP_SHAPE);
 
-	for (Component * c=getFirstChild();c!=nullptr;c=c->getNext()) {
+	disableLocalDisplayProperties();
+
+	for (Component * c=getFirstChild(); c; c=c->getNext()) {
 		if(c->isEnabled()) {
 			c->display(region);
 			// if item is collapsed show only first element
@@ -93,14 +102,13 @@ void TreeView::TreeViewEntry::doDisplay(const Geometry::Rect & region) {
 	if(getContentsCount() > 1 && dynamic_cast<TreeViewEntry*>(getParent())) {
 		float h=getFirstChild()->getHeight();
 		if(isCollapsed())
-			getGUI().displayShape(PROPERTY_TREEVIEW_ACTIVE_INDENTATION_SHAPE,Geometry::Rect(4,0,1,getHeight()));
+			shape_activeIndentation->display(Geometry::Rect(4,0,1,getHeight()));
 		else
-			getGUI().displayShape(PROPERTY_TREEVIEW_PASSIVE_INDENTATION_SHAPE,Geometry::Rect(4,0,1,getHeight()));
+			shape_passiveIndentation->display(Geometry::Rect(4,0,1,getHeight()));
 
-
-		getGUI().displayShape(PROPERTY_TREEVIEW_SUBROUP_SHAPE,Geometry::Rect(1,1,8,h-2),isCollapsed() ? 0 : AbstractShape::ACTIVE);
+		shape_subgroup->display(Geometry::Rect(1,1,8,h-2),isCollapsed() ? 0 : AbstractShape::ACTIVE);
 	}else{
-		getGUI().displayShape(PROPERTY_TREEVIEW_ACTIVE_INDENTATION_SHAPE,Geometry::Rect(4,0,1,getHeight()));
+		shape_activeIndentation->display(Geometry::Rect(4,0,1,getHeight()));
 	}
 
 }
@@ -381,18 +389,24 @@ void TreeView::doLayout() {
 
 //! ---|> Component
 void TreeView::doDisplay(const Geometry::Rect & region) {
-
+	enableLocalDisplayProperties();
+	displayDefaultShapes();
+	
 	if(isSelected()) {
 		Geometry::Rect r = getLocalRect();
 		r.changeSizeCentered(-2, -2);
 		getGUI().displayShape(PROPERTY_SELECTION_RECT_SHAPE,r);
 	}
+	auto shape_scrollableMarkerTop = getGUI().getStyleManager().getShape(PROPERTY_SCROLLABLE_MARKER_TOP_SHAPE);
+	auto shape_scrollableMarkerBottom = getGUI().getStyleManager().getShape(PROPERTY_SCROLLABLE_MARKER_BOTTOM_SHAPE);
+	disableLocalDisplayProperties();
+	
 	displayChildren(region,true);
 	if(scrollBar.isNotNull()){
 		if(scrollPos>0)
-			getGUI().displayShape(PROPERTY_SCROLLABLE_MARKER_TOP_SHAPE, getLocalRect(), 0);
+			shape_scrollableMarkerTop->display( getLocalRect() );
 		if(scrollPos<scrollBar->getMaxScrollPos())
-			getGUI().displayShape(PROPERTY_SCROLLABLE_MARKER_BOTTOM_SHAPE, getLocalRect(), 0);
+			shape_scrollableMarkerBottom->display( getLocalRect() );
 	}
 }
 

@@ -51,7 +51,7 @@ class NextColumn;
 class NextRow;
 class Menu;
 class Panel;
-class AbstractProperty;
+class DisplayProperty;
 class Slider;
 class Splitter;
 class TabbedPanel;
@@ -391,8 +391,8 @@ class GUI_Manager {
 		void displayLineShape(const propertyId_t id,const std::vector<Geometry::Vec2> & points,uint16_t flags=0);
 		void displayShape(const propertyId_t id,const Geometry::Rect & rect,uint16_t flags=0);
 	
-		void disableProperty(const Util::Reference<AbstractProperty> & p)const;
-		void enableProperty(const Util::Reference<AbstractProperty> & p)const;
+		void disableProperty(const Util::Reference<DisplayProperty> & p)const;
+		void enableProperty(const Util::Reference<DisplayProperty> & p)const;
 		Util::Color4ub getActiveColor(const propertyId_t id)const;
 		AbstractFont * getActiveFont(const propertyId_t id)const;
 		AbstractFont * getDefaultFont(const propertyId_t id)const;

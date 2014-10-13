@@ -288,7 +288,7 @@ Window::Window(GUI_Manager & _gui,const Geometry::Rect & _r,const std::string & 
     resizePanel->setMouseCursorProperty(PROPERTY_MOUSECURSOR_RESIZEDIAGONAL);
 	_addChild(resizePanel.get());
 
-	AbstractProperty * p = new UseShapeProperty(PROPERTY_BUTTON_SHAPE,PROPERTY_WINDOW_BUTTON_SHAPE);
+	DisplayProperty * p = new UseShapeProperty(PROPERTY_BUTTON_SHAPE,PROPERTY_WINDOW_BUTTON_SHAPE);
 
 	hiddenButton=new Button(getGUI());
 	hiddenButton->setText("h");
@@ -416,6 +416,8 @@ void Window::doLayout(){
 void Window::doDisplay(const Geometry::Rect & region){
 	getGUI().pushScissor(Geometry::Rect_i(getAbsRect()));
 
+	enableLocalDisplayProperties();
+	displayDefaultShapes();
 	if(!isMinimized() && !getFlag(HIDDEN_WINDOW) ){
 		getGUI().displayShape(PROPERTY_WINDOW_ACTIVE_SHAPE,getLocalRect());
 		if(isSelected())
@@ -423,6 +425,7 @@ void Window::doDisplay(const Geometry::Rect & region){
 		else
 			getGUI().displayShape(PROPERTY_WINDOW_PASSIVE_SHAPE,getLocalRect());
 	}
+	disableLocalDisplayProperties();
 
 	displayChildren(region);
 	getGUI().popScissor();

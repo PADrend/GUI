@@ -45,6 +45,9 @@ Textfield::~Textfield() = default;
 
 //! ---|> Component
 void Textfield::doDisplay(const Geometry::Rect & /*region*/) {
+	enableLocalDisplayProperties();
+	displayDefaultShapes();			
+
 	getGUI().displayShape(PROPERTY_TEXTFIELD_SHAPE,getLocalRect());
 
 	// update reference to actual font
@@ -99,7 +102,7 @@ void Textfield::doDisplay(const Geometry::Rect & /*region*/) {
 		getGUI().displayShape(PROPERTY_SCROLLABLE_MARKER_LEFT_SHAPE, getLocalRect(), 0);
 	if(textSize.x()+scrollPos>getWidth())
 		getGUI().displayShape(PROPERTY_SCROLLABLE_MARKER_RIGHT_SHAPE, getLocalRect(), 0);
-					
+	disableLocalDisplayProperties();
 }
 
 void Textfield::setText(const std::string & newText) {

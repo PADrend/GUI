@@ -104,7 +104,6 @@ class Component: public Util::AttributeProvider, public Util::ReferenceCounter<C
 		static const flag_t BACKGROUND=1<<7;
 		static const flag_t USE_SCISSOR=1<<8;
 		static const flag_t SELECTABLE=1<<9;
-		static const flag_t TOOLTIP=1<<10;
 		static const flag_t IS_CLIENT_AREA=1<<11; //!< Used to mark internal components so that the external layout can use the parent of the component as reference
 		static const flag_t ALWAYS_ON_TOP=1<<12; //!< Used to mark (top-level) components which should never be behind non ALWAYS_ON_TOP components
 		static const flag_t LOCKED=1<<13; //!< Input components are read only.
@@ -187,16 +186,22 @@ class Component: public Util::AttributeProvider, public Util::ReferenceCounter<C
 
 	// -----------------------------------
 
-	/*!	@name Properties	*/
+	/*!	@name Display properties	*/
 	// @{
 	public:
-		typedef std::vector<Util::Reference<AbstractProperty> > properties_t;
-		void addProperty(AbstractProperty * p)									{	properties.push_back(p);	}
-		void removeProperty(AbstractProperty * p);
-		void clearProperties()													{	properties.clear(); }
-		const properties_t & getProperties()const								{	return properties;	}
+		typedef std::vector<Util::Reference<DisplayProperty> > properties_t;
+		void addProperty(DisplayProperty * p)									{	recursiveDisplayProperties.push_back(p);	}
+		void removeProperty(DisplayProperty * p);
+		void clearProperties()													{	recursiveDisplayProperties.clear(); }
+		const properties_t & getProperties()const								{	return recursiveDisplayProperties;	}
+		void addLocalProperty(DisplayProperty * p)								{	localDisplayProperties.push_back(p);	}
+		void removeLocalProperty(DisplayProperty * p);
+		void clearLocalProperties()												{	localDisplayProperties.clear(); }
+		const properties_t & getLocalProperties()const							{	return localDisplayProperties;	}
+
 	private:
-		properties_t properties;
+		properties_t recursiveDisplayProperties;
+		properties_t localDisplayProperties;
 	// @}
 
 	// -----------------------------------
@@ -209,6 +214,12 @@ class Component: public Util::AttributeProvider, public Util::ReferenceCounter<C
 	private:
 		// ---o
 		virtual void doDisplay(const Geometry::Rect & region);
+		
+	protected:
+		void enableLocalDisplayProperties();
+		void disableLocalDisplayProperties();
+		void displayDefaultShapes();
+		
 	 // @}
 
 	// -----------------------------------
@@ -321,16 +332,10 @@ public:
 	/*!	@name Tooltip */ 
 	// @{
 	public:
-	bool _hasTooltip()const							{	return getFlag(TOOLTIP);	}
-	std::string _getTooltip()const;
-	void _setTooltip(const std::string & s);
-	void _removeTooltip();
-	
-	// ---o
-	virtual bool hasTooltip()const					{	return _hasTooltip();  }
-	virtual std::string getTooltip()const			{	return _getTooltip();  }
-	virtual void setTooltip(const std::string & s)	{	_setTooltip(s); }
-	virtual void removeTooltip()					{	_removeTooltip();   }
+		virtual bool hasTooltip()const;
+		virtual std::string getTooltip()const;
+		virtual void setTooltip(const std::string & s);
+		virtual void removeTooltip();
 	 // @}
 
 };

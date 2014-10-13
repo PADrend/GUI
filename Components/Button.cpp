@@ -62,12 +62,16 @@ Button::~Button() = default;
 //! ---|> Component
 void Button::doDisplay(const Geometry::Rect & region){
 
+	enableLocalDisplayProperties();
+	displayDefaultShapes();
+	
 	if( (!getFlag(FLAT_BUTTON)) || hover || isSwitchedOn() || isActive()){
 		getGUI().displayShape(PROPERTY_BUTTON_SHAPE,getLocalRect(),(isActive()||isSwitchedOn())?AbstractShape::ACTIVE : 0);
 	}
 
 
 	if (isActive()){
+		disableLocalDisplayProperties();
 		Draw::moveCursor(Geometry::Vec2(1,1));
 		displayChildren(region);
 		Draw::moveCursor(-Geometry::Vec2(1,1));
@@ -79,8 +83,9 @@ void Button::doDisplay(const Geometry::Rect & region){
 		}
 
 		if(hover){
-			Util::Reference<AbstractProperty> c = new ColorProperty(PROPERTY_TEXT_COLOR,getGUI().getActiveColor(PROPERTY_BUTTON_HOVERED_TEXT_COLOR));
-			Util::Reference<AbstractProperty> c2 = new ColorProperty(PROPERTY_ICON_COLOR,getGUI().getActiveColor(PROPERTY_BUTTON_HOVERED_TEXT_COLOR));
+			Util::Reference<DisplayProperty> c = new ColorProperty(PROPERTY_TEXT_COLOR,getGUI().getActiveColor(PROPERTY_BUTTON_HOVERED_TEXT_COLOR));
+			Util::Reference<DisplayProperty> c2 = new ColorProperty(PROPERTY_ICON_COLOR,getGUI().getActiveColor(PROPERTY_BUTTON_HOVERED_TEXT_COLOR));
+			disableLocalDisplayProperties();
 			getGUI().enableProperty(c);
 			getGUI().enableProperty(c2);
 
@@ -89,8 +94,9 @@ void Button::doDisplay(const Geometry::Rect & region){
 			getGUI().disableProperty(c2);
 			getGUI().disableProperty(c);
 		}else if(isSwitchedOn()){
-			Util::Reference<AbstractProperty> c = new ColorProperty(PROPERTY_TEXT_COLOR,getGUI().getActiveColor(PROPERTY_BUTTON_ENABLED_COLOR));
-			Util::Reference<AbstractProperty> c2 = new ColorProperty(PROPERTY_ICON_COLOR,getGUI().getActiveColor(PROPERTY_BUTTON_ENABLED_COLOR));
+			Util::Reference<DisplayProperty> c = new ColorProperty(PROPERTY_TEXT_COLOR,getGUI().getActiveColor(PROPERTY_BUTTON_ENABLED_COLOR));
+			Util::Reference<DisplayProperty> c2 = new ColorProperty(PROPERTY_ICON_COLOR,getGUI().getActiveColor(PROPERTY_BUTTON_ENABLED_COLOR));
+			disableLocalDisplayProperties();
 			getGUI().enableProperty(c);
 			getGUI().enableProperty(c2);
 
@@ -100,6 +106,7 @@ void Button::doDisplay(const Geometry::Rect & region){
 			getGUI().disableProperty(c);
 			
 		}else{
+			disableLocalDisplayProperties();
 			displayChildren(region);		
 		}
 

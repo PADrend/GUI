@@ -62,12 +62,14 @@ Connector::~Connector(){
 //! ---|> Component
 void Connector::doDisplay(const Geometry::Rect & region){
 	displayChildren(region);
-	
+
+	enableLocalDisplayProperties();
+	displayDefaultShapes();	
 	std::vector<Geometry::Vec2> points;
 	for(Component * c=getFirstChild();c!=nullptr;c=c->getNext())
 		points.emplace_back(c->getPosition());
 	getGUI().displayLineShape(PROPERTY_CONNECTOR_LINE_SHAPE,points,0);
-
+	disableLocalDisplayProperties();
 }
 
 

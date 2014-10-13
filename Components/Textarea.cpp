@@ -208,11 +208,15 @@ Textarea::~Textarea() {
 
 //! ---|> Component
 void Textarea::doDisplay(const Geometry::Rect & region) {
+	enableLocalDisplayProperties();
+	displayDefaultShapes();			
 	getGUI().displayShape(PROPERTY_TEXTFIELD_SHAPE,getLocalRect());
-	displayChildren(region,true);
 	// update reference to actual font
 	fontReference = getGUI().getActiveFont(PROPERTY_DEFAULT_FONT);
 	lineHeight = fontReference->getLineHeight();
+	disableLocalDisplayProperties();
+
+	displayChildren(region,true);
 	processor->displayText(*this);
 	
 }

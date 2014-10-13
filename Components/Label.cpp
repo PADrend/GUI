@@ -41,11 +41,13 @@ Label::~Label(){
 	//dtor
 }
 
-//! ---|> Component
 void Label::doDisplay(const Geometry::Rect & /*region*/){
+	enableLocalDisplayProperties();
+	displayDefaultShapes();	
 	Draw::drawText(getText(),getLocalRect(),getGUI().getActiveFont(PROPERTY_DEFAULT_FONT),getGUI().getActiveColor( PROPERTY_TEXT_COLOR ),textStyle);
 	if(getGUI().getDebugMode()>0)
 		Draw::drawLineRect(getLocalRect(),Util::Color4ub(255,0,0,20));
+	disableLocalDisplayProperties();
 }
 
 //! ---|> Component

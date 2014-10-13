@@ -61,7 +61,10 @@ void Checkbox::doLayout(){
 
 //! ---|> Component
 void Checkbox::doDisplay(const Geometry::Rect & region){
-	Geometry::Rect r=Geometry::Rect(3,2,8,8);
+	enableLocalDisplayProperties();
+	displayDefaultShapes();
+	
+	const Geometry::Rect r=Geometry::Rect(3,2,8,8);
 
 	if (isActive()){
 		getGUI().displayShape(PROPERTY_CHECKBOX_SHAPE,r,0);
@@ -83,7 +86,8 @@ void Checkbox::doDisplay(const Geometry::Rect & region){
 		rect.changeSizeCentered(2, 2);
 		getGUI().displayShape(PROPERTY_SELECTION_RECT_SHAPE,rect);
 	}
-
+	disableLocalDisplayProperties();
+	
 	displayChildren(region);
 }
 

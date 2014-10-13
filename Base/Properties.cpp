@@ -13,22 +13,22 @@
 
 namespace GUI{
 
-//! ---|> AbstractProperty
+//! ---|> DisplayProperty
 void ColorProperty::doEnable(StyleManager & s){
 	s.pushColor(getPropertyId(),getColor());
 }
-//! ---|> AbstractProperty
+//! ---|> DisplayProperty
 void ColorProperty::doDisable(StyleManager & s){
 	s.popColor(getPropertyId());
 }
 // ---
 // FontProperty
 
-//! ---|> AbstractProperty
+//! ---|> DisplayProperty
 void FontProperty::doEnable(StyleManager & s){
 	s.pushFont(getPropertyId(),getFont());
 }
-//! ---|> AbstractProperty
+//! ---|> DisplayProperty
 void FontProperty::doDisable(StyleManager & s){
 	s.popFont(getPropertyId());
 }
@@ -36,11 +36,11 @@ void FontProperty::doDisable(StyleManager & s){
 // ---
 // UseColorProperty
 
-//! ---|> AbstractProperty
+//! ---|> DisplayProperty
 void UseColorProperty::doEnable(StyleManager & s){
 	s.pushColor(getPropertyId(),s.getColor(prop2));
 }
-//! ---|> AbstractProperty
+//! ---|> DisplayProperty
 void UseColorProperty::doDisable(StyleManager & s){
 	s.popColor(getPropertyId());
 }
@@ -48,11 +48,11 @@ void UseColorProperty::doDisable(StyleManager & s){
 // ---
 // UseFontProperty
 
-//! ---|> AbstractProperty
+//! ---|> DisplayProperty
 void UseFontProperty::doEnable(StyleManager & s){
 	s.pushFont(getPropertyId(),s.getFont(prop2));
 }
-//! ---|> AbstractProperty
+//! ---|> DisplayProperty
 void UseFontProperty::doDisable(StyleManager & s){
 	s.popFont(getPropertyId());
 }
@@ -60,11 +60,11 @@ void UseFontProperty::doDisable(StyleManager & s){
 // ---
 // UseShapeProperty
 
-//! ---|> AbstractProperty
+//! ---|> DisplayProperty
 void UseShapeProperty::doEnable(StyleManager & s){
 	s.pushShape(getPropertyId(),s.getShape(prop2));
 }
-//! ---|> AbstractProperty
+//! ---|> DisplayProperty
 void UseShapeProperty::doDisable(StyleManager & s){
 	s.popShape(getPropertyId());
 }
@@ -72,11 +72,11 @@ void UseShapeProperty::doDisable(StyleManager & s){
 // ---
 //ShapeProperty
 
-//! ---|> AbstractProperty
+//! ---|> DisplayProperty
 void ShapeProperty::doEnable(StyleManager & s){
 	s.pushShape(getPropertyId(),getShape());
 }
-//! ---|> AbstractProperty
+//! ---|> DisplayProperty
 void ShapeProperty::doDisable(StyleManager & s){
 	s.popShape(getPropertyId());
 }

@@ -122,12 +122,13 @@ void Slider::doLayout(){
 
 //! ---|> Component
 void Slider::doDisplay(const Geometry::Rect & region) {
-	if(stepWidth==0 || numSteps==0 ){
+	if(stepWidth==0 || numSteps==0 )
 		return;
-	}
+
+	enableLocalDisplayProperties();
+	displayDefaultShapes();			
+	
 	const float buttonSize = getGUI().getGlobalValue( PROPERTY_SLIDER_BUTTON_SIZE );
-
-
 	// show marker
 	const float pos=getPosFromValue(getValue());
 
@@ -188,6 +189,7 @@ void Slider::doDisplay(const Geometry::Rect & region) {
 	}
 
 	displayChildren(region);
+	disableLocalDisplayProperties();
 }
 
 //! ---|> MouseButtonListener

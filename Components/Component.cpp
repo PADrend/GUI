@@ -14,6 +14,7 @@
 #include "../Base/ListenerHelper.h"
 #include "../Base/Draw.h"
 #include "../Base/Layouters/ExtLayouter.h"
+#include "ComponentTooltipFeature.h"
 #include "../GUI_Manager.h"
 #include "Container.h"
 #include <algorithm>
@@ -176,17 +177,17 @@ void Component::setRect(const Geometry::Rect & newRect) {
 	}
 }
 
-void Component::display(const Geometry::Rect & region) {
-	// enable display properties
-	std::for_each(properties.begin(), properties.end(), 
-				  std::bind(&GUI_Manager::enableProperty, std::ref(getGUI()), std::placeholders::_1));
+void Component::enableLocalDisplayProperties() {
+	for(auto& p: localDisplayProperties)
+		getGUI().enableProperty( p );
+}
 
-	// displayBegin();
-	Draw::moveCursor(getPosition());
+void Component::disableLocalDisplayProperties() {
+	for(auto it=localDisplayProperties.rbegin(); it!=localDisplayProperties.rend(); ++it)
+		getGUI().disableProperty(*it);
+}
 
-	if(flags&USE_SCISSOR){
-		getGUI().pushScissor(Geometry::Rect_i(getAbsRect()));
-	}
+void Component::displayDefaultShapes() {
 	if(flags&BORDER){
 		if((flags^BORDER)&RAISED_BORDER){
 			getGUI().displayShape(PROPERTY_COMPONENT_RAISED_BORDER_SHAPE,getLocalRect());
@@ -196,8 +197,20 @@ void Component::display(const Geometry::Rect & region) {
 			getGUI().displayShape(PROPERTY_COMPONENT_BORDER_SHAPE,getLocalRect());
 		}
 	}
-	if(flags&BACKGROUND){
+	if(flags&BACKGROUND)
 		getGUI().displayShape(PROPERTY_COMPONENT_BACKGROUND_SHAPE,getLocalRect());
+}
+	
+void Component::display(const Geometry::Rect & region) {
+	// enable display properties
+	for(auto& p: recursiveDisplayProperties)
+		getGUI().enableProperty( p );
+
+	// displayBegin();
+	Draw::moveCursor(getPosition());
+
+	if(flags&USE_SCISSOR){
+		getGUI().pushScissor(Geometry::Rect_i(getAbsRect()));
 	}
 
 	doDisplay(region);
@@ -208,18 +221,22 @@ void Component::display(const Geometry::Rect & region) {
 		getGUI().popScissor();
 	}
 	// disable display properties
-	for(auto it=properties.rbegin();it!=properties.rend();++it)
+	for(auto it=recursiveDisplayProperties.rbegin();it!=recursiveDisplayProperties.rend();++it)
 		getGUI().disableProperty(*it);
 }
 
 //! ---o
 void Component::doDisplay(const Geometry::Rect & /*region*/) {
+	enableLocalDisplayProperties();
+	displayDefaultShapes();
+
 	if (isSelected()) {
 		Geometry::Rect r=getLocalRect();
 		r.changeSize(-4,-4);
 		r.moveRel(2,2);
 		getGUI().displayShape(PROPERTY_SELECTION_RECT_SHAPE,r);
 	}
+	disableLocalDisplayProperties();
 }
 
 //! ---o
@@ -363,28 +380,17 @@ propertyName_t Component::getMouseCursorProperty(){
 // -----------------------------------
 // ---- Tooltip
 
-static const Util::StringIdentifier attrName_tooltip("_TOOLTIP");
-
-std::string Component::_getTooltip()const{
-	Util::GenericAttribute * t=getAttribute(attrName_tooltip);
-	return t!=nullptr ? t->toString() : std::string();
-}
-
-void Component::_setTooltip(const std::string & s){
-	setAttribute(attrName_tooltip, Util::GenericAttribute::createString(s));
-	setFlag(TOOLTIP,true);
-}
-
-void Component::_removeTooltip(){
-	setFlag(TOOLTIP,false);
-}
+bool Component::hasTooltip()const					{	return hasComponentTooltip(*this);	}
+std::string Component::getTooltip()const			{	return getComponentTooltip(*this);	}
+void Component::setTooltip(const std::string & s)	{	setComponentTooltip(*this,s);	}
+void Component::removeTooltip()						{	removeComponentTooltip(*this);	}
 
 // -----------------------------------
 // ---- Layout
 
 uint32_t Component::layout(){
 		// enable display properties
-	for(auto & prop : properties)
+	for(auto & prop : recursiveDisplayProperties)
 		getGUI().enableProperty(prop);
 		
 	const bool wasValid = getFlag(LAYOUT_VALID);
@@ -396,12 +402,11 @@ uint32_t Component::layout(){
 		setFlag(SUBTREE_LAYOUT_VALID,true);
 		count += layoutChildren();
 	}
-
+		
 	if(!wasValid || !getFlag(LAYOUT_VALID)){
 		
-		for(auto & layouter : layouters){
+		for(auto & layouter : layouters)
 			layouter->layout(this);
-		}
 
 		// \note external layouter should not be used in combination with AUTO_MAXIMIZE
 		if (getFlag(AUTO_MAXIMIZE)){ // deprecated!
@@ -410,7 +415,9 @@ uint32_t Component::layout(){
 			}
 		}
 
+		enableLocalDisplayProperties();
 		doLayout();
+		disableLocalDisplayProperties();
 
 //		if(!getFlag(SUBTREE_LAYOUT_VALID)){
 //			setFlag(SUBTREE_LAYOUT_VALID,true);
@@ -419,7 +426,7 @@ uint32_t Component::layout(){
 		++count;
 	}
 	// disable display properties
-	for(auto & prop : properties)
+	for(auto & prop : recursiveDisplayProperties)
 		getGUI().disableProperty(prop);	
 	return count;
 }
@@ -470,11 +477,15 @@ void Component::removeLayouter(Util::WeakPointer<AbstractLayouter> layouter){
 }
 // -----------------------------------
 // ---- Properties
-void Component::removeProperty(AbstractProperty * p){
-	auto pos = std::find(properties.begin(),properties.end(),p);
-	if(pos!=properties.end()){
-		properties.erase(pos);
-	}
+void Component::removeProperty(DisplayProperty * p){
+	auto pos = std::find(recursiveDisplayProperties.begin(),recursiveDisplayProperties.end(),p);
+	if(pos!=recursiveDisplayProperties.end())
+		recursiveDisplayProperties.erase(pos);
+}
+void Component::removeLocalProperty(DisplayProperty * p){
+	auto pos = std::find(localDisplayProperties.begin(),localDisplayProperties.end(),p);
+	if(pos!=localDisplayProperties.end())
+		localDisplayProperties.erase(pos);
 }
 
 // ---------------------------------------

@@ -20,98 +20,98 @@
 
 namespace GUI{
 
-//! ColorProperty ---|> AbstractProperty
-class ColorProperty : public AbstractProperty {
+//! ColorProperty ---|> DisplayProperty
+class ColorProperty : public DisplayProperty {
 		PROVIDES_TYPE_NAME(ColorProperty)
 
 		Util::Color4ub color;
 	public:
-		ColorProperty(propertyId_t _propertyId,Util::Color4ub c) : AbstractProperty(_propertyId),color(std::move(c)) {}
+		ColorProperty(propertyId_t _propertyId,Util::Color4ub c) : DisplayProperty(_propertyId),color(std::move(c)) {}
 		virtual ~ColorProperty() {}
 
 		const Util::Color4ub & getColor()const		{	return color;	}
 		void setColor(const Util::Color4ub& c)		{	color=c;	}
 
-		//! ---|> AbstractProperty
+		//! ---|> DisplayProperty
 		virtual void doEnable(StyleManager & s) override;
 		virtual void doDisable(StyleManager & s) override;
 };
 
-//! FontProperty ---|> AbstractProperty
-class FontProperty : public AbstractProperty {
+//! FontProperty ---|> DisplayProperty
+class FontProperty : public DisplayProperty {
 		PROVIDES_TYPE_NAME(FontProperty)
 
 		Util::Reference<AbstractFont> font;
 	public:
-		FontProperty(propertyId_t _propertyId,AbstractFont * f) : AbstractProperty(_propertyId),font(f) {}
+		FontProperty(propertyId_t _propertyId,AbstractFont * f) : DisplayProperty(_propertyId),font(f) {}
 		virtual ~FontProperty() {}
 
 		AbstractFont * getFont()const				{	return font.get();	}
 		void setFont(AbstractFont * f)				{	font=f;	}
 
-		//! ---|> AbstractProperty
+		//! ---|> DisplayProperty
 		virtual void doEnable(StyleManager & s) override;
 		virtual void doDisable(StyleManager & s) override;
 };
 
-/*! UseColorProperty ---|> AbstractProperty
+/*! UseColorProperty ---|> DisplayProperty
 	Apply the Color of another property (prop2). */
-class UseColorProperty : public AbstractProperty {
+class UseColorProperty : public DisplayProperty {
 		PROVIDES_TYPE_NAME(UseColorProperty)
 
 		propertyId_t prop2;
 	public:
-		UseColorProperty(propertyId_t _propertyId, propertyId_t _prop2) : AbstractProperty(_propertyId),prop2(_prop2) {}
+		UseColorProperty(propertyId_t _propertyId, propertyId_t _prop2) : DisplayProperty(_propertyId),prop2(_prop2) {}
 		virtual ~UseColorProperty() {}
 
-		//! ---|> AbstractProperty
+		//! ---|> DisplayProperty
 		virtual void doEnable(StyleManager & s) override;
 		virtual void doDisable(StyleManager & s) override;
 };
 
-/*! UseFontProperty ---|> AbstractProperty
+/*! UseFontProperty ---|> DisplayProperty
 	Apply the FOnt of another property (prop2). */
-class UseFontProperty : public AbstractProperty {
+class UseFontProperty : public DisplayProperty {
 		PROVIDES_TYPE_NAME(UseFontProperty)
 
 		propertyId_t prop2;
 	public:
-		UseFontProperty(propertyId_t _propertyId, propertyId_t _prop2) : AbstractProperty(_propertyId),prop2(_prop2) {}
+		UseFontProperty(propertyId_t _propertyId, propertyId_t _prop2) : DisplayProperty(_propertyId),prop2(_prop2) {}
 		virtual ~UseFontProperty() {}
 
-		//! ---|> AbstractProperty
+		//! ---|> DisplayProperty
 		virtual void doEnable(StyleManager & s) override;
 		virtual void doDisable(StyleManager & s) override;
 };
 
-/*! UseShapeProperty ---|> AbstractProperty
+/*! UseShapeProperty ---|> DisplayProperty
 	Apply the Shape of another property (prop2). */
-class UseShapeProperty : public AbstractProperty {
+class UseShapeProperty : public DisplayProperty {
 		PROVIDES_TYPE_NAME(UseShapeProperty)
 
 		propertyId_t prop2;
 	public:
-		UseShapeProperty(propertyId_t _propertyId, propertyId_t _prop2) : AbstractProperty(_propertyId),prop2(_prop2) {}
+		UseShapeProperty(propertyId_t _propertyId, propertyId_t _prop2) : DisplayProperty(_propertyId),prop2(_prop2) {}
 		virtual ~UseShapeProperty() {}
 
-		//! ---|> AbstractProperty
+		//! ---|> DisplayProperty
 		virtual void doEnable(StyleManager & s) override;
 		virtual void doDisable(StyleManager & s) override;
 };
 
-//! ShapeProperty ---|> AbstractProperty
-class ShapeProperty : public AbstractProperty {
+//! ShapeProperty ---|> DisplayProperty
+class ShapeProperty : public DisplayProperty {
 		PROVIDES_TYPE_NAME(ShapeProperty)
 
 		Util::Reference<AbstractShape> shape;
 	public:
-		ShapeProperty(propertyId_t _propertyId,AbstractShape * s) : AbstractProperty(_propertyId),shape(s) {}
+		ShapeProperty(propertyId_t _propertyId,AbstractShape * s) : DisplayProperty(_propertyId),shape(s) {}
 		virtual ~ShapeProperty() {}
 
 		AbstractShape * getShape()const				{	return shape.get();	}
 		void setShape(AbstractShape * s)			{	shape=s;	}
 
-		//! ---|> AbstractProperty
+		//! ---|> DisplayProperty
 		virtual void doEnable(StyleManager & s) override;
 		virtual void doDisable(StyleManager & s) override;
 };

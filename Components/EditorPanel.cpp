@@ -75,6 +75,10 @@ EditorPanel::~EditorPanel() = default;
 
 //! ---|> Component
 void EditorPanel::doDisplay(const Geometry::Rect & region) {
+	enableLocalDisplayProperties();
+	displayDefaultShapes();	
+	disableLocalDisplayProperties();
+	
 	for(const auto & markedChild : getMarkedChildren()) {
 		if(isSelected()) {
 			Draw::drawLineRect(markedChild->getRect().changeSizeCentered(4, 4), Colors::ACTIVE_COLOR_3, false);

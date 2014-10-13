@@ -44,7 +44,10 @@ Splitter::~Splitter() = default;
 
 //! ---|> Component
 void Splitter::doDisplay(const Geometry::Rect & /*region*/){
+	enableLocalDisplayProperties();
+	displayDefaultShapes();			
 	getGUI().displayShape(PROPERTY_SPLITTER_SHAPE,getLocalRect(),isSelected() ? AbstractShape::ACTIVE :0);
+	disableLocalDisplayProperties();
 }
 
 class StackingLayouter : public AbstractLayouter{

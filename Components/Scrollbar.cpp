@@ -116,6 +116,8 @@ void Scrollbar::doLayout(){
 
 //! ---|> Component
 void Scrollbar::doDisplay(const Geometry::Rect & region) {
+	enableLocalDisplayProperties();
+	displayDefaultShapes();			
 	if (isVertical()) {
 		getGUI().displayShape(PROPERTY_SCROLLBAR_VERTICAL_BAR_SHAPE,getLocalRect(),isSelected() ? AbstractShape::ACTIVE : 0);
 	} else {
@@ -124,6 +126,7 @@ void Scrollbar::doDisplay(const Geometry::Rect & region) {
 	if (isSelected()) {
 		getGUI().displayShape(PROPERTY_SELECTION_RECT_SHAPE,getLocalRect());
 	}
+	disableLocalDisplayProperties();
 	displayChildren(region);
 }
 
