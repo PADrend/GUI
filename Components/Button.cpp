@@ -1,7 +1,7 @@
 /*
 	This file is part of the GUI library.
 	Copyright (C) 2008-2013 Benjamin Eikel <benjamin@eikel.org>
-	Copyright (C) 2008-2012 Claudius Jähn <claudius@uni-paderborn.de>
+	Copyright (C) 2008-2014 Claudius Jähn <claudius@uni-paderborn.de>
 	Copyright (C) 2008-2012 Ralf Petring <ralf@petring.net>
 	
 	This library is subject to the terms of the Mozilla Public License, v. 2.0.
@@ -15,6 +15,7 @@
 #include "../Base/Properties.h"
 #include "../Base/Layouters/ExtLayouter.h"
 #include "ComponentPropertyIds.h"
+#include "ComponentHoverPropertyFeature.h"
 #include <Util/UI/Event.h>
 #include <iostream>
 
@@ -34,7 +35,6 @@ static ExtLayouter * getDefaultLabelLayouter(){
 Button::Button(GUI_Manager & _gui,flag_t _flags/*=0*/) :
 		Container(_gui,_flags),
 		switchedOn(false),
-		hover(false),
 		actionListener(),
 		keyListener(createKeyListener(_gui, this, &Button::onKeyEvent)),
 		mouseButtonListener(createMouseButtonListener(_gui, this, &Button::onMouseButton)),
@@ -45,8 +45,7 @@ Button::Button(GUI_Manager & _gui,flag_t _flags/*=0*/) :
 															action();
 														}
 														return true;
-													})),
-		mouseMotionListener(createMouseMotionListener(_gui, this, &Button::onMouseMove)) {
+													})){
 	setFlag(SELECTABLE,true);
 
 	// create Label
@@ -54,6 +53,11 @@ Button::Button(GUI_Manager & _gui,flag_t _flags/*=0*/) :
 	textLabel->addLayouter(getDefaultLabelLayouter());
 	textLabel->setTextStyle(Draw::TEXT_ALIGN_CENTER|Draw::TEXT_ALIGN_MIDDLE);
 	addContent(textLabel.get());
+	
+	addComponentHoverProperty(*this,new UseColorProperty(PROPERTY_TEXT_COLOR,PROPERTY_BUTTON_HOVERED_TEXT_COLOR),1,true);
+	addComponentHoverProperty(*this,new UseColorProperty(PROPERTY_ICON_COLOR,PROPERTY_BUTTON_HOVERED_TEXT_COLOR),1,true);
+
+//	PROPERTY_TEXT_COLOR
 }
 
 //! (dtor)
@@ -65,7 +69,7 @@ void Button::doDisplay(const Geometry::Rect & region){
 	enableLocalDisplayProperties();
 	displayDefaultShapes();
 	
-	if( (!getFlag(FLAT_BUTTON)) || hover || isSwitchedOn() || isActive()){
+	if( (!getFlag(FLAT_BUTTON)) || isSwitchedOn() || isActive()){
 		getGUI().displayShape(PROPERTY_BUTTON_SHAPE,getLocalRect(),(isActive()||isSwitchedOn())?AbstractShape::ACTIVE : 0);
 	}
 
@@ -81,19 +85,7 @@ void Button::doDisplay(const Geometry::Rect & region){
 			r.changeSizeCentered(-4, -4);
 			getGUI().displayShape(PROPERTY_SELECTION_RECT_SHAPE,r);
 		}
-
-		if(hover){
-			Util::Reference<DisplayProperty> c = new ColorProperty(PROPERTY_TEXT_COLOR,getGUI().getActiveColor(PROPERTY_BUTTON_HOVERED_TEXT_COLOR));
-			Util::Reference<DisplayProperty> c2 = new ColorProperty(PROPERTY_ICON_COLOR,getGUI().getActiveColor(PROPERTY_BUTTON_HOVERED_TEXT_COLOR));
-			disableLocalDisplayProperties();
-			getGUI().enableProperty(c);
-			getGUI().enableProperty(c2);
-
-			displayChildren(region);
-
-			getGUI().disableProperty(c2);
-			getGUI().disableProperty(c);
-		}else if(isSwitchedOn()){
+		if(isSwitchedOn()){
 			Util::Reference<DisplayProperty> c = new ColorProperty(PROPERTY_TEXT_COLOR,getGUI().getActiveColor(PROPERTY_BUTTON_ENABLED_COLOR));
 			Util::Reference<DisplayProperty> c2 = new ColorProperty(PROPERTY_ICON_COLOR,getGUI().getActiveColor(PROPERTY_BUTTON_ENABLED_COLOR));
 			disableLocalDisplayProperties();
@@ -156,30 +148,11 @@ std::string Button::getText()const{
 //! ---o
 void Button::action(){
 	//  try own action listener
-	if(actionListener && actionListener(this, Util::StringIdentifier())) {
-		return;
-	}
+	if(!actionListener || !actionListener(this, Util::StringIdentifier())) 
+		getGUI().componentActionPerformed(this, Util::StringIdentifier());	// then use the global listener
 
-	// then use the global listener
-	getGUI().componentActionPerformed(this, Util::StringIdentifier());
 }
 
-bool Button::onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent) {
-	const Geometry::Vec2 absPos(motionEvent.x, motionEvent.y);
-	if(!isLocked() && !hover && coversAbsPosition(absPos)) {
-		hover=true;
-		invalidateRegion();
-
-		if(getFlag(HOVER_BUTTON)){
-			select();
-			action();
-		}
-	} else if(!isLocked() && hover && !coversAbsPosition(absPos)) {
-		hover=false;
-		invalidateRegion();
-	}
-	return false;
-}
 
 void Button::setColor(const Util::Color4ub & color){ // deprecated!!!!!!
 	addProperty(new ColorProperty(PROPERTY_TEXT_COLOR,color));

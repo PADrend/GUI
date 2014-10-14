@@ -6,8 +6,8 @@
 	You should have received a copy of the MPL along with this library; see the 
 	file LICENSE. If not, you can obtain one at http://mozilla.org/MPL/2.0/.
 */
-#ifndef GUI_COMPONENT_HOVER_SHAPE_H
-#define GUI_COMPONENT_HOVER_SHAPE_H
+#ifndef GUI_COMPONENT_HOVER_PROPERTY_FEATURE_H
+#define GUI_COMPONENT_HOVER_PROPERTY_FEATURE_H
 
 #include <string>
 
@@ -17,12 +17,14 @@ class DisplayProperty;
 class GUI_Manager;
 class HoverPropertyHandler;
 
-bool hasComponentHoverProperty(const Component& c);
-DisplayProperty* getComponentHoverProperty(const Component& c);
-void setComponentHoverProperty(Component& c, DisplayProperty* s);
-void removeComponentHoverProperty(Component& c);
+bool hasComponentHoverProperties(const Component& c);
+//DisplayProperty* getComponentHoverProperties(const Component& c);
+
+typedef uint8_t hoverPropertyLayer_t;
+void addComponentHoverProperty(Component& c, DisplayProperty* s,hoverPropertyLayer_t layer,bool recursive);
+void clearComponentHoverProperties(Component& c);
 
 void initHoverPropertyHandler(GUI_Manager& gui,Component& objHolder);
 
 }
-#endif // GUI_COMPONENT_HOVER_SHAPE_H
+#endif // GUI_COMPONENT_HOVER_PROPERTY_FEATURE_H

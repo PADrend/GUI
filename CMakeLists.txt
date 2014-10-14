@@ -30,7 +30,7 @@ add_library(GUI
 	Components/Button.cpp
 	Components/Checkbox.cpp
 	Components/Component.cpp
-	Components/ComponentHoverShapeFeature.cpp
+	Components/ComponentHoverPropertyFeature.cpp
 	Components/ComponentTooltipFeature.cpp
 	Components/Container.cpp
 	Components/Connector.cpp

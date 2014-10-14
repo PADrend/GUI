@@ -1,7 +1,7 @@
 /*
 	This file is part of the GUI library.
 	Copyright (C) 2008-2013 Benjamin Eikel <benjamin@eikel.org>
-	Copyright (C) 2008-2012 Claudius Jähn <claudius@uni-paderborn.de>
+	Copyright (C) 2008-2014 Claudius Jähn <claudius@uni-paderborn.de>
 	Copyright (C) 2008-2012 Ralf Petring <ralf@petring.net>
 	
 	This library is subject to the terms of the Mozilla Public License, v. 2.0.
@@ -23,8 +23,7 @@ namespace GUI {
 class Button : public Container {
 		PROVIDES_TYPE_NAME(Button)
 	public:
-		static const flag_t FLAT_BUTTON=1<<24;
-		static const flag_t HOVER_BUTTON=1<<25;
+		static const flag_t FLAT_BUTTON = 1<<24;
 				
 		Button(GUI_Manager & gui,flag_t flags=0);
 		virtual ~Button();
@@ -33,13 +32,11 @@ class Button : public Container {
 		std::string getText()const;
 
 		bool isSwitchedOn()const 						{	return switchedOn;	}
-		void setSwitch(bool b) 							{	switchedOn=b;	}
+		void setSwitch(bool b) 							{	switchedOn = b;	}
 		void setFont(AbstractFont * newFont)			{   textLabel->setFont(newFont);	}
-		void setActionListener(HandleActionFun fun) {
-			actionListener = std::move(fun);
-		}
+		void setActionListener(HandleActionFun fun)		{	actionListener = std::move(fun);	}
 		void setTextStyle(unsigned int style)			{   textLabel->setTextStyle(style);	}
-		void setColor(const Util::Color4ub & newColor);//	{   textColor=newColor;	}
+		void setColor(const Util::Color4ub & newColor);
 
 		// ---o
 		virtual void action();
@@ -50,17 +47,14 @@ class Button : public Container {
 
 		bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
 		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
-		bool onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent);
 
 	protected:
 		Util::WeakPointer<Label> textLabel;
 		bool switchedOn;
-		bool hover;
 		HandleActionFun actionListener;
 		KeyListener keyListener;
 		MouseButtonListener mouseButtonListener;
 		MouseClickListener mouseClickListener;
-		MouseMotionListener mouseMotionListener;
 };
 }
 #endif // GUI_Button_H

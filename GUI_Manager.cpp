@@ -31,7 +31,7 @@
 #include "Components/TreeView.h"
 #include "Components/Window.h"
 #include "Components/ComponentTooltipFeature.h"
-#include "Components/ComponentHoverShapeFeature.h"
+#include "Components/ComponentHoverPropertyFeature.h"
 
 #include "Base/AnimationHandler.h"
 #include "Base/Draw.h"

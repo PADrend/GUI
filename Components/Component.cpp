@@ -197,6 +197,7 @@ void Component::displayDefaultShapes() {
 			getGUI().displayShape(PROPERTY_COMPONENT_BORDER_SHAPE,getLocalRect());
 		}
 	}
+	getGUI().displayShape(PROPERTY_COMPONENT_ADDITIONAL_BACKGROUND_SHAPE,getLocalRect());
 	if(flags&BACKGROUND)
 		getGUI().displayShape(PROPERTY_COMPONENT_BACKGROUND_SHAPE,getLocalRect());
 }
