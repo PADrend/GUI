@@ -147,7 +147,7 @@ void ResizerShape::display(const Rect & rect,flag_t /*flag*/){
 }//
 
 //! TriangleAtCornerShape ---|> AbstractShape
-void TriangleAtCornerShape::display(const Rect & rect,flag_t flags){
+void TriangleAtCornerShape::display(const Rect & rect,flag_t/* flags*/){
 	std::vector<float> vertices;
 	std::vector<uint32_t> colors;
 	vertices.reserve(3*2);
