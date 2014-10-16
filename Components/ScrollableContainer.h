@@ -15,7 +15,6 @@
 #include "LayoutHelper.h"
 #include "../Base/ListenerHelper.h"
 #include "../Base/Layouters/FlowLayouter.h"
-#include <iostream>
 #include <memory>
 
 namespace GUI {

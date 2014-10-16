@@ -13,7 +13,6 @@
 
 #include "ScrollableContainer.h"
 #include "LayoutHelper.h"
-#include <iostream>
 
 namespace GUI {
 class Scrollbar;
