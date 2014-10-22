@@ -36,17 +36,16 @@
 */
 namespace GUI {
 
-static int getPrevCursorPos(const std::string & str,int cursor){
-	if(cursor<=1 || str.empty())
+static size_t getPrevCursorPosInLine(const std::string & str,size_t posInLine){
+	if(str.empty())
 		return 0;
-	if(cursor>static_cast<int>(str.length())) cursor = str.length();
-	--cursor;
-	uint8_t c = static_cast<uint8_t>(str[cursor]);
-	while( c>=128 && c<=191 && cursor>0){ // search for first byte of multi byte characters
-		--cursor;
-		c = static_cast<uint8_t>(str[cursor]);
+	posInLine = std::min(str.length(),posInLine) - 1;
+	uint8_t c = static_cast<uint8_t>(str[posInLine]);
+	while( c>=128 && c<=191 && posInLine>0){ // search for first byte of multi byte characters
+		--posInLine;
+		c = static_cast<uint8_t>(str[posInLine]);
 	}
-	return cursor;
+	return posInLine;
 }
 
 static int getNextCursorPos(const std::string & str,int cursor){
@@ -440,7 +439,7 @@ bool Textarea::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {
 		}
 	} else if(keyEvent.key == Util::UI::KEY_LEFT) {
 		if(cursor.second>0 && !getLine(cursor.first).empty()){
-			moveCursor(std::make_pair(cursor.first, getPrevCursorPos(getLine(cursor.first), std::min(getLine(cursor.first).length(),cursor.second))),shiftPressed);
+			moveCursor(std::make_pair(cursor.first, getPrevCursorPosInLine(getLine(cursor.first), cursor.second)),shiftPressed);
 		}else if(cursor.first>0){
 			moveCursor(std::make_pair(cursor.first-1,getLine(cursor.first-1).length()),shiftPressed);
 		}
@@ -471,18 +470,17 @@ bool Textarea::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {
 		}
 		executeTextUpdate(range(cursor, pos2), "");
 	} else if(keyEvent.key == Util::UI::KEY_BACKSPACE) {
-		cursor_t pos2;
+		cursor_t rangeTo;
 		if(isTextSelected()) {
-			pos2 = selectionStart;
-		} else if(cursor.second>0){
-			const int bytesToDelete = cursor.second - getPrevCursorPos(getLine(cursor.first),cursor.second);
-			pos2 = std::make_pair(cursor.first,cursor.second-bytesToDelete);
+			rangeTo = selectionStart;
+		} else if( std::min(cursor.second,getLine(cursor.first).length())>0 ){
+			rangeTo = std::make_pair(cursor.first, getPrevCursorPosInLine(getLine(cursor.first),cursor.second));
 		} else if(cursor.first>0){
-			pos2 = std::make_pair(cursor.first-1,std::string::npos-1);
+			rangeTo = std::make_pair(cursor.first-1, std::string::npos-1);
 		} else {
 			return true;
 		}
-		executeTextUpdate(range(cursor, pos2), "");
+		executeTextUpdate(range(cursor, rangeTo), "");
 	} else if(keyEvent.key == Util::UI::KEY_ESCAPE) {
 		unselect();
 	} else if(keyEvent.key == Util::UI::KEY_REDO || (keyEvent.key == Util::UI::KEY_Z && ctrlPressed && shiftPressed)) {
@@ -495,14 +493,25 @@ bool Textarea::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {
 		if(isTextSelected()) {
 			getGUI().copyStringToClipboard(getText(range(selectionStart,cursor)));
 		}
+	} else if(keyEvent.key == Util::UI::KEY_D && ctrlPressed) { // duplicate 
+		auto cursorBackup = trimToLineLength(cursor);
+		if(isTextSelected()) {
+			auto selectionStartBackup = trimToLineLength(selectionStart);
+			executeTextUpdate(range(cursor, cursor), getText(range(selectionStart,cursor)));
+			selectionStart = selectionStartBackup;
+		}else{
+			cursor_t nextLine = std::make_pair(cursor.first+1,0);
+			executeTextUpdate(range(nextLine, nextLine), getLine(cursor.first)+"\n");
+			selectionStart = cursorBackup;
+		}
+		cursor = cursorBackup;
 	} else if(keyEvent.key == Util::UI::KEY_X && ctrlPressed) {
 		if(isTextSelected()) {
 			getGUI().copyStringToClipboard(getText(range(selectionStart,cursor)));
 			executeTextUpdate(range(cursor, selectionStart), "");
 		}
 	} else if(keyEvent.key == Util::UI::KEY_V && ctrlPressed) {
-		executeTextUpdate(range(cursor, selectionStart), getGUI().getStringFromClipboard());
-//	}
+		executeTextUpdate(range(cursor, selectionStart), getGUI().getStringFromClipboard());//	}
 //	// does not work... No idea why...
 ////     else if(ke->getChar() == 'z' &&ke->getModifier()&KMOD_CTRL  ) {
 ////        text=backupText;

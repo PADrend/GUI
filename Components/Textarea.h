@@ -55,6 +55,8 @@ class Textarea: public Container {
 		cursor_t getSelectionStart()const		{	return selectionStart;	}
 		size_t getNumberOfLines()const			{	return lines.size();	}
 	private:
+		cursor_t trimToLineLength(cursor_t p)const{	return std::make_pair(p.first,std::min(getLine(p.first).length(),p.second)); }
+		
 		void consolidate();
 		cursor_t _deleteText(const range_t &);
 		// ---|> Component
@@ -70,8 +72,8 @@ class Textarea: public Container {
 			linesToConsolidate.second = std::max(linesToConsolidate.second,std::max(line1,line2));
 		}
 		range_t range(cursor_t p1,cursor_t p2)const{
-			p1.second = std::min(getLine(p1.first).length(),p1.second);
-			p2.second = std::min(getLine(p2.first).length(),p2.second);
+			p1 = trimToLineLength(p1);
+			p2 = trimToLineLength(p2);
 			return p1<p2 ? std::make_pair(p1,p2) : std::make_pair(p2,p1);
 		}
 		void updateScrollPos();
