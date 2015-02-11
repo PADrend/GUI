@@ -17,9 +17,7 @@
 namespace GUI {
 
 
-/***
- **	RectShape ---|> AbstractShape
- **/
+//!	RectShape ---|> AbstractShape
 class RectShape : public AbstractShape{
 	public:
 		RectShape(Util::Color4ub _bgColor, Util::Color4ub _lineColor, bool _blend) :
@@ -27,17 +25,15 @@ class RectShape : public AbstractShape{
 		virtual ~RectShape()	{}
 
 		// ---|> AbstractShape
-		virtual void display(const Geometry::Rect & rect,flag_t flag) override;
-		virtual AbstractShape * clone() override		{	return new RectShape(*this);	}
+		void display(const Geometry::Rect & rect,flag_t flag) override;
+		AbstractShape * clone() override		{	return new RectShape(*this);	}
 
 		Util::Color4ub bgColor;
 		Util::Color4ub lineColor;
 		bool blend;
 };
 
-/***
- **	Rect3dShape ---|> AbstractShape
- **/
+//!	Rect3dShape ---|> AbstractShape
 class Rect3dShape : public AbstractShape{
 	public:
 		Rect3dShape(Util::Color4ub _bgColor1, Util::Color4ub _bgColor2,bool _blend,bool _invert=false) :
@@ -45,8 +41,8 @@ class Rect3dShape : public AbstractShape{
 		virtual ~Rect3dShape()	{}
 
 		// ---|> AbstractShape
-		virtual void display(const Geometry::Rect & rect,flag_t flag) override;
-		virtual AbstractShape * clone() override		{	return new Rect3dShape(*this);	}
+		void display(const Geometry::Rect & rect,flag_t flag) override;
+		AbstractShape * clone() override		{	return new Rect3dShape(*this);	}
 
 		Util::Color4ub bgColor1;
 		Util::Color4ub bgColor2;
@@ -54,9 +50,7 @@ class Rect3dShape : public AbstractShape{
 		bool invert;
 };
 
-/***
- **	ShadowedRectShape ---|> AbstractShape
- **/
+//!	ShadowedRectShape ---|> AbstractShape
 class ShadowedRectShape : public AbstractShape{
 	public:
 		ShadowedRectShape(Util::Color4ub _bgColor, Util::Color4ub _lineColor, bool _blend) :
@@ -64,17 +58,15 @@ class ShadowedRectShape : public AbstractShape{
 		virtual ~ShadowedRectShape()	{}
 
 		// ---|> AbstractShape
-		virtual void display(const Geometry::Rect & rect,flag_t flag) override;
-		virtual AbstractShape * clone() override		{	return new ShadowedRectShape(*this);	}
+		void display(const Geometry::Rect & rect,flag_t flag) override;
+		AbstractShape * clone() override		{	return new ShadowedRectShape(*this);	}
 
 		Util::Color4ub bgColor;
 		Util::Color4ub lineColor;
 		bool blend;
 };
 
-/***
- **	Rounded3dRectShape ---|> AbstractShape
- **/
+//!	Rounded3dRectShape ---|> AbstractShape
 class Rounded3dRectShape : public AbstractShape{
 	public:
 		Rounded3dRectShape(Util::Color4ub _bgColor1, Util::Color4ub _bgColor2,bool _blend,
@@ -84,8 +76,8 @@ class Rounded3dRectShape : public AbstractShape{
 		virtual ~Rounded3dRectShape()	{}
 
 		// ---|> AbstractShape
-		virtual void display(const Geometry::Rect & rect,flag_t flag) override;
-		virtual AbstractShape * clone() override		{	return new Rounded3dRectShape(*this);	}
+		void display(const Geometry::Rect & rect,flag_t flag) override;
+		AbstractShape * clone() override		{	return new Rounded3dRectShape(*this);	}
 
 		Util::Color4ub bgColor1;
 		Util::Color4ub bgColor2;
@@ -93,9 +85,7 @@ class Rounded3dRectShape : public AbstractShape{
 		float roundnessTL,roundnessTR,roundnessBL,roundnessBR;
 };
 
-/***
- **	ResizerShape ---|> AbstractShape
- **/
+//!	ResizerShape ---|> AbstractShape
 class ResizerShape : public AbstractShape{
 	public:
 		ResizerShape(Util::Color4ub _color,bool _blend) :
@@ -103,16 +93,14 @@ class ResizerShape : public AbstractShape{
 		virtual ~ResizerShape()	{}
 
 		// ---|> AbstractShape
-		virtual void display(const Geometry::Rect & rect,flag_t flag) override;
-		virtual AbstractShape * clone() override		{	return new ResizerShape(*this);	}
+		void display(const Geometry::Rect & rect,flag_t flag) override;
+		AbstractShape * clone() override		{	return new ResizerShape(*this);	}
 
 		Util::Color4ub color;
 		bool blend;
 };
 
-/***
- **	TriangleAtCornerShape ---|> AbstractShape
- **/
+//!	TriangleAtCornerShape ---|> AbstractShape
 class TriangleAtCornerShape : public AbstractShape{
 	public:
 		TriangleAtCornerShape(Util::Color4ub _color,float _size) :
@@ -120,16 +108,14 @@ class TriangleAtCornerShape : public AbstractShape{
 		virtual ~TriangleAtCornerShape()	{}
 
 		// ---|> AbstractShape
-		virtual void display(const Geometry::Rect & rect,flag_t flag) override;
-		virtual AbstractShape * clone() override		{	return new TriangleAtCornerShape(*this);	}
+		void display(const Geometry::Rect & rect,flag_t flag) override;
+		AbstractShape * clone() override		{	return new TriangleAtCornerShape(*this);	}
 
 		Util::Color4ub color;
 		float size;
 };
 
-/***
- **	TriangleSelectorShape ---|> AbstractShape
- **/
+//!	TriangleSelectorShape ---|> AbstractShape
 class TriangleSelectorShape : public AbstractShape{
 	public:
 		TriangleSelectorShape(Util::Color4ub _color) :
@@ -137,15 +123,13 @@ class TriangleSelectorShape : public AbstractShape{
 		virtual ~TriangleSelectorShape()	{}
 
 		// ---|> AbstractShape
-		virtual void display(const Geometry::Rect & rect,flag_t flag) override;
-		virtual AbstractShape * clone() override		{	return new TriangleSelectorShape(*this);	}
+		void display(const Geometry::Rect & rect,flag_t flag) override;
+		AbstractShape * clone() override		{	return new TriangleSelectorShape(*this);	}
 
 		Util::Color4ub color;
 };
 
-/***
- **	ScrollableMarkerShape ---|> AbstractShape
- **/
+//!	ScrollableMarkerShape ---|> AbstractShape
 class ScrollableMarkerShape : public AbstractShape{
 	public:
 		ScrollableMarkerShape(Util::Color4ub _colorTop,Util::Color4ub _colorRight,
@@ -154,16 +138,14 @@ class ScrollableMarkerShape : public AbstractShape{
 		virtual ~ScrollableMarkerShape()	{}
 
 		// ---|> AbstractShape
-		virtual void display(const Geometry::Rect & rect,flag_t flag) override;
-		virtual AbstractShape * clone() override		{	return new ScrollableMarkerShape(*this);	}
+		void display(const Geometry::Rect & rect,flag_t flag) override;
+		AbstractShape * clone() override		{	return new ScrollableMarkerShape(*this);	}
 
 		Util::Color4ub colorTop,colorRight,colorBottom,colorLeft;
 		float width;
 };
 
-/***
- **	SliderMarkerShape ---|> AbstractShape
- **/
+//!	SliderMarkerShape ---|> AbstractShape
 class SliderMarkerShape : public AbstractShape{
 	public:
 		SliderMarkerShape(Util::Color4ub c1, Util::Color4ub c2) :
@@ -171,16 +153,14 @@ class SliderMarkerShape : public AbstractShape{
 		virtual ~SliderMarkerShape()	{}
 
 		// ---|> AbstractShape
-		virtual void display(const Geometry::Rect & rect,flag_t flag) override;
-		virtual AbstractShape * clone() override		{	return new SliderMarkerShape(*this);	}
+		void display(const Geometry::Rect & rect,flag_t flag) override;
+		AbstractShape * clone() override		{	return new SliderMarkerShape(*this);	}
 
 		Util::Color4ub color1;
 		Util::Color4ub color2;
 };
 
-/***
- **	TabHeaderShape ---|> AbstractShape
- **/
+//!	TabHeaderShape ---|> AbstractShape
 class TabHeaderShape : public AbstractShape{
 	public:
 		TabHeaderShape(Util::Color4ub c1, Util::Color4ub c2, Util::Color4ub c3)
@@ -188,17 +168,15 @@ class TabHeaderShape : public AbstractShape{
 		virtual ~TabHeaderShape()	{}
 
 		// ---|> AbstractShape
-		virtual void display(const Geometry::Rect & rect,flag_t flag) override;
-		virtual AbstractShape * clone() override		{	return new TabHeaderShape(*this);	}
+		void display(const Geometry::Rect & rect,flag_t flag) override;
+		AbstractShape * clone() override		{	return new TabHeaderShape(*this);	}
 
 		Util::Color4ub color1;
 		Util::Color4ub color2;
 		Util::Color4ub color3;
 };
 
-/***
- **	GridShape ---|> AbstractShape
- **/
+//!	GridShape ---|> AbstractShape
 class GridShape : public AbstractShape{
 	public:
 		GridShape(Util::Color4ub _majorColor,Util::Color4ub _minorColor,float _hDistance,float _vDistance,int _hNumMinors=0,int _vNumMinors=0) :
@@ -206,8 +184,8 @@ class GridShape : public AbstractShape{
 		virtual ~GridShape()	{}
 
 		// ---|> AbstractShape
-		virtual void display(const Geometry::Rect & rect,flag_t flag) override;
-		virtual AbstractShape * clone() override		{	return new GridShape(*this);	}
+		void display(const Geometry::Rect & rect,flag_t flag) override;
+		AbstractShape * clone() override		{	return new GridShape(*this);	}
 
 		Util::Color4ub majorColor;
 		Util::Color4ub minorColor;
@@ -217,9 +195,7 @@ class GridShape : public AbstractShape{
 		int vNumMinors;
 };
 
-/***
- **	CrossShape ---|> AbstractShape
- **/
+//!	CrossShape ---|> AbstractShape
 class CrossShape : public AbstractShape{
 	public:
 		CrossShape(Util::Color4ub _color1,Util::Color4ub _color2,float _lineWidth) :
@@ -227,8 +203,8 @@ class CrossShape : public AbstractShape{
 		virtual ~CrossShape()	{}
 
 		// ---|> AbstractShape
-		virtual void display(const Geometry::Rect & rect,flag_t flag) override;
-		virtual AbstractShape * clone() override		{	return new CrossShape(*this);	}
+		void display(const Geometry::Rect & rect,flag_t flag) override;
+		AbstractShape * clone() override		{	return new CrossShape(*this);	}
 
 		Util::Color4ub color1;
 		Util::Color4ub color2;
@@ -238,9 +214,7 @@ class CrossShape : public AbstractShape{
 // -----------------------------
 // line shapes
 
-/***
- **	StraightLineShape ---|> AbstractLineShape
- **/
+//!	StraightLineShape ---|> AbstractLineShape
 class StraightLineShape : public AbstractLineShape{
 	public:
 		StraightLineShape(Util::Color4ub _color,float _lineWidth) : 
@@ -248,19 +222,17 @@ class StraightLineShape : public AbstractLineShape{
 		virtual ~StraightLineShape()	{}
 
 		// ---|> AbstractShape
-		virtual StraightLineShape * clone() override		{	return new StraightLineShape(color,lineWidth);	}
+		StraightLineShape * clone() override		{	return new StraightLineShape(color,lineWidth);	}
 		
 		// ---|> AbstractLineShape
-		virtual void displayLine(const std::vector<Geometry::Vec2> & points,flag_t flag) override;
+		void displayLine(const std::vector<Geometry::Vec2> & points,flag_t flag) override;
 		
 		Util::Color4ub color;
 		float lineWidth;
 };
 
 
-/***
- **	SmoothConnectorShape ---|> AbstractLineShape
- **/
+//!	SmoothConnectorShape ---|> AbstractLineShape
 class SmoothConnectorShape : public AbstractLineShape{
 	public:
 		SmoothConnectorShape(Util::Color4ub _color,float _lineWidth) : 
@@ -268,10 +240,10 @@ class SmoothConnectorShape : public AbstractLineShape{
 		virtual ~SmoothConnectorShape()	{}
 
 		// ---|> AbstractShape
-		virtual SmoothConnectorShape * clone() override		{	return new SmoothConnectorShape(color,lineWidth);	}
+		SmoothConnectorShape * clone() override		{	return new SmoothConnectorShape(color,lineWidth);	}
 		
 		// ---|> AbstractLineShape
-		virtual void displayLine(const std::vector<Geometry::Vec2> & points,flag_t flag) override;
+		void displayLine(const std::vector<Geometry::Vec2> & points,flag_t flag) override;
 		
 		Util::Color4ub color;
 		float lineWidth;

@@ -1,7 +1,7 @@
 /*
 	This file is part of the GUI library.
 	Copyright (C) 2008-2013 Benjamin Eikel <benjamin@eikel.org>
-	Copyright (C) 2008-2012 Claudius Jähn <claudius@uni-paderborn.de>
+	Copyright (C) 2008-2012,2015 Claudius Jähn <claudius@uni-paderborn.de>
 	Copyright (C) 2008-2012 Ralf Petring <ralf@petring.net>
 	
 	This library is subject to the terms of the Mozilla Public License, v. 2.0.
@@ -100,15 +100,14 @@ void TreeView::TreeViewEntry::doDisplay(const Geometry::Rect & region) {
 		}
 	}
 	if(getContentsCount() > 1 && dynamic_cast<TreeViewEntry*>(getParent())) {
-		float h=getFirstChild()->getHeight();
-		if(isCollapsed())
-			shape_activeIndentation->display(Geometry::Rect(4,0,1,getHeight()));
-		else
-			shape_passiveIndentation->display(Geometry::Rect(4,0,1,getHeight()));
-
-		shape_subgroup->display(Geometry::Rect(1,1,8,h-2),isCollapsed() ? 0 : AbstractShape::ACTIVE);
+		const int markerHeight = std::min<int>(getFirstChild()->getHeight(),20);
+	
+		shape_activeIndentation->display(Geometry::Rect(4,0,1,markerHeight*0.3));
+		(isCollapsed()&&getNext() ? shape_activeIndentation : shape_passiveIndentation) ->display(Geometry::Rect(4,markerHeight*0.8,1,getHeight()-markerHeight*0.8-1));
+			
+		shape_subgroup->display(Geometry::Rect(1,1,8,markerHeight),isCollapsed() ? 0 : AbstractShape::ACTIVE);
 	}else{
-		shape_activeIndentation->display(Geometry::Rect(4,0,1,getHeight()));
+		shape_activeIndentation->display(Geometry::Rect(4,0,1,getHeight()-1));
 	}
 
 }
