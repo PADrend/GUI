@@ -1,7 +1,7 @@
 /*
 	This file is part of the GUI library.
 	Copyright (C) 2008-2012 Benjamin Eikel <benjamin@eikel.org>
-	Copyright (C) 2008-2012 Claudius Jähn <claudius@uni-paderborn.de>
+	Copyright (C) 2008-2012,2015 Claudius Jähn <claudius@uni-paderborn.de>
 	Copyright (C) 2008-2012 Ralf Petring <ralf@petring.net>
 	
 	This library is subject to the terms of the Mozilla Public License, v. 2.0.
@@ -22,7 +22,7 @@ using namespace Geometry;
 namespace GUI {
 
 //! (static) Factory
-BitmapFont * BitmapFont::createFont(const Util::FileName & fontFile,uint32_t fontSize,const std::string & charMap_utf8){
+Util::Reference<BitmapFont> BitmapFont::createFont(const Util::FileName & fontFile,uint32_t fontSize,const std::string & charMap_utf8){
 	Util::FontRenderer fontRenderer(fontFile.getPath());
 	auto bitmapAndFontInfo = fontRenderer.createGlyphBitmap(fontSize,Util::StringUtils::utf8_to_utf32(charMap_utf8));
 	Util::Reference<Util::Bitmap> bitmap = bitmapAndFontInfo.first;
@@ -52,12 +52,16 @@ BitmapFont * BitmapFont::createFont(const Util::FileName & fontFile,uint32_t fon
 				glyph.second.xAdvance);
 		
 	}
-	return font.detachAndDecrease();
+	auto spaceGlyph = font->getGlyph(static_cast<uint32_t>(' '));
+	if(spaceGlyph.isValid())
+		font->setTabWidth(spaceGlyph.xAdvance*4);
+
+	return std::move(font);
 }
 
 //!	(ctor)
 BitmapFont::BitmapFont(Util::Reference<ImageData> _bitmap,int _lineHeight):
-		AbstractFont(_lineHeight),bitmap(std::move(_bitmap)){
+		AbstractFont(_lineHeight),bitmap(std::move(_bitmap)),tabWidth(24){
 	//ctor
 }
 
@@ -115,9 +119,13 @@ void BitmapFont::renderText( const Vec2 & _pos, const std::string & text, const 
 			const Glyph & type = getGlyph(codePoint.first);
 			float dx = 0;
 			if(!type.isValid()){
-				const Geometry::Rect r(static_cast<int>(pos.getX()+1) , static_cast<int>(pos.getY()+1) , 5, getLineHeight()-1);
-				Draw::drawLineRect(r,Colors::WHITE,false);
-				dx = 7.0;
+				if( codePoint.first == static_cast<uint32_t>('\t') ){ // tab
+					dx = tabWidth - static_cast<int>(pos.x() - _pos.x())%tabWidth;
+				}else{
+					const Geometry::Rect r(static_cast<int>(pos.getX()+1) , static_cast<int>(pos.getY()+1) , 5, getLineHeight()-1);
+					Draw::drawLineRect(r,Colors::WHITE,false);
+					dx = 7.0;
+				}
 			}else{
 				const auto kerningIt( kerning.find(std::make_pair(prevChar,codePoint.first)) );
 				if(kerningIt!=kerning.end())
@@ -165,15 +173,21 @@ Vec2 BitmapFont::getRenderedTextSize( const std::string & text ){
 			break;
 	
 		if(codePoint.first==static_cast<uint32_t>('\n')){
-			y+=getLineHeight();
-			x=0;
+			y += getLineHeight();
+			x = 0;
 		}else{
 			const auto kerningIt( kerning.find(std::make_pair(prevChar,codePoint.first)) );
 			if(kerningIt!=kerning.end())
 				x+=kerningIt->second;
 			const Glyph & type=getGlyph(codePoint.first);
-			const float dx = (type.isValid() ? type.xAdvance : 6.0 );
-			x+=dx;
+			if(type.isValid()){
+				x += type.xAdvance;
+			}else if( codePoint.first == static_cast<uint32_t>('\t') ){ // tab
+				x += tabWidth - (static_cast<int>(x)%tabWidth);
+			}else{
+				x+=6.0f;
+			}
+
 			if(x>maxX) maxX = x;
 		}
 		cursor += codePoint.second;

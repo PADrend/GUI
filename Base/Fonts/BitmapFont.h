@@ -1,7 +1,7 @@
 /*
 	This file is part of the GUI library.
 	Copyright (C) 2008-2012 Benjamin Eikel <benjamin@eikel.org>
-	Copyright (C) 2008-2012 Claudius Jähn <claudius@uni-paderborn.de>
+	Copyright (C) 2008-2012,2015 Claudius Jähn <claudius@uni-paderborn.de>
 	Copyright (C) 2008-2012 Ralf Petring <ralf@petring.net>
 	
 	This library is subject to the terms of the Mozilla Public License, v. 2.0.
@@ -31,7 +31,7 @@ class BitmapFont : public AbstractFont{
 	public:
 		/*! Load a .ttf or .otf file.
 			Returns a BitmapFont or throws an exception.	*/
-		static BitmapFont * createFont(const Util::FileName & fontFile,uint32_t fontSize,const std::string & charMap_utf8);
+		static Util::Reference<BitmapFont> createFont(const Util::FileName & fontFile,uint32_t fontSize,const std::string & charMap_utf8);
 		
 		/*
 			+cursor(0,0)                       _
@@ -84,6 +84,7 @@ class BitmapFont : public AbstractFont{
 			return bitmap->getBitmap();
 		}
 		void setKerning(uint32_t first,uint32_t second, int16_t amount){	kerning[std::make_pair(first,second)] = amount;	}
+		void setTabWidth(uint32_t s){	tabWidth = s;}
 		
 		// ---|> AbstractFont
 		virtual void enable() override;
@@ -95,6 +96,7 @@ class BitmapFont : public AbstractFont{
 		std::map<std::pair<uint32_t,uint32_t>, int16_t> kerning; // use std::map instead of unordered map to allow pair as key.
 		Util::Reference<ImageData> bitmap;
 		typefaceMap_t glyphs;
+		uint32_t tabWidth;
 };
 }
 
