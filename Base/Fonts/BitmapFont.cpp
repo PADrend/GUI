@@ -101,6 +101,7 @@ void BitmapFont::renderText( const Vec2 & _pos, const std::string & text, const 
 
 	Vec2 pos(round(_pos.getX()),round(_pos.getY()));
 	
+	uint32_t prevChar = 0;
 	size_t cursor = 0;
 	while(true){
 		auto codePoint = Util::StringUtils::readUTF8Codepoint(text,cursor);
@@ -118,6 +119,9 @@ void BitmapFont::renderText( const Vec2 & _pos, const std::string & text, const 
 				Draw::drawLineRect(r,Colors::WHITE,false);
 				dx = 7.0;
 			}else{
+				const auto kerningIt( kerning.find(std::make_pair(prevChar,codePoint.first)) );
+				if(kerningIt!=kerning.end())
+					pos.x( pos.x()+kerningIt->second );
 				const Geometry::Rect rect = Geometry::Rect(
 												static_cast<int>(pos.getX()) + type.screenRect.getX() ,
 												static_cast<int>(pos.getY()) + type.screenRect.getY() ,
@@ -138,6 +142,7 @@ void BitmapFont::renderText( const Vec2 & _pos, const std::string & text, const 
 		}
 		
 		cursor += codePoint.second;
+		prevChar = codePoint.first;
 	}
 
 	Draw::drawTexturedTriangles(posAndUV,color,true);
@@ -145,13 +150,14 @@ void BitmapFont::renderText( const Vec2 & _pos, const std::string & text, const 
 
 //!	---|> AbstractFont
 Vec2 BitmapFont::getRenderedTextSize( const std::string & text ){
-	float maxX=0;
-	float x=0;
-	float y=0;
+	float maxX = 0;
+	float x = 0;
+	float y = 0;
 
 	if(text.length() > 0)
 		y=getLineHeight();
 	
+	uint32_t prevChar = 0;
 	size_t cursor = 0;
 	while(true){
 		auto codePoint = Util::StringUtils::readUTF8Codepoint(text,cursor);
@@ -162,12 +168,16 @@ Vec2 BitmapFont::getRenderedTextSize( const std::string & text ){
 			y+=getLineHeight();
 			x=0;
 		}else{
+			const auto kerningIt( kerning.find(std::make_pair(prevChar,codePoint.first)) );
+			if(kerningIt!=kerning.end())
+				x+=kerningIt->second;
 			const Glyph & type=getGlyph(codePoint.first);
-			float dx = (type.isValid() ? type.xAdvance : 6.0 );
+			const float dx = (type.isValid() ? type.xAdvance : 6.0 );
 			x+=dx;
 			if(x>maxX) maxX = x;
 		}
 		cursor += codePoint.second;
+		prevChar = codePoint.first;
 	}
 	return Vec2(maxX,y);
 }

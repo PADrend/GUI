@@ -16,6 +16,7 @@
 #include <Geometry/Rect.h>
 
 #include <unordered_map>
+#include <map>
 
 namespace Util {
 class FileName;
@@ -33,8 +34,8 @@ class BitmapFont : public AbstractFont{
 		static BitmapFont * createFont(const Util::FileName & fontFile,uint32_t fontSize,const std::string & charMap_utf8);
 		
 		/*
-		    +cursor(0,0)                       _
-              |screenOffset                    |
+			+cursor(0,0)                       _
+			  |screenOffset                    |
 			  +_____________   _               |
 			  |  ###### ### |  |               | lineHeight 
 			  |  #     ###  |  |               |
@@ -82,7 +83,8 @@ class BitmapFont : public AbstractFont{
 		const Util::Reference<Util::Bitmap> & getBitmap() const {
 			return bitmap->getBitmap();
 		}
-
+		void setKerning(uint32_t first,uint32_t second, int16_t amount){	kerning[std::make_pair(first,second)] = amount;	}
+		
 		// ---|> AbstractFont
 		virtual void enable() override;
 		virtual void disable() override;
@@ -90,7 +92,7 @@ class BitmapFont : public AbstractFont{
 		virtual Geometry::Vec2 getRenderedTextSize( const std::string & text) override;
 
 	private:
-
+		std::map<std::pair<uint32_t,uint32_t>, int16_t> kerning; // use std::map instead of unordered map to allow pair as key.
 		Util::Reference<ImageData> bitmap;
 		typefaceMap_t glyphs;
 };
