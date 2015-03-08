@@ -24,7 +24,8 @@ namespace GUI {
 //! (static) Factory
 Util::Reference<BitmapFont> BitmapFont::createFont(const Util::FileName & fontFile,uint32_t fontSize,const std::string & charMap_utf8){
 	Util::FontRenderer fontRenderer(fontFile.getPath());
-	auto bitmapAndFontInfo = fontRenderer.createGlyphBitmap(fontSize,Util::StringUtils::utf8_to_utf32(charMap_utf8));
+	const auto charMap_utf32 = Util::StringUtils::utf8_to_utf32(charMap_utf8);
+	auto bitmapAndFontInfo = fontRenderer.createGlyphBitmap(fontSize,charMap_utf32);
 	Util::Reference<Util::Bitmap> bitmap = bitmapAndFontInfo.first;
 	if(bitmap->getPixelFormat().getNumComponents()!=4){ // alpha values are required!
 		const uint32_t width = bitmap->getWidth();
@@ -56,6 +57,8 @@ Util::Reference<BitmapFont> BitmapFont::createFont(const Util::FileName & fontFi
 	if(spaceGlyph.isValid())
 		font->setTabWidth(spaceGlyph.xAdvance*4);
 
+	for(const auto & kerningMapEntry : fontRenderer.createKerningMap(charMap_utf32))
+		font->setKerning(kerningMapEntry.first.first, kerningMapEntry.first.second, kerningMapEntry.second);
 	return std::move(font);
 }
 
