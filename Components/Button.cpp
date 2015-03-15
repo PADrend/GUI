@@ -80,11 +80,9 @@ void Button::doDisplay(const Geometry::Rect & region){
 		displayChildren(region);
 		Draw::moveCursor(-Geometry::Vec2(1,1));
 	}else{
-		if(isSelected()) {
-			Geometry::Rect r = getLocalRect();
-			r.changeSizeCentered(-4, -4);
-			getGUI().displayShape(PROPERTY_SELECTION_RECT_SHAPE,r);
-		}
+		if(isSelected())
+			getGUI().displayShape(PROPERTY_SELECTION_RECT_SHAPE,getLocalRect());
+
 		if(isSwitchedOn()){
 			Util::Reference<DisplayProperty> c = new ColorProperty(PROPERTY_TEXT_COLOR,getGUI().getActiveColor(PROPERTY_BUTTON_ENABLED_COLOR));
 			Util::Reference<DisplayProperty> c2 = new ColorProperty(PROPERTY_ICON_COLOR,getGUI().getActiveColor(PROPERTY_BUTTON_ENABLED_COLOR));
