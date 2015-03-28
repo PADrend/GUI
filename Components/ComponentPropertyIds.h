@@ -1,7 +1,7 @@
 /*
 	This file is part of the GUI library.
 	Copyright (C) 2008-2012 Benjamin Eikel <benjamin@eikel.org>
-	Copyright (C) 2008-2012 Claudius Jähn <claudius@uni-paderborn.de>
+	Copyright (C) 2008-2012,2015 Claudius Jähn <claudius@uni-paderborn.de>
 	Copyright (C) 2008-2012 Ralf Petring <ralf@petring.net>
 	
 	This library is subject to the terms of the Mozilla Public License, v. 2.0.
@@ -43,8 +43,9 @@ static const propertyId_t PROPERTY_WINDOW_TITLE_FONT			 	= 3;
 
 static const propertyId_t PROPERTY_SELECTION_RECT_SHAPE 			= 1;
 static const propertyId_t PROPERTY_BUTTON_SHAPE 					= 2;
-static const propertyId_t PROPERTY_CHECKBOX_SHAPE 					= 3;
-static const propertyId_t PROPERTY_CHECKBOX_MARKER_SHAPE 			= 4;
+static const propertyId_t PROPERTY_BUTTON_HOVERED_SHAPE				= 3;
+static const propertyId_t PROPERTY_CHECKBOX_SHAPE 					= 4;
+static const propertyId_t PROPERTY_CHECKBOX_MARKER_SHAPE 			= 5;
 static const propertyId_t PROPERTY_COMPONENT_BACKGROUND_SHAPE 		= 10;
 static const propertyId_t PROPERTY_COMPONENT_ADDITIONAL_BACKGROUND_SHAPE	= 11;
 static const propertyId_t PROPERTY_COMPONENT_BORDER_SHAPE 			= 12;

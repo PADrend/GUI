@@ -1,7 +1,7 @@
 /*
 	This file is part of the GUI library.
 	Copyright (C) 2008-2012 Benjamin Eikel <benjamin@eikel.org>
-	Copyright (C) 2008-2012 Claudius Jähn <claudius@uni-paderborn.de>
+	Copyright (C) 2008-2012,2015 Claudius Jähn <claudius@uni-paderborn.de>
 	Copyright (C) 2008-2012 Ralf Petring <ralf@petring.net>
 	
 	This library is subject to the terms of the Mozilla Public License, v. 2.0.
@@ -66,6 +66,7 @@ void Style::initStyleManager(StyleManager & m){
 	// button
 	static Util::Reference<AbstractShape> buttonShape = new Rounded3dRectShape(Colors::BUTTON_BG_1,Colors::BUTTON_BG_2,false,2,2,2,2);
 	m.setDefaultShape(PROPERTY_BUTTON_SHAPE,buttonShape.get());
+	m.setDefaultShape(PROPERTY_BUTTON_HOVERED_SHAPE,buttonShape.get());
 	m.setDefaultColor(PROPERTY_BUTTON_HOVERED_TEXT_COLOR , Colors::WHITE);
 	m.setDefaultColor(PROPERTY_BUTTON_ENABLED_COLOR , Colors::WHITE);
 

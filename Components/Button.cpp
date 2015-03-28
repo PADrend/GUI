@@ -1,7 +1,7 @@
 /*
 	This file is part of the GUI library.
 	Copyright (C) 2008-2013 Benjamin Eikel <benjamin@eikel.org>
-	Copyright (C) 2008-2014 Claudius Jähn <claudius@uni-paderborn.de>
+	Copyright (C) 2008-2015 Claudius Jähn <claudius@uni-paderborn.de>
 	Copyright (C) 2008-2012 Ralf Petring <ralf@petring.net>
 	
 	This library is subject to the terms of the Mozilla Public License, v. 2.0.
@@ -56,6 +56,7 @@ Button::Button(GUI_Manager & _gui,flag_t _flags/*=0*/) :
 	
 	addComponentHoverProperty(*this,new UseColorProperty(PROPERTY_TEXT_COLOR,PROPERTY_BUTTON_HOVERED_TEXT_COLOR),1,true);
 	addComponentHoverProperty(*this,new UseColorProperty(PROPERTY_ICON_COLOR,PROPERTY_BUTTON_HOVERED_TEXT_COLOR),1,true);
+	addComponentHoverProperty(*this,new UseShapeProperty(PROPERTY_BUTTON_SHAPE,PROPERTY_BUTTON_HOVERED_SHAPE),1,true);
 
 //	PROPERTY_TEXT_COLOR
 }
