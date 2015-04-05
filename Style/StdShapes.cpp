@@ -74,11 +74,8 @@ void SliderMarkerShape::display(const Rect & rect,flag_t flags){
 }
 
 //! TabHeaderShape ---|> AbstractShape
-void TabHeaderShape::display(const Rect & rect,flag_t flags){
-	if (flags&ACTIVE)
-		Draw::drawTab(rect,color1,color2,color3);
-	else
-		Draw::drawTab(rect,Colors::NO_COLOR,color2,color1);
+void TabHeaderShape::display(const Rect & rect,flag_t /*flags*/){
+	Draw::drawTab(rect,color1,color2,color3);
 }
 
 //! Rounded3dRectShape ---|> AbstractShape

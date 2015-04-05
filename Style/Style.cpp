@@ -111,7 +111,8 @@ void Style::initStyleManager(StyleManager & m){
 
 	// tab
 	m.setDefaultShape(PROPERTY_TAB_BODY_SHAPE , new Rect3dShape(Colors::COMPONENT_COLOR_1, Colors::COMPONENT_COLOR_2,false));
-	m.setDefaultShape(PROPERTY_TAB_HEADER_SHAPE , new TabHeaderShape(Colors::DARK_COLOR, Colors::BRIGHT_COLOR, Colors::COMPONENT_COLOR_1));
+	m.setDefaultShape(PROPERTY_TAB_HEADER_ACTIVE_SHAPE , new TabHeaderShape(Colors::DARK_COLOR, Colors::BRIGHT_COLOR, Colors::COMPONENT_COLOR_1));
+	m.setDefaultShape(PROPERTY_TAB_HEADER_PASSIVE_SHAPE , new TabHeaderShape(Colors::NO_COLOR, Colors::COMPONENT_COLOR_1, Colors::BRIGHT_COLOR));
 	m.setDefaultColor(PROPERTY_TAB_HEADER_ACTIVE_TEXT_COLOR , Colors::BLACK);
 	m.setDefaultColor(PROPERTY_TAB_HEADER_PASSIVE_TEXT_COLOR , Colors::ALMOST_BLACK_COLOR);
 	m.setGlobalValue(PROPERTY_TAB_HEADER_HEIGHT , 16);

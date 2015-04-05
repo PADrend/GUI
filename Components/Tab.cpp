@@ -164,12 +164,11 @@ struct TabTitlePanel : public Container {
 		if (myTab.isActiveTab()) {
 			Geometry::Rect rect=getLocalRect();
 			rect.changeSize(0,2);
-			getGUI().displayShape(PROPERTY_TAB_HEADER_SHAPE,rect, AbstractShape::ACTIVE);
-
+			getGUI().displayShape(PROPERTY_TAB_HEADER_ACTIVE_SHAPE,rect);
 			c = new ColorProperty(PROPERTY_TEXT_COLOR,getGUI().getActiveColor(PROPERTY_TAB_HEADER_ACTIVE_TEXT_COLOR));
 		}else{
+			getGUI().displayShape(PROPERTY_TAB_HEADER_PASSIVE_SHAPE,getLocalRect());
 			c = new ColorProperty(PROPERTY_TEXT_COLOR,getGUI().getActiveColor(PROPERTY_TAB_HEADER_PASSIVE_TEXT_COLOR));
-			getGUI().displayShape(PROPERTY_TAB_HEADER_SHAPE,getLocalRect(), 0);
 		}
 		if(isSelected()) {
 			Geometry::Rect rect = getLocalRect();
