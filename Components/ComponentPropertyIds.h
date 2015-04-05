@@ -54,12 +54,13 @@ static const propertyId_t PROPERTY_COMPONENT_LOWERED_BORDER_SHAPE 	= 14;
 static const propertyId_t PROPERTY_COMPONENT_HOVER_SHAPE		 	= 15;
 static const propertyId_t PROPERTY_CONNECTOR_LINE_SHAPE		 		= 16;
 static const propertyId_t PROPERTY_MENU_SHAPE 						= 17;
-static const propertyId_t PROPERTY_LISTVIEW_SHAPE					= 18;
-static const propertyId_t PROPERTY_LISTVIEW_MARKED_ENTRY_SHAPE		= 19;
-static const propertyId_t PROPERTY_SCROLLBAR_HORIZONTAL_BAR_SHAPE	= 20;
-static const propertyId_t PROPERTY_SCROLLBAR_HORIZONTAL_MARKER_SHAPE= 21;
-static const propertyId_t PROPERTY_SCROLLBAR_VERTICAL_BAR_SHAPE		= 22;
-static const propertyId_t PROPERTY_SCROLLBAR_VERTICAL_MARKER_SHAPE	= 23;
+static const propertyId_t PROPERTY_MENU_OUTER_SHAPE					= 18;
+static const propertyId_t PROPERTY_LISTVIEW_SHAPE					= 19;
+static const propertyId_t PROPERTY_LISTVIEW_MARKED_ENTRY_SHAPE		= 20;
+static const propertyId_t PROPERTY_SCROLLBAR_HORIZONTAL_BAR_SHAPE	= 21;
+static const propertyId_t PROPERTY_SCROLLBAR_HORIZONTAL_MARKER_SHAPE= 22;
+static const propertyId_t PROPERTY_SCROLLBAR_VERTICAL_BAR_SHAPE		= 23;
+static const propertyId_t PROPERTY_SCROLLBAR_VERTICAL_MARKER_SHAPE	= 24;
 static const propertyId_t PROPERTY_SCROLLABLE_MARKER_TOP_SHAPE		= 30;
 static const propertyId_t PROPERTY_SCROLLABLE_MARKER_BOTTOM_SHAPE	= 31;
 static const propertyId_t PROPERTY_SCROLLABLE_MARKER_LEFT_SHAPE		= 32;
@@ -83,6 +84,8 @@ static const propertyId_t PROPERTY_WINDOW_RESIZER_SHAPE				= 65;
 static const propertyId_t PROPERTY_WINDOW_ACTIVE_SHAPE				= 66;
 static const propertyId_t PROPERTY_WINDOW_PASSIVE_SHAPE				= 67;
 static const propertyId_t PROPERTY_WINDOW_BUTTON_SHAPE				= 68;
+static const propertyId_t PROPERTY_WINDOW_ACTIVE_OUTER_SHAPE		= 69;
+static const propertyId_t PROPERTY_WINDOW_PASSIVE_OUTER_SHAPE		= 70;
     
 // ---
 // MouseCursors

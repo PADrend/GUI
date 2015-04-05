@@ -53,11 +53,13 @@ void Menu::doLayout() {
 //! ---|> Component
 void Menu::doDisplay(const Geometry::Rect & region) {
 	enableLocalDisplayProperties();
-	displayDefaultShapes();		
+	displayDefaultShapes();
 	getGUI().displayShape(PROPERTY_MENU_SHAPE,getLocalRect());
 	disableLocalDisplayProperties();
-
 	displayChildren(region,true);
+	
+	getGUI().displayShape(PROPERTY_MENU_OUTER_SHAPE,getLocalRect());
+
 }
 
 static void onFrame(Menu & menu, double /*timeSecs*/) {

@@ -66,6 +66,21 @@ class ShadowedRectShape : public AbstractShape{
 		bool blend;
 };
 
+//!	OuterRectShadowShape ---|> AbstractShape
+class OuterRectShadowShape : public AbstractShape{
+	public:
+		OuterRectShadowShape(float _size_top,float _size_bottom,float _size_left, float _size_right, Util::Color4ub _color) :
+				size_top(_size_top),size_bottom(_size_bottom),size_left(_size_left),size_right(_size_right),color(std::move(_color))	{}
+		virtual ~OuterRectShadowShape()	{}
+
+		// ---|> AbstractShape
+		void display(const Geometry::Rect & rect,flag_t flag) override;
+		AbstractShape * clone() override		{	return new OuterRectShadowShape(*this);	}
+
+		float size_top,size_bottom,size_left,size_right;
+		Util::Color4ub color;
+};
+
 //!	Rounded3dRectShape ---|> AbstractShape
 class Rounded3dRectShape : public AbstractShape{
 	public:

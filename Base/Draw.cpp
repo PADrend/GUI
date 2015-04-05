@@ -577,7 +577,49 @@ void Draw::dropShadow(const Geometry::Rect & r){
 	drawVertices(GL_TRIANGLES, sizeof(vertices) / (sizeof(GLfloat)*2), vertices, colors);
 	glDisable(GL_BLEND);
 }
+//! (static)
+void Draw::dropShadow(const Geometry::Rect & r1,const Geometry::Rect & r2, const Util::Color4ub c){
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_DST_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+	const uint32_t c1 = c.getAsUInt();
+	const uint32_t c2 = Util::Color4ub(0,0,0,0).getAsUInt();
+	/*
+		r2_xy----------r2_Xy
+		|                  |
+		|   r1_xy--r1_Xy   |
+		|   |          |   |
+		|   |          |   |
+		|   r1_xY--r1_XY   |
+		|                  |
+		r2_xY----------r2_XY
+	
+	*/
+	const float r1_x = std::max( r1.getMinX(),r2.getMinX() );
+	const float r1_X = std::min( r1.getMaxX(),r2.getMaxX() );
+	const float r1_y = std::max( r1.getMinY(),r2.getMinY() );
+	const float r1_Y = std::min( r1.getMaxY(),r2.getMaxY() );
+	
+	const GLfloat vertices[] = {
+		/*r1_xy,r2_Xy,r2_xy*/	r1_x,r1_y,	r2.getMaxX(),r2.getMinY(),	r2.getMinX(),r2.getMinY(),
+		/*r1_xy,r1_Xy,r2_Xy*/	r1_x,r1_y,	r1_X,r1_y,					r2.getMaxX(),r2.getMinY(),
+		/*r1_xy,r2_xy,r2_xY*/	r1_x,r1_y,	r2.getMinX(),r2.getMinY(),	r2.getMinX(),r2.getMaxY(),
+		/*r1_xy,r2_xY,r1_xY*/	r1_x,r1_y,	r2.getMinX(),r2.getMaxY(),	r1_x,r1_Y,
+
+		/*r1_XY,r2_XY,r2_Xy*/	r1_X,r1_Y,	r2.getMaxX(),r2.getMaxY(),	r2.getMaxX(),r2.getMinY(),
+		/*r1_XY,r2_Xy,r1_Xy*/	r1_X,r1_Y,	r2.getMaxX(),r2.getMinY(),	r1_X,r1_y,
+		/*r1_XY,r1_xY,r2_xY*/	r1_X,r1_Y,	r1_x,r1_Y,					r2.getMinX(),r2.getMaxY(),
+		/*r1_XY,r2_xY,r2_XY*/	r1_X,r1_Y,	r2.getMinX(),r2.getMaxY(),	r2.getMaxX(),r2.getMaxY()
+	};
+
+	const uint32_t colors[] = {
+		c1,	c2,	c2,		c1,	c1,	c2,		c1,	c2,	c2,		c1,	c2,	c1,
+		c1,	c2,	c2,		c1,	c2,	c1,		c1,	c1,	c2,		c1,	c2,	c2
+	};
+
+	drawVertices(GL_TRIANGLES, sizeof(vertices) / (sizeof(GLfloat)*2), vertices, colors);
+	glDisable(GL_BLEND);
+}
 
 //! (static)
 void Draw::drawTexturedTriangles(const std::vector<float> & posAndUV, const Util::Color4ub & c, bool blend/* = true*/){

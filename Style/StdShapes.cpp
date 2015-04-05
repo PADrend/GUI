@@ -20,6 +20,11 @@ using namespace Geometry;
 
 namespace GUI {
 
+//! OuterRectShadowShape ---|> AbstractShape
+void OuterRectShadowShape::display(const Rect & rect,flag_t /*flag*/){
+	Geometry::Rect rect2(rect.getMinX()-size_left,rect.getMinX()-size_top,rect.getWidth()+size_left+size_right,rect.getHeight()+size_top+size_bottom);
+	Draw::dropShadow(rect,rect2,color);
+}
 //! RectShape ---|> AbstractShape
 void RectShape::display(const Rect & rect,flag_t /*flag*/){
 	Draw::drawFilledRect(rect,bgColor,blend);

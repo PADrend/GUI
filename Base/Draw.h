@@ -61,7 +61,8 @@ class Draw {
 
 		static void drawTab(const Geometry::Rect & r, const Util::Color4ub & lineColor,const Util::Color4ub & bgColor1, const Util::Color4ub & bgColor2);
 		static void dropShadow(const Geometry::Rect & r);
-
+		static void dropShadow(const Geometry::Rect & r,const Geometry::Rect & r2, const Util::Color4ub c);
+		
 		static void drawTexturedRect(const Geometry::Rect_i & screenRect, const Geometry::Rect & uvRect, const Util::Color4ub & c, bool blend = true);
 
 		//! @p posAndUV:  { x0,y0,u0,v0, x1,y1,u1,v1, x2,y2,u2,v2, ... }

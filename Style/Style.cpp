@@ -78,7 +78,8 @@ void Style::initStyleManager(StyleManager & m){
 	m.setDefaultColor(PROPERTY_ICON_COLOR , Colors::WHITE);
 
 	// menu
-	m.setDefaultShape(PROPERTY_MENU_SHAPE , new ShadowedRectShape(Colors::PASSIVE_COLOR_2,Colors::ACTIVE_COLOR_1,false));
+	m.setDefaultShape(PROPERTY_MENU_SHAPE , new RectShape(Colors::PASSIVE_COLOR_2,Colors::ACTIVE_COLOR_1,false));
+	m.setDefaultShape(PROPERTY_MENU_OUTER_SHAPE , new OuterRectShadowShape(-2,5,-2,5,Util::Color4ub(0x00,0x00,0x00,0x70)));
 	m.setDefaultColor(PROPERTY_MENU_TEXT_COLOR , Colors::BLACK);
 
 	// checkbox
@@ -137,6 +138,8 @@ void Style::initStyleManager(StyleManager & m){
 	m.setDefaultShape(PROPERTY_WINDOW_ACTIVE_SHAPE , new Rounded3dRectShape(Colors::WINDOW_BG_ACTIVE,Colors::WINDOW_BG_ACTIVE,true,3,3,0,0));
 	m.setDefaultShape(PROPERTY_WINDOW_PASSIVE_SHAPE , new Rounded3dRectShape(Colors::WINDOW_BG_PASSIVE,Colors::COMPONENT_COLOR_1,true,3,3,0,0));
 	m.setDefaultShape(PROPERTY_WINDOW_BUTTON_SHAPE , new RectShape(Colors::COMPONENT_COLOR_1,Colors::COMPONENT_COLOR_1,true));
+	m.setDefaultShape(PROPERTY_WINDOW_PASSIVE_OUTER_SHAPE , new OuterRectShadowShape(3,5,3,5,Util::Color4ub(0x00,0x00,0x00,0x10)));
+	m.setDefaultShape(PROPERTY_WINDOW_ACTIVE_OUTER_SHAPE , new OuterRectShadowShape(-4,5,-4,5,Util::Color4ub(0x00,0x00,0x00,0x40)));
 	m.setDefaultColor(PROPERTY_WINDOW_TITLE_COLOR , Colors::BLACK);
 	
 	m.setDefaultFont(PROPERTY_WINDOW_TITLE_FONT , boldFont.get() );

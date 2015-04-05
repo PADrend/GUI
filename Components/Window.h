@@ -35,6 +35,7 @@ class Window : public Container {
 		static const flag_t NO_RESIZE_PANEL=1<<26;
 		static const flag_t HIDDEN_WINDOW=1<<27; //!< Only the content of the window is shown, if it is not selected.
 		static const flag_t ONE_TIME_WINDOW=1<<28; //! Destroy the content when closed.
+		static const flag_t SNAP_TO_BORDER=1<<29; 
 
 		Window(GUI_Manager & gui,const Geometry::Rect & r,const std::string & title="",flag_t flags=0);
 		virtual ~Window();

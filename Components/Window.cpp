@@ -56,6 +56,19 @@ struct TitlePanel : public Container {
 		}
 		const Geometry::Vec2 currentMousePos(motionEvent.x, motionEvent.y);
 		window.setPosition(currentMousePos + dragOffset);
+		if(window.hasParent() && window.getFlag(Window::SNAP_TO_BORDER)){
+			Geometry::Rect r = window.getRect();
+
+			if(r.getX()<5)
+				r.setX(0);
+			else if(r.getMaxX()>window.getParent()->getWidth()-5)
+				r.setX( window.getParent()->getWidth()-window.getWidth() );
+			if(r.getY()<5)
+				r.setY(0);
+			else if(r.getMaxY()>window.getParent()->getHeight()-5)
+				r.setY( window.getParent()->getHeight()-window.getHeight() );
+			window.setRect(r);
+		}
 		return true;
 	}
 };
@@ -365,13 +378,11 @@ void Window::doLayout(){
 	const unsigned int titleHeight=getGUI().getGlobalValue(PROPERTY_WINDOW_TITLEBAR_HEIGHT);
 	const bool hideComponents = getFlag(HIDDEN_WINDOW) && !isSelected();
 
-	if (getWidth()<10 || getHeight()<titleHeight){
+	if(getWidth()<10 || getHeight()<titleHeight){
 		Geometry::Rect r=getLocalRect();
 		r.include(10,titleHeight);
 		setRect(r);
 	}
-
-
 	if(hideComponents){
 		titlePanel->disable();
 	}else{
@@ -418,21 +429,16 @@ void Window::doDisplay(const Geometry::Rect & region){
 
 	enableLocalDisplayProperties();
 	displayDefaultShapes();
-	if(!isMinimized() && !getFlag(HIDDEN_WINDOW) ){
-		getGUI().displayShape(PROPERTY_WINDOW_ACTIVE_SHAPE,getLocalRect());
-		if(isSelected())
-			getGUI().displayShape(PROPERTY_WINDOW_ACTIVE_SHAPE,getLocalRect());
-		else
-			getGUI().displayShape(PROPERTY_WINDOW_PASSIVE_SHAPE,getLocalRect());
-	}
+	if(!isMinimized() && !getFlag(HIDDEN_WINDOW) )
+		getGUI().displayShape(isSelected() ? PROPERTY_WINDOW_ACTIVE_SHAPE : PROPERTY_WINDOW_PASSIVE_SHAPE,getLocalRect());
 	disableLocalDisplayProperties();
 
 	displayChildren(region);
 	getGUI().popScissor();
 
-	if(!getFlag(HIDDEN_WINDOW) ){//|| isSelected()){
-		Draw::dropShadow(getLocalRect());
-	}
+	if(!getFlag(HIDDEN_WINDOW) )
+		getGUI().displayShape(isSelected() ? PROPERTY_WINDOW_ACTIVE_OUTER_SHAPE : PROPERTY_WINDOW_PASSIVE_OUTER_SHAPE,getLocalRect());
+
 }
 
 //! ---|> Component
