@@ -15,6 +15,7 @@
 #include "Components/Component.h"
 #include <Util/Graphics/Color.h>
 #include <Util/Registry.h>
+#include <Util/AttributeProvider.h>
 
 #include <list>
 #include <stack>
@@ -91,7 +92,7 @@ class GUI_Manager {
 		 * Create a new GUI manager and associate it with the given event
 		 * context to receive user interface events.
 		 */
-		GUI_Manager(Util::UI::EventContext & context);
+		GUI_Manager(Util::UI::EventContext * context=nullptr);
 		~GUI_Manager();
 		bool handleEvent(const Util::UI::Event & e);
 		void display();
@@ -106,10 +107,12 @@ class GUI_Manager {
 		Util::UI::Window * getWindow() {
 			return window;
 		}
+		
+		Util::AttributeProvider userData;
 	private:
-		Util::UI::EventContext & eventContext;
-
+		Util::UI::EventContext * eventContext;
 		Util::UI::Window * window;
+		std::string alternativeClipboard; // used if no window is available to provide the clipboard.
 	//	@}
 
 	// --------------------------------------------------------------------------------

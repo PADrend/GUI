@@ -85,11 +85,14 @@ class GlobalContainer : public Container{
 // ---------------------------------------------
 
 void GUI_Manager::copyStringToClipboard(const std::string & s) {
-	window->setClipboardText(s);
+	if(window)
+		window->setClipboardText(s);
+	else
+		alternativeClipboard = s;
 }
 
 std::string GUI_Manager::getStringFromClipboard() const {
-	return window->getClipboardText();
+	return window ? window->getClipboardText() : alternativeClipboard;
 }
 
 // ----------
@@ -265,7 +268,7 @@ class TooltipHandler : public Component {
 // ---------------------------------------------
 
 //! (ctor)
-GUI_Manager::GUI_Manager(Util::UI::EventContext & context) : 
+GUI_Manager::GUI_Manager(Util::UI::EventContext * context) : 
 		eventContext(context), window(nullptr), debugMode(0),
 		lazyRendering(false), style(new StyleManager),
 		mouseCursorHandler(new MouseCursorHandler(*this)),
@@ -291,11 +294,11 @@ Rect GUI_Manager::getScreenRect()const{
 // ------------------------------------------------------------------------
 // Event handling & Listener
 bool GUI_Manager::isCtrlPressed() const {
-	return eventContext.isCtrlPressed();
+	return eventContext ? eventContext->isCtrlPressed() : false;
 }
 
 bool GUI_Manager::isShiftPressed() const {
-	return eventContext.isShiftPressed();
+	return eventContext ? eventContext->isShiftPressed() : false;
 }
 
 //! (internal)
