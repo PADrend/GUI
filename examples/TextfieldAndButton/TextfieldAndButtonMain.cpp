@@ -44,7 +44,7 @@ int main(int /*argc*/, char */*argv*/[]) {
 	Util::UI::EventContext eventContext;
 	eventContext.getEventQueue().registerEventGenerator(std::bind(&Util::UI::Window::fetchEvents, window.get()));
 	
-	GUI::GUI_Manager guiManager(eventContext);
+	GUI::GUI_Manager guiManager(&eventContext);
 	guiManager.setWindow(window.get());
 
 	Util::Reference<GUI::Window> guiWin = guiManager.createWindow(Geometry::Rect_f(10, 10, 200, 200), "Window");
