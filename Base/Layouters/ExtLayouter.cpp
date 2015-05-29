@@ -93,7 +93,7 @@ void ExtLayouter::layout(Util::WeakPointer<Component> component){
 
 
 	// apply x pos
-	float x=getPosition().getX();
+	float x=rect.getMinX();
 	if( (flags&POS_X_ABS) || (flags&POS_X_REL) ){
 		x = (flags&POS_X_ABS) ?
 				extPos.getX() :
