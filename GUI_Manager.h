@@ -187,7 +187,7 @@ class GUI_Manager {
 		ActionListenerRegistry actionListener;
 	public:
 		ActionListenerHandle addActionListener(HandleActionFun fun) {
-			return std::move(actionListener.registerElement(std::move(fun)));
+			return actionListener.registerElement(std::move(fun));
 		}
 		void removeActionListener(ActionListenerHandle handle) {
 			actionListener.unregisterElement(std::move(handle));
@@ -199,7 +199,7 @@ class GUI_Manager {
 	public:
 		ComponentDestructionListenerHandle addComponentDestructionListener(const Component * component, 
 																		   HandleComponentDestructionFun fun) {
-			return std::move(componentDestructionListener[component].registerElement(std::move(fun)));
+			return componentDestructionListener[component].registerElement(std::move(fun));
 		}
 		void removeComponentDestructionListener(const Component * component, 
 												ComponentDestructionListenerHandle handle) {
@@ -217,7 +217,7 @@ class GUI_Manager {
 		DataChangeListenerMap dataChangeListener;
 	public:
 		DataChangeListenerHandle addDataChangeListener(Component * component, HandleDataChangeFun fun) {
-			return std::move(dataChangeListener[component].registerElement(std::move(fun)));
+			return dataChangeListener[component].registerElement(std::move(fun));
 		}
 		void removeDataChangeListener(Component * component, DataChangeListenerHandle handle) {
 			const auto it = dataChangeListener.find(component);
@@ -230,7 +230,7 @@ class GUI_Manager {
 		}
 		DataChangeListenerHandle addGlobalDataChangeListener(HandleDataChangeFun fun) {
 			// Use nullptr as component to access global registry.
-			return std::move(addDataChangeListener(nullptr, std::move(fun)));
+			return addDataChangeListener(nullptr, std::move(fun));
 		}
 		void removeGlobalDataChangeListener(DataChangeListenerHandle handle) {
 			// Use nullptr as component to access global registry.
@@ -241,7 +241,7 @@ class GUI_Manager {
 		FrameListenerRegistry frameListener;
 	public:
 		FrameListenerHandle addFrameListener(FrameListenerFun fun) {
-			return std::move(frameListener.registerElement(std::move(fun)));
+			return frameListener.registerElement(std::move(fun));
 		}
 		void removeFrameListener(FrameListenerHandle handle) {
 			frameListener.unregisterElement(std::move(handle));
@@ -252,7 +252,7 @@ class GUI_Manager {
 		KeyListenerMap keyListener;
 	public:
 		KeyListenerHandle addKeyListener(Component * component, HandleKeyFun fun) {
-			return std::move(keyListener[component].registerElement(std::move(fun)));
+			return keyListener[component].registerElement(std::move(fun));
 		}
 		void removeKeyListener(Component * component, KeyListenerHandle handle) {
 			const auto it = keyListener.find(component);
@@ -269,7 +269,7 @@ class GUI_Manager {
 		MouseButtonListenerMap mouseButtonListener;
 	public:
 		MouseButtonListenerHandle addMouseButtonListener(Component * component, HandleMouseButtonFun fun) {
-			return std::move(mouseButtonListener[component].registerElement(std::move(fun)));
+			return mouseButtonListener[component].registerElement(std::move(fun));
 		}
 		void removeMouseButtonListener(Component * component, MouseButtonListenerHandle handle) {
 			const auto it = mouseButtonListener.find(component);
@@ -282,7 +282,7 @@ class GUI_Manager {
 		}
 		MouseButtonListenerHandle addGlobalMouseButtonListener(HandleMouseButtonFun fun) {
 			// Use nullptr as component to access global registry.
-			return std::move(addMouseButtonListener(nullptr, std::move(fun)));
+			return addMouseButtonListener(nullptr, std::move(fun));
 		}
 		void removeGlobalMouseButtonListener(MouseButtonListenerHandle handle) {
 			// Use nullptr as component to access global registry.
@@ -294,7 +294,7 @@ class GUI_Manager {
 		MouseClickListenerMap mouseClickListener;
 	public:
 		MouseClickListenerHandle addMouseClickListener(Component * component, HandleMouseClickFun fun) {
-			return std::move(mouseClickListener[component].registerElement(std::move(fun)));
+			return mouseClickListener[component].registerElement(std::move(fun));
 		}
 		void removeMouseClickListener(Component * component, MouseClickListenerHandle handle) {
 			const auto it = mouseClickListener.find(component);
@@ -310,7 +310,7 @@ class GUI_Manager {
 		MouseMotionListenerRegistry globalMouseMotionListener;
 	public:
 		MouseMotionListenerHandle addGlobalMouseMotionListener(HandleMouseMotionFun fun) {
-			return std::move(globalMouseMotionListener.registerElement(std::move(fun)));
+			return globalMouseMotionListener.registerElement(std::move(fun));
 		}
 		void removeGlobalMouseMotionListener(MouseMotionListenerHandle handle) {
 			globalMouseMotionListener.unregisterElement(std::move(handle));

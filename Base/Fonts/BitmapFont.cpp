@@ -59,7 +59,7 @@ Util::Reference<BitmapFont> BitmapFont::createFont(const Util::FileName & fontFi
 
 	for(const auto & kerningMapEntry : fontRenderer.createKerningMap(charMap_utf32))
 		font->setKerning(kerningMapEntry.first.first, kerningMapEntry.first.second, kerningMapEntry.second);
-	return std::move(font);
+	return font;
 }
 
 //!	(ctor)
