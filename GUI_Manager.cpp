@@ -109,7 +109,7 @@ class MouseCursorHandler {
 			cursorLockedByButton(false),
 			mouseButtonListener(createGlobalMouseButtonListener(_gui,
 				[this](Component *, const Util::UI::ButtonEvent & buttonEvent) {
-					activateCursor(std::move(queryHoverComponentMouseCursor(Geometry::Vec2(buttonEvent.x, buttonEvent.y))));
+					activateCursor(queryHoverComponentMouseCursor(Geometry::Vec2(buttonEvent.x, buttonEvent.y)));
 					cursorLockedByButton = buttonEvent.pressed;
 					return false;
 				})),
@@ -119,7 +119,7 @@ class MouseCursorHandler {
 					// because the position can be outside component and would
 					// end in cursor switch!
 					if(!cursorLockedByButton) {
-						activateCursor(std::move(queryHoverComponentMouseCursor(Geometry::Vec2(motionEvent.x, motionEvent.y))));
+						activateCursor(queryHoverComponentMouseCursor(Geometry::Vec2(motionEvent.x, motionEvent.y)));
 					}
 					return false;
 				})) {
@@ -128,7 +128,7 @@ class MouseCursorHandler {
 		std::shared_ptr<Util::UI::Cursor> queryHoverComponentMouseCursor(const Vec2 & absPos)const{
 			for(Component * c=gui.getComponentAtPos(absPos);c!=nullptr;c=c->getParent()){
 				if(c->hasMouseCursorProperty())
-					return std::move(gui.getStyleManager().getMouseCursor(c->getMouseCursorProperty()));
+					return gui.getStyleManager().getMouseCursor(c->getMouseCursorProperty());
 			}
 			return nullptr;
 		}
