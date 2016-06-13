@@ -72,7 +72,7 @@ class ExtLayouter : public AbstractLayouter{
 			 - If not set for an axis, the original value is not changed.
 			 - ABS : pixel, REL : relative (1.0 is 100%)
 			 - CHILDREN referes to the children's size; FILL fills up to the next component (or the end)
-			 - For WIDTH_ABS and HEIHGT_ABS: If size-value < 0, the value is substracted from
+			 - For WIDTH_ABS and HEIHGT_ABS: If size-value < 0, the value is subtracted from
 				the corrseponding size of the parent.	*/
 		static const extLayoutFlags_t WIDTH_REL 			= 1<<16;
 		static const extLayoutFlags_t HEIGHT_REL 			= 1<<17;
