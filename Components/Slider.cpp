@@ -41,7 +41,7 @@ class SliderMarker:public Component {
 	virtual ~SliderMarker() = default;
 
 	bool onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) {
-		if(buttonEvent.button == Util::UI::MOUSE_WHEEL_UP || buttonEvent.button == Util::UI::MOUSE_WHEEL_DOWN) {
+		if(slider.isLocked() || buttonEvent.button == Util::UI::MOUSE_WHEEL_UP || buttonEvent.button == Util::UI::MOUSE_WHEEL_DOWN) {
 			return false;
 		}
 		if (buttonEvent.pressed) {
