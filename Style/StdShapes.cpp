@@ -157,7 +157,7 @@ void TriangleAtCornerShape::display(const Rect & rect,flag_t/* flags*/){
 
 	colors.insert(colors.end(),3, color.getAsUInt());
 
-	const Geometry::Vec2 corner = rect.getCorner(CORNER_XY);
+	const Geometry::Vec2 corner = rect.getCorner(Geometry::rectCorner_t::XY);
 	vertices.push_back(corner.x());				vertices.push_back(corner.y());
 	vertices.push_back(corner.x());				vertices.push_back(corner.y()-size);
 	vertices.push_back(corner.x()-size);		vertices.push_back(corner.y());
