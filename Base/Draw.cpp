@@ -3,6 +3,7 @@
 	Copyright (C) 2008-2012 Benjamin Eikel <benjamin@eikel.org>
 	Copyright (C) 2008-2012 Claudius Jähn <claudius@uni-paderborn.de>
 	Copyright (C) 2008-2012 Ralf Petring <ralf@petring.net>
+	Copyright (C) 2018 Sascha Brandt <sascha@brandt.graphics>
 	
 	This library is subject to the terms of the Mozilla Public License, v. 2.0.
 	You should have received a copy of the MPL along with this library; see the 
@@ -17,6 +18,7 @@
 #include <Util/Macros.h>
 #include <Util/Graphics/PixelFormat.h>
 #include <iostream>
+#include <cstring>
 
 namespace GUI{
 
@@ -25,27 +27,31 @@ namespace GUI{
 
 struct DrawContext{
 	bool useShader;
-	GLuint shaderProg,activeTextureId,nullTexture;
+	GLuint shaderProg,activeTextureId,nullTexture,vertexBuffer;
+	GLintptr vertexBufferOffset;
+	GLsizeiptr vertexBufferSize;
 	GLint attr_color, attr_uv, attr_vertex;
 	GLint u_color,	u_colorAttrEnabled, u_posOffset, u_screenScale, u_textureEnabled, u_useVertexColor;
 	Geometry::Vec2i position,screenSize;
-	DrawContext() : useShader(false),shaderProg(0),activeTextureId(0),nullTexture(0){}
+	uint8_t* vboPtr = nullptr;
+	DrawContext() : useShader(true),shaderProg(0),activeTextureId(0),nullTexture(0),
+	vertexBuffer(0),vertexBufferOffset(1048576),vertexBufferSize(1048576) {} // allocate 1MB vertex buffer
 };
 
 static DrawContext ctxt;
 
 static const char * const vs = 
-R"***(#version 110
-attribute vec4 attr_color;
-attribute vec2 attr_vertex;
-attribute vec2 attr_uv;
+R"***(#version 330
+in vec4 attr_color;
+in vec2 attr_vertex;
+in vec2 attr_uv;
 uniform vec2 u_posOffset;
 uniform vec2 u_screenScale;
 uniform vec4 u_color;
 uniform int u_textureEnabled;
 uniform int u_colorAttrEnabled;
-varying vec2 var_uv;
-varying vec4 var_color;
+out vec2 var_uv;
+out vec4 var_color;
 void main() {
 	gl_Position = vec4(vec2(-1.0, 1.0) + u_screenScale * (attr_vertex + u_posOffset), -0.1, 1.0);
 	var_uv = (u_textureEnabled > 0) ? attr_uv : vec2(0.0);
@@ -54,38 +60,96 @@ void main() {
 )***";
 
 static const char * const fs = 
-R"***(#version 110
-varying vec4 var_color;
-varying vec2 var_uv;
+R"***(#version 330
+in vec4 var_color;
+in vec2 var_uv;
 uniform sampler2D sampler0;
 uniform int u_textureEnabled;
+out vec4 fragColor;
 void main() {
 	vec4 color = var_color;
 	if(u_textureEnabled > 0) {
 		color *= texture2D(sampler0, var_uv);
 	}
-	gl_FragColor = color;
+	fragColor = color;
 }
 )***";
+static const char * getGLErrorString(GLenum errorFlag) {
+	switch (errorFlag) {
+		case GL_NO_ERROR:
+			return "GL_NO_ERROR";
+		case GL_INVALID_ENUM:
+			return "GL_INVALID_ENUM";
+		case GL_INVALID_VALUE:
+			return "GL_INVALID_VALUE";
+		case GL_INVALID_OPERATION:
+			return "GL_INVALID_OPERATION";
+		case GL_OUT_OF_MEMORY:
+			return "GL_OUT_OF_MEMORY";
+		case GL_STACK_OVERFLOW:
+			return "GL_STACK_OVERFLOW";
+		case GL_STACK_UNDERFLOW:
+			return "GL_STACK_UNDERFLOW";
+		case GL_TABLE_TOO_LARGE:
+			return "GL_TABLE_TOO_LARGE";
+		case GL_INVALID_FRAMEBUFFER_OPERATION:
+			return "GL_INVALID_FRAMEBUFFER_OPERATION";
+		default:
+			return "Unknown error";
+	}
+}
 
 static void checkGLError(int line) {
 	GLenum errorFlag = glGetError();
 	for(int i=0;errorFlag != GL_NO_ERROR && i<10;++i){
-		std::cout << "GUI/Draw: OpenGL Error:"<<errorFlag<<"(Before line:"<<line<<")\n";
+		std::cout << "GUI/Draw: OpenGL Error: " << getGLErrorString(errorFlag) << " (" << errorFlag << ")" << " (Before line:"<<line<<")\n";
 		errorFlag = glGetError();
 	}
 }
 
+static inline GLsizeiptr ensureBufferSize(size_t size) {
+	GLsizeiptr paddedSize = (size + 63) & ~63; // round up to multiple of 64
+	if(ctxt.vertexBufferOffset + paddedSize > ctxt.vertexBufferSize) {
+	#ifdef GL_VERSION_4_4
+		// ensure that all draw commands are finished
+		// TODO: use sync objects instead of a full glFinish
+		glFinish(); 
+	#else
+		// buffer overflow: orphan old buffer and allocate new
+		glBufferData(GL_ARRAY_BUFFER, ctxt.vertexBufferSize, nullptr, GL_STATIC_DRAW);
+	#endif
+		ctxt.vertexBufferOffset = 0;
+	}
+	return paddedSize;
+}
+
+static const uint8_t* updateBuffer(size_t size, const uint8_t * data) {
+	GLsizeiptr paddedSize = ensureBufferSize(size);
+	#ifdef GL_VERSION_4_4
+		std::memcpy(ctxt.vboPtr + ctxt.vertexBufferOffset, data, size);
+	#else
+		uint8_t* ptr = reinterpret_cast<uint8_t*>(glMapBufferRange(GL_ARRAY_BUFFER, ctxt.vertexBufferOffset, paddedSize, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_RANGE_BIT | GL_MAP_UNSYNCHRONIZED_BIT));
+		std::memcpy(ptr, data, size);
+		glUnmapBuffer(GL_ARRAY_BUFFER);
+	#endif 
+	//checkGLError(__LINE__);
+	auto offset = reinterpret_cast<const uint8_t*>(ctxt.vertexBufferOffset);
+	ctxt.vertexBufferOffset += paddedSize;
+	return offset;
+}
 
 static void drawVertices(const GLenum mode,size_t numVertices,const GLfloat * vertices, const Util::Color4ub & color){
-//	checkGLError(__LINE__);
+	//checkGLError(__LINE__);
 	if(ctxt.useShader){
 		const Util::Color4f c2(color);
 		glUniform4fv(ctxt.u_color,1,c2.data());
 
-		glVertexAttribPointer(ctxt.attr_vertex,2,GL_FLOAT,GL_FALSE,0,vertices);
-		glVertexAttribPointer(ctxt.attr_color,4,GL_UNSIGNED_BYTE,GL_FALSE,0,vertices); // dummy for AMD-cards
-		glVertexAttribPointer(ctxt.attr_uv,2,GL_UNSIGNED_BYTE,GL_FALSE,0,vertices); // dummy for AMD-cards
+		auto ptr = updateBuffer(numVertices * 2 * sizeof(GLfloat), reinterpret_cast<const uint8_t*>(vertices));
+		
+		glVertexAttribPointer(ctxt.attr_vertex,2,GL_FLOAT,GL_FALSE,0,ptr);
+		glVertexAttribPointer(ctxt.attr_color,4,GL_UNSIGNED_BYTE,GL_FALSE,0,ptr); // dummy for AMD-cards
+		glVertexAttribPointer(ctxt.attr_uv,2,GL_UNSIGNED_BYTE,GL_FALSE,0,ptr); // dummy for AMD-cards
+		
 		glDrawArrays(mode, 0, numVertices);
 	}else{
 		glColor4ubv(color.data());
@@ -94,19 +158,24 @@ static void drawVertices(const GLenum mode,size_t numVertices,const GLfloat * ve
 		glDrawArrays(mode, 0, numVertices);
 		glDisableClientState(GL_VERTEX_ARRAY);
 	}
-//	checkGLError(__LINE__);
+	//checkGLError(__LINE__);
 }
 
 
 static void drawVertices(const GLenum mode,size_t numVertices,const GLfloat * vertices, const uint32_t * colors){
-//	checkGLError(__LINE__);
+	//checkGLError(__LINE__);
 	if(ctxt.useShader){	
 		glUniform1i(ctxt.u_colorAttrEnabled,1);
-		glVertexAttribPointer(ctxt.attr_vertex,2,GL_FLOAT,GL_FALSE,0,vertices);
-		glVertexAttribPointer(ctxt.attr_color,4,GL_UNSIGNED_BYTE,GL_TRUE,0,colors);
-		glVertexAttribPointer(ctxt.attr_uv,2,GL_UNSIGNED_BYTE,GL_FALSE,0,colors); // dummy for AMD-cards
-
-		glDrawArrays(mode, 0, numVertices ) ;
+				
+		ensureBufferSize(numVertices * 3 * sizeof(GLfloat));
+		auto vPtr = updateBuffer(numVertices * 2 * sizeof(GLfloat), reinterpret_cast<const uint8_t*>(vertices));
+		auto cPtr = updateBuffer(numVertices * sizeof(uint32_t), reinterpret_cast<const uint8_t*>(colors));
+				
+		glVertexAttribPointer(ctxt.attr_vertex,2,GL_FLOAT,GL_FALSE,0,vPtr);
+		glVertexAttribPointer(ctxt.attr_color,4,GL_UNSIGNED_BYTE,GL_TRUE,0,cPtr);
+		glVertexAttribPointer(ctxt.attr_uv,2,GL_UNSIGNED_BYTE,GL_FALSE,0,cPtr); // dummy for AMD-cards
+		
+		glDrawArrays(mode, 0, numVertices);
 
 		glUniform1i(ctxt.u_colorAttrEnabled,0);
 	}else{
@@ -118,15 +187,17 @@ static void drawVertices(const GLenum mode,size_t numVertices,const GLfloat * ve
 		glDisableClientState(GL_COLOR_ARRAY);
 		glDisableClientState(GL_VERTEX_ARRAY);
 	}
-//	checkGLError(__LINE__);
+	//checkGLError(__LINE__);
 }
 
 static void drawTexturedVertices(const GLenum mode,size_t numVertices,const GLfloat * verticesAndUVs, const Util::Color4ub & color){
-//	checkGLError(__LINE__);
-	if(ctxt.useShader){	
-		glVertexAttribPointer(ctxt.attr_vertex,2,GL_FLOAT,GL_FALSE,sizeof(GLfloat)*4,verticesAndUVs);
-		glVertexAttribPointer(ctxt.attr_uv,2,GL_FLOAT,GL_FALSE,sizeof(GLfloat)*4,verticesAndUVs+2);
-		glVertexAttribPointer(ctxt.attr_color,4,GL_UNSIGNED_BYTE,GL_FALSE,0,verticesAndUVs); // dummy for AMD-cards
+	//checkGLError(__LINE__);
+	if(ctxt.useShader){		
+		auto ptr = updateBuffer(numVertices * 4 * sizeof(GLfloat), reinterpret_cast<const uint8_t*>(verticesAndUVs));
+		
+		glVertexAttribPointer(ctxt.attr_vertex,2,GL_FLOAT,GL_FALSE,sizeof(GLfloat)*4,ptr);
+		glVertexAttribPointer(ctxt.attr_uv,2,GL_FLOAT,GL_FALSE,sizeof(GLfloat)*4, ptr + 2*sizeof(GLfloat));
+		glVertexAttribPointer(ctxt.attr_color,4,GL_UNSIGNED_BYTE,GL_FALSE,0,ptr); // dummy for AMD-cards
 
 		const Util::Color4f c2(color);
 		glUniform4fv(ctxt.u_color,1,c2.data());
@@ -142,13 +213,13 @@ static void drawTexturedVertices(const GLenum mode,size_t numVertices,const GLfl
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		glDisableClientState(GL_VERTEX_ARRAY);
 	}
-//	checkGLError(__LINE__);
+	//checkGLError(__LINE__);
 }
 
 
 //! (internal)
 static GLuint createShaderObject(const GLuint type,const char * code){
-//	checkGLError(__LINE__);
+	//checkGLError(__LINE__);
 	const GLuint shader = glCreateShader(type);
 	glShaderSource(shader, 1, &code, nullptr);
 	glCompileShader(shader);
@@ -180,7 +251,7 @@ static GLuint createShaderObject(const GLuint type,const char * code){
 //! (internal)
 static bool init(){
 	glewInit();
-//	checkGLError(__LINE__);
+	checkGLError(__LINE__);
 	
 	GLuint shaderProg = glCreateProgram();
 
@@ -232,8 +303,18 @@ static bool init(){
 		Draw::uploadTexture(ctxt.nullTexture,1,1,Util::PixelFormat::RGBA, reinterpret_cast<const uint8_t*>(&data));
 	}
 		
-    ctxt.useShader = true;
-    
+  ctxt.useShader = true;
+	
+#ifdef GL_VERSION_4_4
+	glCreateBuffers(1, &ctxt.vertexBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, ctxt.vertexBuffer);
+  const GLbitfield flags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
+	glBufferStorage(GL_ARRAY_BUFFER, ctxt.vertexBufferSize, nullptr, flags);
+	ctxt.vboPtr = static_cast<uint8_t*>(glMapNamedBufferRange(ctxt.vertexBuffer, 0, ctxt.vertexBufferSize, flags));
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+#else
+	glGenBuffers(1, &ctxt.vertexBuffer);
+#endif 
 	checkGLError(__LINE__);
 	return true;
 }
@@ -251,7 +332,7 @@ void Draw::beginDrawing(const Geometry::Vec2i & screenSize){
 	checkGLError(__LINE__);
 	// Push back and cache the current state of depth testing and lighting
 	// and then disable them.
-	glPushAttrib( GL_ALL_ATTRIB_BITS);
+	//glPushAttrib( GL_ALL_ATTRIB_BITS); // deprecated
 
 	glBlendEquation(GL_FUNC_ADD);
 
@@ -266,6 +347,7 @@ void Draw::beginDrawing(const Geometry::Vec2i & screenSize){
 	resetScissor();
 	
 	if(ctxt.useShader){
+	
 		glUseProgram(ctxt.shaderProg);
 		ctxt.position = Geometry::Vec2(0,0);
 		glUniform2f(ctxt.u_posOffset,ctxt.position.x(),ctxt.position.y());
@@ -280,6 +362,10 @@ void Draw::beginDrawing(const Geometry::Vec2i & screenSize){
 		// use 1x1 white texture as backup for graphic drivers that access the sampler even in disabled branches...
 		glBindTexture(GL_TEXTURE_2D,ctxt.nullTexture);
 		ctxt.activeTextureId = ctxt.nullTexture;
+		
+		// bind vertex buffer
+		glBindBuffer(GL_ARRAY_BUFFER, ctxt.vertexBuffer);
+		//ctxt.vertexBufferOffset = 0;
 	}else{
 		glDisable( GL_TEXTURE_2D );
 		glDisable( GL_LIGHTING );
@@ -295,13 +381,14 @@ void Draw::beginDrawing(const Geometry::Vec2i & screenSize){
 		glLoadIdentity();
 	}
 	checkGLError(__LINE__);
-
 }
 
 //! (static)
 void Draw::endDrawing(){
 	checkGLError(__LINE__);
 	if(ctxt.useShader){	
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	
 		glUseProgram(0);
 		glDisableVertexAttribArray(ctxt.attr_vertex);
 		glDisableVertexAttribArray(ctxt.attr_color);
@@ -315,7 +402,7 @@ void Draw::endDrawing(){
 	}
 	glBindTexture(GL_TEXTURE_2D,0);
 	ctxt.activeTextureId = 0;
-	glPopAttrib();
+	//glPopAttrib(); // deprecated
 	checkGLError(__LINE__);
 }
 
@@ -655,7 +742,7 @@ void Draw::drawTexturedRect(const Geometry::Rect_i & screenRect,const Geometry::
 void Draw::drawLine(const std::vector<float> & vertices,const std::vector<uint32_t> & colors,const float lineWidth/*=1.0*/,bool lineSmooth/*=false*/){
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
-	glPushAttrib(GL_LINE_BIT);
+	//glPushAttrib(GL_LINE_BIT);
 	glLineWidth(lineWidth);
 	if(lineSmooth){
 		glEnable(GL_LINE_SMOOTH);
@@ -669,7 +756,7 @@ void Draw::drawLine(const std::vector<float> & vertices,const std::vector<uint32
 //		glHint(GL_LINE_SMOOTH_HINT,GL_NICEST);
 	}
 
-	glPopAttrib();
+	//glPopAttrib();
 	glDisable(GL_BLEND);
 }
 
@@ -677,12 +764,12 @@ void Draw::drawLine(const std::vector<float> & vertices,const std::vector<uint32
 void Draw::drawLines(const std::vector<float> & vertices,const std::vector<uint32_t> & colors,const float lineWidth/*=1.0*/){
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
-	glPushAttrib(GL_LINE_BIT);
+	//glPushAttrib(GL_LINE_BIT);
 	glLineWidth(lineWidth);
 // assert colors.size() == vertices.size()
 	drawVertices(GL_LINES, vertices.size() / 2, vertices.data(), colors.data());
 
-	glPopAttrib();
+	//glPopAttrib();
 	glDisable(GL_BLEND);
 }
 
@@ -751,18 +838,23 @@ uint32_t Draw::generateTextureId(){
 
 void Draw::uploadTexture(uint32_t textureId,uint32_t width,uint32_t height,const Util::PixelFormat & pixelFormat, const uint8_t * data){
 
-	GLint glInternalFormat = pixelFormat.getBytesPerPixel();
+	GLint glInternalFormat;
 	GLint glFormat;
 	if(pixelFormat==Util::PixelFormat::RGBA){
 		glFormat = GL_RGBA;
+		glInternalFormat = GL_RGBA;
 	}else if(pixelFormat==Util::PixelFormat::BGRA){
 		glFormat = GL_BGRA;
+		glInternalFormat = GL_RGBA;
 	}else if(pixelFormat==Util::PixelFormat::RGB){
 		glFormat = GL_RGB;
+		glInternalFormat = GL_RGB;
 	}else if(pixelFormat==Util::PixelFormat::BGR){
 		glFormat = GL_BGR;
+		glInternalFormat = GL_RGB;
 	}else if(pixelFormat==Util::PixelFormat::MONO){
 		glFormat = GL_RED;
+		glInternalFormat = GL_RED;
 	}else{
 		throw std::invalid_argument("Draw::uploadTexture: Bitmap has unimplemented color format.");
 	}
