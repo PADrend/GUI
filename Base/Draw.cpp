@@ -41,7 +41,7 @@ struct DrawContext{
 static DrawContext ctxt;
 
 static const char * const vs = 
-R"***(#version 330
+R"***(#version 130
 in vec4 attr_color;
 in vec2 attr_vertex;
 in vec2 attr_uv;
@@ -60,7 +60,7 @@ void main() {
 )***";
 
 static const char * const fs = 
-R"***(#version 330
+R"***(#version 130
 in vec4 var_color;
 in vec2 var_uv;
 uniform sampler2D sampler0;
