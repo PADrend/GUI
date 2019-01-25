@@ -107,13 +107,21 @@ static void checkGLError(int line) {
 	}
 }
 
+static bool isGL44Supported() {
+	static bool supported = glewIsSupported("GL_VERSION_4_4");
+	return supported;
+}
+
 static inline GLsizeiptr ensureBufferSize(size_t size) {
 	GLsizeiptr paddedSize = (size + 63) & ~63; // round up to multiple of 64
 	if(ctxt.vertexBufferOffset + paddedSize > ctxt.vertexBufferSize) {
 	#ifdef GL_VERSION_4_4
 		// ensure that all draw commands are finished
 		// TODO: use sync objects instead of a full glFinish
-		glFinish(); 
+		if(isGL44Supported())
+			glFinish();
+		else
+			glBufferData(GL_ARRAY_BUFFER, ctxt.vertexBufferSize, nullptr, GL_STATIC_DRAW);
 	#else
 		// buffer overflow: orphan old buffer and allocate new
 		glBufferData(GL_ARRAY_BUFFER, ctxt.vertexBufferSize, nullptr, GL_STATIC_DRAW);
@@ -126,7 +134,13 @@ static inline GLsizeiptr ensureBufferSize(size_t size) {
 static const uint8_t* updateBuffer(size_t size, const uint8_t * data) {
 	GLsizeiptr paddedSize = ensureBufferSize(size);
 	#ifdef GL_VERSION_4_4
-		std::memcpy(ctxt.vboPtr + ctxt.vertexBufferOffset, data, size);
+		if(isGL44Supported()) {
+			std::memcpy(ctxt.vboPtr + ctxt.vertexBufferOffset, data, size);
+		} else {
+			uint8_t* ptr = reinterpret_cast<uint8_t*>(glMapBufferRange(GL_ARRAY_BUFFER, ctxt.vertexBufferOffset, paddedSize, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_RANGE_BIT | GL_MAP_UNSYNCHRONIZED_BIT));
+			std::memcpy(ptr, data, size);
+			glUnmapBuffer(GL_ARRAY_BUFFER);
+		}
 	#else
 		uint8_t* ptr = reinterpret_cast<uint8_t*>(glMapBufferRange(GL_ARRAY_BUFFER, ctxt.vertexBufferOffset, paddedSize, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_RANGE_BIT | GL_MAP_UNSYNCHRONIZED_BIT));
 		std::memcpy(ptr, data, size);
@@ -306,15 +320,20 @@ static bool init(){
   ctxt.useShader = true;
 	
 #ifdef GL_VERSION_4_4
-	glCreateBuffers(1, &ctxt.vertexBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, ctxt.vertexBuffer);
-  const GLbitfield flags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
-	glBufferStorage(GL_ARRAY_BUFFER, ctxt.vertexBufferSize, nullptr, flags);
-	ctxt.vboPtr = static_cast<uint8_t*>(glMapNamedBufferRange(ctxt.vertexBuffer, 0, ctxt.vertexBufferSize, flags));
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-#else
+	if(isGL44Supported()) {
+		glCreateBuffers(1, &ctxt.vertexBuffer);
+		glBindBuffer(GL_ARRAY_BUFFER, ctxt.vertexBuffer);
+	const GLbitfield flags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
+		glBufferStorage(GL_ARRAY_BUFFER, ctxt.vertexBufferSize, nullptr, flags);
+		ctxt.vboPtr = static_cast<uint8_t*>(glMapNamedBufferRange(ctxt.vertexBuffer, 0, ctxt.vertexBufferSize, flags));
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+	} else {
+		glGenBuffers(1, &ctxt.vertexBuffer);
+	}
+#else 
 	glGenBuffers(1, &ctxt.vertexBuffer);
 #endif 
+
 	checkGLError(__LINE__);
 	return true;
 }
