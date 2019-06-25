@@ -14,11 +14,12 @@
 #include "Fonts/AbstractFont.h"
 #include "BasicColors.h"
 #include "../Style/Colors.h" // \todo remove this!!!
-#include "GUI_internals.h"
 #include <Util/Macros.h>
 #include <Util/Graphics/PixelFormat.h>
 #include <iostream>
 #include <cstring>
+
+#include <GL/glew.h>
 
 namespace GUI{
 
