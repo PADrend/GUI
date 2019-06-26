@@ -14,6 +14,7 @@
 #include "../ImageData.h"
 #include "AbstractFont.h"
 #include <Geometry/Rect.h>
+#include <Util/Graphics/Bitmap.h>
 
 #include <unordered_map>
 #include <map>
@@ -80,7 +81,7 @@ class BitmapFont : public AbstractFont{
 			const auto it = glyphs.find(characterCode);
 			return it == glyphs.end() ? emptyGlyph : it->second;
 		}
-		const Util::Reference<Util::Bitmap> & getBitmap() const {
+		const Util::Reference<Util::Bitmap> getBitmap() const {
 			return bitmap->getBitmap();
 		}
 		void setKerning(uint32_t first,uint32_t second, int16_t amount){	kerning[std::make_pair(first,second)] = amount;	}

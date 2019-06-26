@@ -12,76 +12,60 @@
 
 #include "Draw.h"
 #include <Util/Graphics/PixelAccessor.h>
+#include <Rendering/Texture/Texture.h>
+#include <Rendering/Texture/TextureUtils.h>
 #include <iostream>
 
-namespace GUI{
+namespace GUI {
+using namespace Rendering;
 
 //! (ctor)
 ImageData::ImageData(Util::Reference<Util::Bitmap> _bitmap):
 		ReferenceCounter_t(),
-		bitmap(std::move(_bitmap)),
-		textureId(0),
-		dataHasChanged(false) {
-	dataChanged();
-}
+		texture(TextureUtils::createTextureFromBitmap(*_bitmap.get())) { }
 
+//! (ctor)
+ImageData::ImageData(Util::Reference<Rendering::Texture> _texture):
+		ReferenceCounter_t(),
+		texture(std::move(_texture)) { }
 
 //! (dtor)
-ImageData::~ImageData() {
-	removeGLData();
-}
+ImageData::~ImageData() { }
 
-
-bool ImageData::uploadGLTexture() {
-	if( textureId==0 )
-		textureId = Draw::generateTextureId();
-	if( textureId==0 )
-		return false;
-
-	Draw::uploadTexture(textureId,bitmap->getWidth(),bitmap->getHeight(),bitmap->getPixelFormat(),getLocalData());
-
-	dataHasChanged=false;
-	return true; 
-}
 
 uint8_t * ImageData::getLocalData() {
-	return bitmap->data();
+	return texture->openLocalData(Draw::getRenderingContext());
 }
 
 const uint8_t * ImageData::getLocalData() const {
-	return bitmap->data();
+	return texture->openLocalData(Draw::getRenderingContext());
+}
+
+const Util::Reference<Util::Bitmap> ImageData::getBitmap() const {
+	texture->openLocalData(Draw::getRenderingContext());
+	return texture->getLocalBitmap();
 }
 
 bool ImageData::enable() {
-	if( (textureId == 0 || dataHasChanged) && !uploadGLTexture() )
-		return false;
-
-	Draw::enableTexture(textureId);
+	Draw::enableTexture(texture.get());
 	return true;
 }
 
 void ImageData::disable() {
-	if (textureId!=0) 
-		Draw::disableTexture();
-}
-
-void ImageData::removeGLData() {
-	if(textureId!=0)
-		Draw::destroyTexture(textureId);
-	textureId=0;
+	Draw::disableTexture();
 }
 
 void ImageData::dataChanged() {
-	dataHasChanged=true;
+	texture->dataChanged();
 }
 
 void ImageData::updateData(const Util::Bitmap & _bitmap) {
-	if(_bitmap.getPixelFormat() != getBitmap()->getPixelFormat()){
+	if(_bitmap.getPixelFormat() != texture->getLocalBitmap()->getPixelFormat()){
 		WARN("updateData: Different pixel formats!");
 		return;
 	}
 	std::copy(_bitmap.data(), _bitmap.data() + std::min<size_t>(_bitmap.getDataSize(), getBitmap()->getDataSize()), getLocalData());
-	dataChanged();
+		texture->dataChanged();
 }
 
 Util::Reference<Util::PixelAccessor> ImageData::createPixelAccessor(){

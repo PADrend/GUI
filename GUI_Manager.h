@@ -35,6 +35,10 @@ class Window;
 }
 }
 
+namespace Rendering {
+class RenderingContext;
+} /* Rendering */
+
 namespace GUI {
 
 class AbstractFont;
@@ -95,7 +99,7 @@ class GUI_Manager {
 		GUI_Manager(Util::UI::EventContext * context=nullptr);
 		~GUI_Manager();
 		bool handleEvent(const Util::UI::Event & e);
-		void display();
+		void display(Rendering::RenderingContext& rc);
 		Geometry::Rect getScreenRect()const;
 
 		//! Associate a window (e.g. X11 or SDL) to the GUI manager

@@ -70,17 +70,12 @@ if(NOT TARGET Util)
 endif()
 target_link_libraries(GUI LINK_PUBLIC Util)
 
-# Dependency to OpenGL
-find_package(OpenGL REQUIRED)
-if(IS_DIRECTORY ${OPENGL_INCLUDE_DIR})
-	target_include_directories(GUI PRIVATE ${OPENGL_INCLUDE_DIR})
+# Dependency to Rendering
+if(NOT TARGET Rendering)
+	find_package(Rendering 0.2.0 REQUIRED NO_MODULE)
 endif()
-target_link_libraries(GUI LINK_PRIVATE ${OPENGL_LIBRARIES})
+target_link_libraries(GUI LINK_PUBLIC Rendering)
 
-# Dependency to GLEW
-find_package(GLEW REQUIRED)
-target_include_directories(GUI PRIVATE ${GLEW_INCLUDE_DIRS})
-target_link_libraries(GUI LINK_PRIVATE ${GLEW_LIBRARIES})
 
 # Set version of library
 set_target_properties(GUI PROPERTIES VERSION ${GUI_VERSION}

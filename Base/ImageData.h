@@ -19,6 +19,9 @@ namespace Util{
 class Bitmap;
 class PixelAccessor;
 }
+namespace Rendering {
+class Texture;
+} /* Rendering */
 namespace GUI {
 
 /***
@@ -41,32 +44,27 @@ class ImageData: public Util::ReferenceCounter<ImageData> {
 	public:
 
 		ImageData(Util::Reference<Util::Bitmap> _bitmap);
+		ImageData(Util::Reference<Rendering::Texture> _texture);
 		~ImageData();
 
 	public:
-		bool uploadGLTexture();
-
 		uint8_t * getLocalData();
 		const uint8_t * getLocalData() const;
 
-		const Util::Reference<Util::Bitmap> & getBitmap() const {
-			return bitmap;
+		const Util::Reference<Util::Bitmap> getBitmap() const;
+		const Util::Reference<Rendering::Texture> & getTexture() const {
+			return texture;
 		}
-
 		void updateData(const Util::Bitmap & bitmap);
 
 		bool enable();
 		void disable();
 		void dataChanged();
 
-		void removeGLData();
-
 		Util::Reference<Util::PixelAccessor> createPixelAccessor();
 
 	private:
-		Util::Reference<Util::Bitmap> bitmap;
-		uint32_t textureId;
-		bool dataHasChanged;
+		Util::Reference<Rendering::Texture> texture;
 };
 }
 #endif // GUI_IMAGE_DATA_H

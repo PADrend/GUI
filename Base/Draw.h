@@ -18,6 +18,10 @@
 namespace Util {
 class PixelFormat;
 }
+namespace Rendering {
+class RenderingContext;
+class Texture;
+} /* Rendering */
 namespace GUI {
 
 class AbstractFont;
@@ -25,10 +29,11 @@ class AbstractFont;
 class Draw {
 	public:
 		// general
-		static void beginDrawing(const Geometry::Vec2i & screenSize);
+		static void beginDrawing(Rendering::RenderingContext& rc, const Geometry::Vec2i & screenSize);
 		static void endDrawing();
+		static Rendering::RenderingContext& getRenderingContext();
+		static void flush();
 		static void moveCursor(const Geometry::Vec2i & pos);
-		static Geometry::Rect_i queryViewport();
 		static void setScissor(const Geometry::Rect_i & rect);
 		static void resetScissor();
 		static void clearScreen(const Util::Color4ub & color);
@@ -79,10 +84,8 @@ class Draw {
 
 		// textures
 		static uint32_t generateTextureId();
-		static void enableTexture(uint32_t textureId);
+		static void enableTexture(Rendering::Texture* texture);
 		static void disableTexture();
-		static void destroyTexture(uint32_t textureId);
-		static void uploadTexture(uint32_t textureId,uint32_t width,uint32_t height,const Util::PixelFormat & format, const uint8_t * data);
 };
 
 }

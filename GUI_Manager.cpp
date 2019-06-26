@@ -49,6 +49,8 @@
 #include <Util/UI/UI.h>
 #include <Util/UI/Window.h>
 #include <Util/Timer.h>
+#include <Rendering/RenderingContext/RenderingContext.h>
+
 #include <algorithm>
 #include <functional>
 #include <iostream>
@@ -445,13 +447,13 @@ void GUI_Manager::invalidateRegion(const Rect & region){
 	invalidRegion.include(region);
 }
 
-void GUI_Manager::display(){
+void GUI_Manager::display(Rendering::RenderingContext& rc){
 	
 	{ // init draw process
 		// update size
-		Geometry::Rect_i viewport = Draw::queryViewport();
+		Geometry::Rect_i viewport = rc.getViewport();
 		globalContainer->setSize(viewport.getWidth(), viewport.getHeight());
-		Draw::beginDrawing(Geometry::Vec2i(viewport.getWidth(),viewport.getHeight()));
+		Draw::beginDrawing(rc, Geometry::Vec2i(viewport.getWidth(),viewport.getHeight()));
 	}
 
 			
