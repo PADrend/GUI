@@ -72,7 +72,7 @@ target_link_libraries(GUI LINK_PUBLIC Util)
 
 # Dependency to Rendering
 if(NOT TARGET Rendering)
-	find_package(Rendering 0.2.0 REQUIRED NO_MODULE)
+	find_package(Rendering 0.3.0 REQUIRED NO_MODULE)
 endif()
 target_link_libraries(GUI LINK_PUBLIC Rendering)
 
