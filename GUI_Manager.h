@@ -13,6 +13,7 @@
 
 #include "Base/Listener.h"
 #include "Components/Component.h"
+#include <GUI/config.h>
 #include <Util/Graphics/Color.h>
 #include <Util/Registry.h>
 #include <Util/AttributeProvider.h>
@@ -99,7 +100,11 @@ class GUI_Manager {
 		GUI_Manager(Util::UI::EventContext * context=nullptr);
 		~GUI_Manager();
 		bool handleEvent(const Util::UI::Event & e);
+	#ifdef GUI_BACKEND_RENDERING
 		void display(Rendering::RenderingContext& rc);
+	#else // GUI_BACKEND_RENDERING
+		void display();
+	#endif // GUI_BACKEND_RENDERING
 		Geometry::Rect getScreenRect()const;
 
 		//! Associate a window (e.g. X11 or SDL) to the GUI manager

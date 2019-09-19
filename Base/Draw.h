@@ -11,6 +11,7 @@
 #ifndef GUI_DRAW_H
 #define GUI_DRAW_H
 
+#include <GUI/config.h>
 #include <Geometry/Vec2.h>
 #include <Geometry/Rect.h>
 #include <Util/Graphics/Color.h>
@@ -18,25 +19,32 @@
 namespace Util {
 class PixelFormat;
 }
+#ifdef GUI_BACKEND_RENDERING
 namespace Rendering {
 class RenderingContext;
-class Texture;
 } /* Rendering */
+#endif // GUI_BACKEND_RENDERING
 namespace GUI {
 
 class AbstractFont;
+class ImageData;
 
 class Draw {
 	public:
 		// general
+#ifdef GUI_BACKEND_RENDERING
 		static void beginDrawing(Rendering::RenderingContext& rc, const Geometry::Vec2i & screenSize);
-		static void endDrawing();
 		static Rendering::RenderingContext& getRenderingContext();
+#else // GUI_BACKEND_RENDERING
+		static void beginDrawing(const Geometry::Vec2i & screenSize);
+#endif // GUI_BACKEND_RENDERING
+		static void endDrawing();
 		static void flush();
 		static void moveCursor(const Geometry::Vec2i & pos);
 		static void setScissor(const Geometry::Rect_i & rect);
 		static void resetScissor();
 		static void clearScreen(const Util::Color4ub & color);
+		static Geometry::Rect_i queryViewport();
 
 		// text
 		static const unsigned int TEXT_ALIGN_LEFT=1<<0;
@@ -83,8 +91,7 @@ class Draw {
 		static void drawTriangleFan(const std::vector<float> & vertices,const std::vector<uint32_t> & colors);
 
 		// textures
-		static uint32_t generateTextureId();
-		static void enableTexture(Rendering::Texture* texture);
+		static void enableTexture(ImageData* texture);
 		static void disableTexture();
 };
 

@@ -447,13 +447,24 @@ void GUI_Manager::invalidateRegion(const Rect & region){
 	invalidRegion.include(region);
 }
 
-void GUI_Manager::display(Rendering::RenderingContext& rc){
-	
+#ifdef GUI_BACKEND_RENDERING
+void GUI_Manager::display(Rendering::RenderingContext& rc)
+#else // GUI_BACKEND_RENDERING
+void GUI_Manager::display()
+#endif // GUI_BACKEND_RENDERING
+{
 	{ // init draw process
 		// update size
-		Geometry::Rect_i viewport = rc.getViewport();
-		globalContainer->setSize(viewport.getWidth(), viewport.getHeight());
-		Draw::beginDrawing(rc, Geometry::Vec2i(viewport.getWidth(),viewport.getHeight()));
+			
+		#ifdef GUI_BACKEND_RENDERING
+			Geometry::Rect_i viewport = rc.getViewport();
+			globalContainer->setSize(viewport.getWidth(), viewport.getHeight());
+			Draw::beginDrawing(rc, Geometry::Vec2i(viewport.getWidth(),viewport.getHeight()));
+		#else // GUI_BACKEND_RENDERING
+			Geometry::Rect_i viewport = Draw::queryViewport();
+			globalContainer->setSize(viewport.getWidth(), viewport.getHeight());
+			Draw::beginDrawing(Geometry::Vec2i(viewport.getWidth(),viewport.getHeight()));
+		#endif // GUI_BACKEND_RENDERING
 	}
 
 			

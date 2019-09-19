@@ -70,12 +70,30 @@ if(NOT TARGET Util)
 endif()
 target_link_libraries(GUI LINK_PUBLIC Util)
 
-# Dependency to Rendering
-if(NOT TARGET Rendering)
-	find_package(Rendering 0.3.0 REQUIRED NO_MODULE)
-endif()
-target_link_libraries(GUI LINK_PUBLIC Rendering)
+option(GUI_BACKEND_RENDERING "Use the Rendering library for drawing instead of OpenGL (recommended for use with PADrend)" ON)
 
+if(GUI_BACKEND_RENDERING)
+	# Dependency to Rendering
+	if(NOT TARGET Rendering)
+		find_package(Rendering 0.3.0 REQUIRED NO_MODULE)
+	endif()
+	target_link_libraries(GUI LINK_PUBLIC Rendering)
+else(GUI_BACKEND_RENDERING)		
+	# Dependency to OpenGL
+	find_package(OpenGL REQUIRED)
+	if(IS_DIRECTORY ${OPENGL_INCLUDE_DIR})
+		target_include_directories(GUI PRIVATE ${OPENGL_INCLUDE_DIR})
+	endif()
+	target_link_libraries(GUI LINK_PRIVATE ${OPENGL_LIBRARIES})
+
+	# Dependency to GLEW
+	find_package(GLEW REQUIRED)
+	target_include_directories(GUI PRIVATE ${GLEW_INCLUDE_DIRS})
+	target_link_libraries(GUI LINK_PRIVATE ${GLEW_LIBRARIES})
+endif(GUI_BACKEND_RENDERING)
+
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/config.h.in" "${CMAKE_CURRENT_BINARY_DIR}/config.h")
+target_include_directories(GUI PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/..)
 
 # Set version of library
 set_target_properties(GUI PROPERTIES VERSION ${GUI_VERSION}
@@ -95,6 +113,7 @@ file(GLOB GUI_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/Style/*.h")
 install(FILES ${GUI_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/GUI/Style COMPONENT headers)
 file(GLOB GUI_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
 install(FILES ${GUI_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/GUI COMPONENT headers)
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/config.h" DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/GUI COMPONENT headers)
 
 # Install the library
 install(TARGETS GUI EXPORT LibraryExport
@@ -106,7 +125,7 @@ install(TARGETS GUI EXPORT LibraryExport
 # Set include directories for users of this library
 target_include_directories(GUI
 													 INTERFACE
-													 "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>"
+													 "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..;${CMAKE_CURRENT_BINARY_DIR}/..>"
 													 "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}>")
 
 # Library export
