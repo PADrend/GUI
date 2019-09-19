@@ -18,7 +18,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 include(GNUInstallDirs)
 set(CMAKE_INSTALL_CMAKECONFIGDIR ${CMAKE_INSTALL_LIBDIR}/cmake/GUI)
 
-add_library(GUI
+add_library(GUI SHARED
 	Base/BasicColors.cpp
 	Base/Draw.cpp
 	Base/Fonts/BitmapFont.cpp
@@ -70,21 +70,35 @@ if(NOT TARGET Util)
 endif()
 target_link_libraries(GUI LINK_PUBLIC Util)
 
-# Dependency to OpenGL
-find_package(OpenGL REQUIRED)
-if(IS_DIRECTORY ${OPENGL_INCLUDE_DIR})
-	target_include_directories(GUI PRIVATE ${OPENGL_INCLUDE_DIR})
-endif()
-target_link_libraries(GUI LINK_PRIVATE ${OPENGL_LIBRARIES})
+option(GUI_BACKEND_RENDERING "Use the Rendering library for drawing instead of OpenGL (recommended for use with PADrend)" ON)
 
-# Dependency to GLEW
-find_package(GLEW REQUIRED)
-target_include_directories(GUI PRIVATE ${GLEW_INCLUDE_DIRS})
-target_link_libraries(GUI LINK_PRIVATE ${GLEW_LIBRARIES})
+if(GUI_BACKEND_RENDERING)
+	# Dependency to Rendering
+	if(NOT TARGET Rendering)
+		find_package(Rendering 0.3.0 REQUIRED NO_MODULE)
+	endif()
+	target_link_libraries(GUI LINK_PUBLIC Rendering)
+else(GUI_BACKEND_RENDERING)		
+	# Dependency to OpenGL
+	find_package(OpenGL REQUIRED)
+	if(IS_DIRECTORY ${OPENGL_INCLUDE_DIR})
+		target_include_directories(GUI PRIVATE ${OPENGL_INCLUDE_DIR})
+	endif()
+	target_link_libraries(GUI LINK_PRIVATE ${OPENGL_LIBRARIES})
+
+	# Dependency to GLEW
+	find_package(GLEW REQUIRED)
+	target_include_directories(GUI PRIVATE ${GLEW_INCLUDE_DIRS})
+	target_link_libraries(GUI LINK_PRIVATE ${GLEW_LIBRARIES})
+endif(GUI_BACKEND_RENDERING)
+
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/config.h.in" "${CMAKE_CURRENT_BINARY_DIR}/config.h")
+target_include_directories(GUI PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/..)
 
 # Set version of library
 set_target_properties(GUI PROPERTIES VERSION ${GUI_VERSION}
-                                     SOVERSION ${GUI_VERSION_MAJOR})
+																		 SOVERSION ${GUI_VERSION_MAJOR}
+																		 LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
 
 # Install the header files
 file(GLOB GUI_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/Base/Fonts/*.h")
@@ -99,6 +113,7 @@ file(GLOB GUI_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/Style/*.h")
 install(FILES ${GUI_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/GUI/Style COMPONENT headers)
 file(GLOB GUI_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
 install(FILES ${GUI_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/GUI COMPONENT headers)
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/config.h" DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/GUI COMPONENT headers)
 
 # Install the library
 install(TARGETS GUI EXPORT LibraryExport
@@ -109,9 +124,9 @@ install(TARGETS GUI EXPORT LibraryExport
 
 # Set include directories for users of this library
 target_include_directories(GUI
-                           INTERFACE
-                           "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>"
-                           "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}>")
+													 INTERFACE
+													 "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..;${CMAKE_CURRENT_BINARY_DIR}/..>"
+													 "$<INSTALL_INTERFACE:$<INSTALL_PREFIX>/${CMAKE_INSTALL_INCLUDEDIR}>")
 
 # Library export
 install(EXPORT LibraryExport DESTINATION ${CMAKE_INSTALL_CMAKECONFIGDIR} FILE GUITargets.cmake COMPONENT developmentlibraries)
@@ -119,13 +134,13 @@ install(EXPORT LibraryExport DESTINATION ${CMAKE_INSTALL_CMAKECONFIGDIR} FILE GU
 # Create the configuration files
 include(CMakePackageConfigHelpers)
 configure_package_config_file(GUIConfig.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/GUIConfig.cmake
-                              INSTALL_DESTINATION ${CMAKE_INSTALL_CMAKECONFIGDIR}
-                              PATH_VARS CMAKE_INSTALL_CMAKECONFIGDIR
-                              NO_SET_AND_CHECK_MACRO
-                              NO_CHECK_REQUIRED_COMPONENTS_MACRO)
+															INSTALL_DESTINATION ${CMAKE_INSTALL_CMAKECONFIGDIR}
+															PATH_VARS CMAKE_INSTALL_CMAKECONFIGDIR
+															NO_SET_AND_CHECK_MACRO
+															NO_CHECK_REQUIRED_COMPONENTS_MACRO)
 write_basic_package_version_file(${CMAKE_CURRENT_BINARY_DIR}/GUIConfigVersion.cmake
-                                 VERSION ${GUI_VERSION}
-                                 COMPATIBILITY SameMajorVersion)
+																 VERSION ${GUI_VERSION}
+																 COMPATIBILITY SameMajorVersion)
 
 # Install the configuration files
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/GUIConfig.cmake ${CMAKE_CURRENT_BINARY_DIR}/GUIConfigVersion.cmake

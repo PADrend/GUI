@@ -11,14 +11,21 @@
 #ifndef GUI_IMAGE_DATA_H
 #define GUI_IMAGE_DATA_H
 
+#include <GUI/config.h>
 #include <Util/ReferenceCounter.h>
 #include <Util/References.h>
 #include <cstdint>
+#include <memory>
 
 namespace Util{
 class Bitmap;
 class PixelAccessor;
 }
+#ifdef GUI_BACKEND_RENDERING
+namespace Rendering {
+class Texture;
+} /* Rendering */
+#endif
 namespace GUI {
 
 /***
@@ -41,32 +48,33 @@ class ImageData: public Util::ReferenceCounter<ImageData> {
 	public:
 
 		ImageData(Util::Reference<Util::Bitmap> _bitmap);
+#ifdef GUI_BACKEND_RENDERING
+		ImageData(Util::Reference<Rendering::Texture> _texture);
+#endif
 		~ImageData();
 
 	public:
-		bool uploadGLTexture();
-
 		uint8_t * getLocalData();
 		const uint8_t * getLocalData() const;
 
-		const Util::Reference<Util::Bitmap> & getBitmap() const {
-			return bitmap;
-		}
-
+		const Util::Reference<Util::Bitmap> getBitmap() const;
+#ifdef GUI_BACKEND_RENDERING
+		const Util::Reference<Rendering::Texture> & getTexture() const;
+#endif
 		void updateData(const Util::Bitmap & bitmap);
 
 		bool enable();
 		void disable();
 		void dataChanged();
 
-		void removeGLData();
-
 		Util::Reference<Util::PixelAccessor> createPixelAccessor();
-
+		
+		bool uploadGLTexture();
+		void removeGLData();
+		uint32_t getTextureId();
 	private:
-		Util::Reference<Util::Bitmap> bitmap;
-		uint32_t textureId;
-		bool dataHasChanged;
+		struct InternalData;
+		std::unique_ptr<InternalData> data;
 };
 }
 #endif // GUI_IMAGE_DATA_H

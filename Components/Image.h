@@ -13,6 +13,7 @@
 
 #include "Component.h"
 #include "../Base/ImageData.h"
+#include <Util/Graphics/Bitmap.h>
 
 namespace GUI {
 
@@ -48,7 +49,7 @@ class Image: public Component {
 			invalidateRegion();
 		}
 		ImageData * getImageData()const				{	return data.get();	}
-		const Util::Reference<Util::Bitmap> & getBitmap() const {
+		const Util::Reference<Util::Bitmap> getBitmap() const {
 			return data->getBitmap();
 		}
 		void updateData(const Util::Bitmap & bitmap) {
