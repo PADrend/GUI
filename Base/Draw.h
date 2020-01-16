@@ -16,9 +16,6 @@
 #include <Geometry/Rect.h>
 #include <Util/Graphics/Color.h>
 
-namespace Util {
-class PixelFormat;
-}
 #ifdef GUI_BACKEND_RENDERING
 namespace Rendering {
 class RenderingContext;

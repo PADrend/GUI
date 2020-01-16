@@ -16,8 +16,6 @@
 #include "../Style/Colors.h" // \todo remove this!!!
 #include "ImageData.h"
 #include <Util/Macros.h>
-#include <Util/Graphics/PixelFormat.h>
-#include <Util/Graphics/PixelAccessor.h>
 #include <Util/References.h>
 
 #ifdef GUI_BACKEND_RENDERING
