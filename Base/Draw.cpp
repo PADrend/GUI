@@ -29,6 +29,7 @@
 #include <Rendering/Mesh/Mesh.h>
 #include <Rendering/Mesh/MeshDataStrategy.h>
 #include <Rendering/Mesh/VertexAttributeAccessors.h>
+#include <Rendering/BufferObject.h>
 #else // GUI_BACKEND_RENDERING
 #include <GL/glew.h>
 #define GET_GL_ERROR() checkGLError(__LINE__)
@@ -49,6 +50,40 @@ struct Vertex {
 
 static const uint32_t maxVertexCount = 32768; // 1 MB
 
+
+#ifdef GUI_BACKEND_RENDERING
+static const char * const vs = 
+R"***(#version 450
+layout(location=0) in vec2 sg_Position;
+layout(location=1) in vec2 sg_TexCoord0;
+layout(location=2) in vec4 sg_Color;
+layout(push_constant) uniform PushConstants {
+	vec2 u_posOffset;
+	vec2 u_screenScale;
+};
+out vec2 var_uv;
+out vec4 var_color;
+void main() {
+	gl_Position = vec4(vec2(-1.0, 1.0) + u_screenScale * (sg_Position + u_posOffset), 0.0, 1.0);
+	var_uv = sg_TexCoord0;
+	var_color = sg_Color;
+	gl_Position.y = -gl_Position.y;
+}
+)***";
+
+static const char * const fs = 
+R"***(#version 450
+in vec2 var_uv;
+in vec4 var_color;
+layout(set=0, binding=0) uniform sampler2D sg_texture0;
+out vec4 fragColor;
+void main() {
+	vec4 color = var_color;
+	color *= texture(sg_texture0, var_uv);
+	fragColor = color;
+}
+)***";
+#else // GUI_BACKEND_RENDERING
 static const char * const vs = 
 R"***(#version 130
 in vec2 sg_Position;
@@ -80,6 +115,8 @@ void main() {
 	fragColor = color;
 }
 )***";
+#endif // GUI_BACKEND_RENDERING
+
 
 //----------------------------------------------------------------------------------
 // internal
@@ -553,7 +590,7 @@ void Draw::moveCursor(const Geometry::Vec2i & pos) {
 
 //! (static)
 void Draw::setScissor(const Geometry::Rect_i & rect) {
-	ctxt.scissor = {rect.getX(), ctxt.screenSize.getHeight()-rect.getY()-rect.getHeight(), rect.getWidth(), rect.getHeight()};
+	ctxt.scissor = {rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight()};
 }
 
 //! (static)
@@ -718,12 +755,13 @@ void Draw::drawLineRect(const Geometry::Rect & r,const Util::Color4ub & lineColo
 	
 	Geometry::Rect_i ri(r);
 	const std::vector<Geometry::Vec2> vertices = {
-		{ri.getMinX()+0.5f,ri.getMinY()+0.5f}, 
-		{ri.getMinX()+0.5f,ri.getMaxY()+0.5f}, 
+		{ri.getMinX()+0.5f,ri.getMinY()+0.5f},
+		{ri.getMinX()+0.5f,ri.getMaxY()+0.5f},
 		{ri.getMaxX()+0.5f,ri.getMaxY()+0.5f},
-		{ri.getMaxX()+0.5f,ri.getMinY()+0.5f}
+		{ri.getMaxX()+0.5f,ri.getMinY()+0.5f},
+		{ri.getMinX()+0.5f,ri.getMinY()+0.5f}
 	};
-	drawVertices(DRAW_LINE_LOOP, vertices, lineColor, blend);
+	drawVertices(DRAW_LINE_STRIP, vertices, lineColor, blend);
 }
 
 //! (static)
@@ -753,9 +791,10 @@ void Draw::drawTab(const Geometry::Rect & r,const Util::Color4ub & lineColor, co
 			{ri.getMaxX()-2.5f, ri.getMinY()+0.5f},
 			{ri.getMinX()+3.5f, ri.getMinY()+0.5f},
 			{ri.getMinX()+0.5f, ri.getMinY()+3.5f},
-			{ri.getMinX()+0.5f, ri.getMaxY()+0.5f}
+			{ri.getMinX()+0.5f, ri.getMaxY()+0.5f},
+			{ri.getMaxX()+0.5f, ri.getMaxY()+0.5f}
 		};
-		drawVertices(DRAW_LINE_LOOP, vertices, lineColor, true);
+		drawVertices(DRAW_LINE_STRIP, vertices, lineColor, true);
 	}
 }
 
