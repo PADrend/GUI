@@ -28,8 +28,10 @@
 #include <Rendering/Texture/TextureUtils.h>
 #include <Rendering/Mesh/Mesh.h>
 #include <Rendering/Mesh/MeshDataStrategy.h>
-#include <Rendering/Mesh/VertexAttributeAccessors.h>
+#include <Rendering/Mesh/VertexAccessor.h>
 #include <Rendering/BufferObject.h>
+#include <Rendering/Core/Device.h>
+#include <Rendering/Core/Fence.h>
 #else // GUI_BACKEND_RENDERING
 #include <GL/glew.h>
 #define GET_GL_ERROR() checkGLError(__LINE__)
@@ -49,6 +51,7 @@ struct Vertex {
 };
 
 static const uint32_t maxVertexCount = 32768; // 1 MB
+static const uint32_t maxCommands = 256;
 
 
 #ifdef GUI_BACKEND_RENDERING
@@ -57,10 +60,12 @@ R"***(#version 450
 layout(location=0) in vec2 sg_Position;
 layout(location=1) in vec2 sg_TexCoord0;
 layout(location=2) in vec4 sg_Color;
-layout(push_constant) uniform PushConstants {
+
+layout(push_constant) uniform FrameData {
 	vec2 u_posOffset;
 	vec2 u_screenScale;
 };
+
 out vec2 var_uv;
 out vec4 var_color;
 void main() {
@@ -125,12 +130,12 @@ void main() {
 	using namespace Rendering;
 	static const Uniform::UniformName UNIFORM_POS_OFFSET("u_posOffset");
 	static const Uniform::UniformName UNIFORM_SCREEN_SCALE("u_screenScale");
-	typedef Mesh::draw_mode_t draw_mode_t;
-	#define DRAW_POINTS Mesh::DRAW_POINTS
-	#define DRAW_LINE_STRIP Mesh::DRAW_LINE_STRIP
-	#define DRAW_LINE_LOOP Mesh::DRAW_LINE_LOOP
-	#define DRAW_LINES Mesh::DRAW_LINES
-	#define DRAW_TRIANGLES Mesh::DRAW_TRIANGLES
+	typedef PrimitiveTopology draw_mode_t;
+	#define DRAW_POINTS PrimitiveTopology::PointList
+	#define DRAW_LINE_STRIP PrimitiveTopology::LineStrip
+	#define DRAW_LINE_LOOP PrimitiveTopology::LineStrip
+	#define DRAW_LINES PrimitiveTopology::LineList
+	#define DRAW_TRIANGLES PrimitiveTopology::TriangleList
 #else // GUI_BACKEND_RENDERING
 	typedef uint32_t draw_mode_t;
 	#define DRAW_POINTS GL_POINTS
@@ -155,6 +160,14 @@ struct DrawCommand {
 //-------------------------------------------
 #ifdef GUI_BACKEND_RENDERING
 
+struct FrameContext {
+	MeshVertexData vertexData;
+	MeshVertexData instanceData;
+	Util::Reference<VertexAccessor> acc;
+	Util::Reference<VertexAccessor> instAcc;
+	Fence::Ref fence;
+};
+
 struct DrawContext {
 	uint32_t meshOffset = 0;
 	Geometry::Vec2i position,screenSize;
@@ -162,11 +175,9 @@ struct DrawContext {
 	
 	RenderingContext* rc;
 	Util::Reference<Shader> shader;
-	Util::Reference<Mesh> mesh;
-	Util::Reference<TexCoordAttributeAccessor> posAcc;
-	Util::Reference<ColorAttributeAccessor> colAcc;
-	Util::Reference<TexCoordAttributeAccessor> uvAcc;
 	Util::Reference<ImageData> activeTexture;
+	std::array<FrameContext, 3> frames;
+	uint32_t currentFrame = 0;
 	
 	std::deque<DrawCommand> commands;
 };
@@ -174,9 +185,9 @@ struct DrawContext {
 static DrawContext ctxt;
 
 static void updateVertex(uint32_t index, const Vertex& v) {
-	ctxt.posAcc->setCoordinate(index, v.pos);
-	ctxt.uvAcc->setCoordinate(index, {v.uv.x(), -v.uv.y()});
-	ctxt.colAcc->setColor(index, v.col);
+	ctxt.frames[ctxt.currentFrame].acc->setTexCoord(index, v.pos, 0);
+	ctxt.frames[ctxt.currentFrame].acc->setTexCoord(index, {v.uv.x(), -v.uv.y()}, 1);
+	ctxt.frames[ctxt.currentFrame].acc->setColor(index, v.col, 2);
 }
 
 //-------------------------------------------
@@ -256,10 +267,7 @@ static GLuint createShaderObject(const GLuint type,const char * code){
 			auto infoLog = new char[infoLogLength];
 			glGetShaderInfoLog(shader, infoLogLength, &charsWritten, infoLog);
 			std::string s(infoLog, charsWritten);
-//			// Skip "Everything ok" messages from AMD-drivers.
-//			if(s.find("successfully")==string::npos && s.find("shader(s) linked.")==string::npos && s.find("No errors.")==string::npos) {
 				WARN(std::string("Shader compile error:\n") + s + "\nShader code:\n" + code);
-//			}
 			delete [] infoLog;
 		}			
 		throw std::runtime_error("GUI: Invalid shader.");
@@ -276,7 +284,7 @@ static void updateVertex(uint32_t index, const Vertex& v) {
 #endif // GUI_BACKEND_RENDERING
 
 static void drawVertices(const draw_mode_t mode, const std::vector<Geometry::Vec2>& vertices, const Util::Color4f& color, bool blending=false) {
-	if(ctxt.meshOffset+vertices.size() > maxVertexCount)
+	if(ctxt.commands.size() >= maxCommands || ctxt.meshOffset+vertices.size() > maxVertexCount)
 		Draw::flush();
 	
 	for(uint32_t i=0; i<vertices.size(); ++i)
@@ -287,7 +295,7 @@ static void drawVertices(const draw_mode_t mode, const std::vector<Geometry::Vec
 }
 
 static void drawVertices(const draw_mode_t mode, const std::vector<Geometry::Vec2>& vertices, const std::vector<Util::Color4f>& colors, bool blending=false) {
-	if(ctxt.meshOffset+vertices.size() > maxVertexCount)
+	if(ctxt.commands.size() >= maxCommands || ctxt.meshOffset+vertices.size() > maxVertexCount)
 		Draw::flush();
 		
 	for(uint32_t i=0; i<vertices.size(); ++i)
@@ -299,7 +307,7 @@ static void drawVertices(const draw_mode_t mode, const std::vector<Geometry::Vec
 
 static void drawTexturedVertices(const draw_mode_t mode, const std::vector<Geometry::Vec2>& vertices, const std::vector<Geometry::Vec2>& uvs, const Util::Color4f& color, bool blending=false) {
 	assert(vertices.size() == uvs.size());
-	if(ctxt.meshOffset+vertices.size() > maxVertexCount)
+	if(ctxt.commands.size() >= maxCommands || ctxt.meshOffset+vertices.size() > maxVertexCount)
 		Draw::flush();
 		
 	for(uint32_t i=0; i<vertices.size(); ++i)
@@ -315,20 +323,22 @@ static bool init() {
 	
 	#ifdef GUI_BACKEND_RENDERING
 	
-		ctxt.shader = Shader::createShader(vs, fs);
+		ctxt.shader = Shader::createShader(ctxt.rc->getDevice(), vs, fs);
+		ctxt.shader->addDefine("MAX_COMMANDS", std::to_string(maxCommands));
 		if(!ctxt.shader->init())
 			throw std::runtime_error("GUI: Invalid shader program.");
 			
 		VertexDescription vd;
 		vd.appendPosition2D();
 		vd.appendTexCoord();
-		vd.appendColorRGBAFloat();
-		ctxt.mesh = new Mesh(vd, maxVertexCount, 0);
-		ctxt.mesh->setUseIndexData(false);
-		ctxt.mesh->setDataStrategy(SimpleMeshDataStrategy::getPureLocalStrategy());
-		ctxt.posAcc = TexCoordAttributeAccessor::create(ctxt.mesh->openVertexData(), VertexAttributeIds::POSITION);
-		ctxt.colAcc = ColorAttributeAccessor::create(ctxt.mesh->openVertexData(), VertexAttributeIds::COLOR);
-		ctxt.uvAcc = TexCoordAttributeAccessor::create(ctxt.mesh->openVertexData(), VertexAttributeIds::TEXCOORD0);	
+		vd.appendColorRGBAByte();
+		for(uint32_t i=0; i<3; ++i) {
+			ctxt.frames[i].vertexData = {};
+			ctxt.frames[i].vertexData.allocate(maxVertexCount, vd);
+			ctxt.frames[i].vertexData.upload(MemoryUsage::CpuOnly);
+			ctxt.frames[i].acc = VertexAccessor::create(ctxt.frames[i].vertexData);
+			ctxt.frames[i].fence = Fence::create();
+		}
 		
 	#else // GUI_BACKEND_RENDERING
 	
@@ -359,10 +369,7 @@ static bool init() {
 				auto infoLog = new char[infoLogLength];
 				glGetProgramInfoLog(shaderProg, infoLogLength, &charsWritten, infoLog);
 				std::string s(infoLog, charsWritten);
-	//			// Skip "Everything ok" messages from AMD-drivers.
-	//			if(s.find("successfully")==string::npos && s.find("shader(s) linked.")==string::npos && s.find("No errors.")==string::npos) {
 					WARN(std::string("Shader could not be linked:\n") + s );
-	//			}
 				delete [] infoLog;
 			}			
 			throw std::runtime_error("GUI: Invalid shader program.");
@@ -534,7 +541,9 @@ void Draw::endDrawing() {
 void Draw::flush() {	
 	#ifdef GUI_BACKEND_RENDERING
 		BlendingParameters blending(BlendingParameters::SRC_ALPHA, BlendingParameters::ONE_MINUS_SRC_ALPHA);
-		ctxt.mesh->openVertexData().markAsChanged();
+		ctxt.rc->setBlending(blending);
+		ctxt.rc->bindVertexBuffer(ctxt.frames[ctxt.currentFrame].vertexData.getBuffer(), ctxt.frames[ctxt.currentFrame].vertexData.getVertexDescription());
+		
 		for(const auto& cmd : ctxt.commands) {
 			ctxt.shader->setUniform(*ctxt.rc, {UNIFORM_POS_OFFSET, cmd.offset});
 			ctxt.rc->setScissor(ScissorParameters(cmd.scissor));
@@ -542,16 +551,19 @@ void Draw::flush() {
 				blending.enable();
 			else
 				blending.disable();
-			ctxt.rc->setBlending(blending);
+			//ctxt.rc->setBlending(blending);
 			if(cmd.texture.isNull())
 				ctxt.rc->setTexture(0, nullptr);
-			else				
+			else
 				ctxt.rc->setTexture(0, cmd.texture->getTexture().get());
-			ctxt.mesh->setDrawMode(cmd.mode);
-			ctxt.rc->displayMesh(ctxt.mesh.get(), cmd.start, cmd.count);
+			ctxt.rc->setPrimitiveTopology(cmd.mode);
+			ctxt.rc->draw(cmd.count, cmd.start);
 		}
 		ctxt.commands.clear();
-		ctxt.rc->finish();
+		ctxt.frames[ctxt.currentFrame].fence->wait();
+		ctxt.rc->flush();
+		ctxt.frames[ctxt.currentFrame].fence->signal(ctxt.rc->getDevice()->getQueue(QueueFamily::Graphics));
+		ctxt.currentFrame = (ctxt.currentFrame+1) % ctxt.frames.size();
 	#else // GUI_BACKEND_RENDERING		
 		if(!isGL44Supported())
 			glUnmapBuffer(GL_ARRAY_BUFFER);
