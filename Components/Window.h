@@ -27,7 +27,7 @@ class Button;
 class Window : public Container {
 		PROVIDES_TYPE_NAME(Window)
 	public:
-		static const Util::StringIdentifier ACTION_onWindowClosed;
+		GUIAPI static const Util::StringIdentifier ACTION_onWindowClosed;
 
 		// flags
 		static const flag_t NO_CLOSE_BUTTON=1<<24;
@@ -37,30 +37,30 @@ class Window : public Container {
 		static const flag_t ONE_TIME_WINDOW=1<<28; //! Destroy the content when closed.
 		static const flag_t SNAP_TO_BORDER=1<<29; 
 
-		Window(GUI_Manager & gui,const Geometry::Rect & r,const std::string & title="",flag_t flags=0);
-		virtual ~Window();
+		GUIAPI Window(GUI_Manager & gui,const Geometry::Rect & r,const std::string & title="",flag_t flags=0);
+		GUIAPI virtual ~Window();
 
 		Container * getHeader()const 	{	return titlePanel.get();	}
 		Container * clientArea()const 	{	return clientAreaPanel.get();	}
 		bool isMinimized()const 		{	return minimized;	}
-		void minimize();
-		void restore();
-		void restoreRect();
+		GUIAPI void minimize();
+		GUIAPI void restore();
+		GUIAPI void restoreRect();
 
-		void setTitle(const std::string & title);
-		std::string getTitle()const;
+		GUIAPI void setTitle(const std::string & title);
+		GUIAPI std::string getTitle()const;
 
-		void setLogo(Component * newLogo);
+		GUIAPI void setLogo(Component * newLogo);
 		Component * getLogo()const 		{	return logo.get();	}
 
 		float getOpacity()const			{	return opacity;	}
 		void setOpacity(float f)		{	opacity=f;	}
 
 		//! start the closing animation, when the animation is finished, onClosed() is called.
-		void close();
+		GUIAPI void close();
 
 		//! (internal) Called when the closing animation has finished.
-		void _onClosed();
+		GUIAPI void _onClosed();
 
 		// ---|> Container
 		virtual void addContent(const Ref & child) override 						{	clientAreaPanel->addContent(child);	}
@@ -77,17 +77,17 @@ class Window : public Container {
 
 		// ---|> Component
 		virtual Geometry::Rect getInnerRect()const override 						{	return clientAreaPanel->getLocalRect();	}
-		virtual void invalidateRegion() override;
-		virtual void doLayout() override;
-		virtual bool onSelect() override;
-		virtual bool onUnselect() override;
+		GUIAPI virtual void invalidateRegion() override;
+		GUIAPI virtual void doLayout() override;
+		GUIAPI virtual bool onSelect() override;
+		GUIAPI virtual bool onUnselect() override;
 
 	private:
 		// ---|> Component
-		virtual void doDisplay(const Geometry::Rect & region) override;
+		GUIAPI virtual void doDisplay(const Geometry::Rect & region) override;
 
-		bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
-		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
+		GUIAPI bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
+		GUIAPI bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
 
 		Util::WeakPointer<Container> clientAreaPanel;
 		Util::WeakPointer<Container> titlePanel;

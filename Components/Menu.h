@@ -26,20 +26,20 @@ class Menu: public Container {
 	public:
 		static const flag_t ONE_TIME_MENU=1<<24;
 
-		Menu(GUI_Manager & gui,flag_t flags=0);
-		virtual ~Menu();
+		GUIAPI Menu(GUI_Manager & gui,flag_t flags=0);
+		GUIAPI virtual ~Menu();
 
 		// ---|> Component
-		virtual void doLayout() override;
+		GUIAPI virtual void doLayout() override;
 
-		virtual bool onSelect() override;
-		virtual bool onUnselect() override;
+		GUIAPI virtual bool onSelect() override;
+		GUIAPI virtual bool onUnselect() override;
 	private:
 		// ---|> Component
-		virtual void doDisplay(const Geometry::Rect & region) override;
+		GUIAPI virtual void doDisplay(const Geometry::Rect & region) override;
 
-		bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
-		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
+		GUIAPI bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
+		GUIAPI bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
 
 		KeyListener keyListener;
 		MouseButtonListener mouseButtonListener;
@@ -47,8 +47,8 @@ class Menu: public Container {
 
 	public:
 		// ---o
-		virtual void open(const Geometry::Vec2 &pos);
-		virtual void close();
+		GUIAPI virtual void open(const Geometry::Vec2 &pos);
+		GUIAPI virtual void close();
 };
 }
 #endif // GUI_MENU_H

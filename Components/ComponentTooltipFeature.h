@@ -14,10 +14,10 @@
 namespace GUI {
 class Component;
 
-bool hasComponentTooltip(const Component& c);
-std::string getComponentTooltip(const Component& c);
-void setComponentTooltip(Component& c, std::string s);
-void removeComponentTooltip(Component& c);
+GUIAPI bool hasComponentTooltip(const Component& c);
+GUIAPI std::string getComponentTooltip(const Component& c);
+GUIAPI void setComponentTooltip(Component& c, std::string s);
+GUIAPI void removeComponentTooltip(Component& c);
 
 }
 #endif // GUI_COMPONENT_TOOLTIP_H

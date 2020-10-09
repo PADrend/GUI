@@ -23,26 +23,26 @@ namespace GUI {
 class Checkbox : public Container {
 		PROVIDES_TYPE_NAME(Checkbox)
 	public:
-		Checkbox(GUI_Manager & gui,bool checked=false,const std::string & text="",flag_t flags=0);
-		virtual ~Checkbox();
+		GUIAPI Checkbox(GUI_Manager & gui,bool checked=false,const std::string & text="",flag_t flags=0);
+		GUIAPI virtual ~Checkbox();
 
-		void setChecked(bool b);
-		bool isChecked()const;
+		GUIAPI void setChecked(bool b);
+		GUIAPI bool isChecked()const;
 
-		void setValueRef(bool * boolRef);
-		void setValueRef(unsigned int * intValueRef,unsigned int intBitMask);
+		GUIAPI void setValueRef(bool * boolRef);
+		GUIAPI void setValueRef(unsigned int * intValueRef,unsigned int intBitMask);
 
-		void setText(const std::string & text);
-		std::string getText()const;
+		GUIAPI void setText(const std::string & text);
+		GUIAPI std::string getText()const;
 
 		void setFont(AbstractFont * newFont) 				{	textLabel->setFont(newFont);	}
 		void setTextStyle(unsigned int style) 				{	textLabel->setTextStyle(style);	}
 
 		// ---o
-		virtual void action();
+		GUIAPI virtual void action();
 
 		// ---|> Component
-		virtual void doLayout() override;
+		GUIAPI virtual void doLayout() override;
 
 	private:
 		Util::WeakPointer<Label> textLabel;
@@ -56,10 +56,10 @@ class Checkbox : public Container {
 		MouseClickListener mouseClickListener;
 
 		// ---|> Component
-		virtual void doDisplay(const Geometry::Rect & region) override;
+		GUIAPI virtual void doDisplay(const Geometry::Rect & region) override;
 
-		bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
-		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
+		GUIAPI bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
+		GUIAPI bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
 };
 }
 #endif // GUI_Checkbox_H

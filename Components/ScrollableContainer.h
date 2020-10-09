@@ -26,11 +26,11 @@ class ScrollableContainer: public Container {
 		PROVIDES_TYPE_NAME(ScrollableContainer)
 	public:
 
-		ScrollableContainer(GUI_Manager & gui,flag_t flags=0);
-		virtual ~ScrollableContainer();
+		GUIAPI ScrollableContainer(GUI_Manager & gui,flag_t flags=0);
+		GUIAPI virtual ~ScrollableContainer();
 
-		void scrollTo(const Geometry::Vec2 & pos);
-		void scrollTo(const Geometry::Vec2 & pos,float duration);
+		GUIAPI void scrollTo(const Geometry::Vec2 & pos);
+		GUIAPI void scrollTo(const Geometry::Vec2 & pos,float duration);
 		const Geometry::Vec2 & getScrollPos()const						{	return scrollPos;	}
 
 		Container * getContentContainer()const							{	return contentContainer.get();	}
@@ -45,8 +45,8 @@ class ScrollableContainer: public Container {
 		virtual size_t getContentsCount()const override							{   return contentContainer->getContentsCount();	}
 
 		// ---|> Component
-		virtual void doDisplay(const Geometry::Rect & region) override;
-		virtual void doLayout() override;
+		GUIAPI virtual void doDisplay(const Geometry::Rect & region) override;
+		GUIAPI virtual void doLayout() override;
 		
 	private:
 		Util::WeakPointer<Container> contentContainer;
@@ -57,8 +57,8 @@ class ScrollableContainer: public Container {
 		MouseButtonListener mouseButtonListener;
 		OptionalMouseMotionListener optionalMouseMotionListener;
 
-		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
-		bool onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent);
+		GUIAPI bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
+		GUIAPI bool onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent);
 };
 }
 #endif // GUI_ScrollableContainer_H

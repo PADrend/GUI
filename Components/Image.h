@@ -37,13 +37,13 @@ class Image: public Component {
 		PROVIDES_TYPE_NAME(Image)
 	public:
 
-		Image(GUI_Manager & gui,const Geometry::Rect & relRect,flag_t flags=0);
-		Image(GUI_Manager & gui, const Util::Bitmap & bitmap, flag_t flags=0);
+		GUIAPI Image(GUI_Manager & gui,const Geometry::Rect & relRect,flag_t flags=0);
+		GUIAPI Image(GUI_Manager & gui, const Util::Bitmap & bitmap, flag_t flags=0);
 
-		virtual ~Image();
+		GUIAPI virtual ~Image();
 
 	public:
-		Util::Reference<Util::PixelAccessor> createPixelAccessor();
+		GUIAPI Util::Reference<Util::PixelAccessor> createPixelAccessor();
 		void dataChanged(){	
 			data->dataChanged();	
 			invalidateRegion();
@@ -59,7 +59,7 @@ class Image: public Component {
 
 	private:
 		// ---|> Component
-		virtual void doDisplay(const Geometry::Rect & region) override;
+		GUIAPI virtual void doDisplay(const Geometry::Rect & region) override;
 
 		Util::Reference<ImageData> data;
 

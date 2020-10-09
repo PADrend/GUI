@@ -30,11 +30,11 @@ class Style{
 	// ----------------------------------------------------------------
 
 		// shapes
-		static AbstractShape * createButtonShape(float _roundnessTL=2,float _roundnessTR=2,float _roundnessBL=2,float _roundnessBR=2);
+		GUIAPI static AbstractShape * createButtonShape(float _roundnessTL=2,float _roundnessTR=2,float _roundnessBL=2,float _roundnessBR=2);
 
-		static AbstractShape * getButtonShape();
+		GUIAPI static AbstractShape * getButtonShape();
 
-		static void initStyleManager(StyleManager & m);
+		GUIAPI static void initStyleManager(StyleManager & m);
 };
 
 }

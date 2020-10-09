@@ -25,22 +25,22 @@ class Label: public Component	{
 		static const flag_t RECALCULATE_SIZE=1<<24;
 	
 	public:
-		Label(GUI_Manager & gui,const std::string &text="",flag_t flags=0);
-		Label(GUI_Manager & gui,const Geometry::Rect & r,const std::string &text="",flag_t flags=0);
-		virtual ~Label();
+		GUIAPI Label(GUI_Manager & gui,const std::string &text="",flag_t flags=0);
+		GUIAPI Label(GUI_Manager & gui,const Geometry::Rect & r,const std::string &text="",flag_t flags=0);
+		GUIAPI virtual ~Label();
 
-		void setText(const std::string & newText);
+		GUIAPI void setText(const std::string & newText);
 		const std::string & getText()const				{	return text;	}
 
 		void setTextStyle(unsigned int style)           {   textStyle=style;    }
 		void setTextStyle(unsigned int style,bool b)    {   textStyle=b ? (textStyle|style) : (textStyle-(textStyle&style));    }
-		void setColor(const Util::Color4ub & newColor);//  			{   color=newColor; } // deprecated!!!!!!!!!!!!!!!!
-		void setFont(AbstractFont * newFont);
+		GUIAPI void setColor(const Util::Color4ub & newColor);//  			{   color=newColor; } // deprecated!!!!!!!!!!!!!!!!
+		GUIAPI void setFont(AbstractFont * newFont);
 
 	private:
 		// ---|> Component
-		virtual void doDisplay(const Geometry::Rect & region) override;
-		virtual void doLayout() override;
+		GUIAPI virtual void doDisplay(const Geometry::Rect & region) override;
+		GUIAPI virtual void doLayout() override;
 
 		std::string text;
 		unsigned int textStyle;

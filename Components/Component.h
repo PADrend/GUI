@@ -47,18 +47,18 @@ class Component: public Util::AttributeProvider, public Util::ReferenceCounter<C
 		typedef uint32_t flag_t;
 		typedef Util::Reference<Component> Ref;
 
-		Component(GUI_Manager & gui,flag_t flags=0);
-		Component(GUI_Manager & gui,const Geometry::Rect & relRect,flag_t flags=0);
-		virtual ~Component();
+		GUIAPI Component(GUI_Manager & gui,flag_t flags=0);
+		GUIAPI Component(GUI_Manager & gui,const Geometry::Rect & relRect,flag_t flags=0);
+		GUIAPI virtual ~Component();
 
 		GUI_Manager & getGUI() const {
 			return gui;
 		}
 
-		static void destroy(Component * c);
+		GUIAPI static void destroy(Component * c);
 
 		// ---o
-		virtual std::string toString()const;
+		GUIAPI virtual std::string toString()const;
 	// @}
 
 	// -----------------------------------
@@ -75,9 +75,9 @@ class Component: public Util::AttributeProvider, public Util::ReferenceCounter<C
 
 	public:
 		void _setParent(const Util::WeakPointer<Container> & c) 	{	parent = c;	invalidateLayout(); };
-		void _updateNeighbors(const Ref & newPrev,const Ref & newNext);
+		GUIAPI void _updateNeighbors(const Ref & newPrev,const Ref & newNext);
 
-		void bringToFront();
+		GUIAPI void bringToFront();
 
 		Container * getParent()const		{	return parent.get();	}
 		Component * getNext()const			{	return next.get();	}
@@ -115,26 +115,26 @@ class Component: public Util::AttributeProvider, public Util::ReferenceCounter<C
 		static const flag_t SUBTREE_LAYOUT_VALID=1<<22;
 		static const flag_t SELECTED=1<<23;
 
-		void activate();
-		void deactivate();
-		void disable();
-		void enable();
+		GUIAPI void activate();
+		GUIAPI void deactivate();
+		GUIAPI void disable();
+		GUIAPI void enable();
 		bool getFlag(flag_t f)const			{	return (flags&f)>0;	}
-		bool isActive()const;
+		GUIAPI bool isActive()const;
 		bool isDestroyed()const				{	return getFlag(DESTROYED);	}
 		bool isEnabled()const				{	return !getFlag(DISABLED);	}
 		bool isLocked()const				{	return getFlag(LOCKED);	}
 		bool isSelected()const				{	return getFlag(SELECTED);	}
 		bool isSelectable()const			{	return getFlag(SELECTABLE) && isEnabled();	}
-		bool isVisible()const;
+		GUIAPI bool isVisible()const;
 		void setEnabled(bool e)				{	e ? enable() : disable();	}
 		void setFlag(flag_t f,bool value)	{	flags = value ? (flags|f) : flags^(flags&f); }
 		void setLocked(bool b)				{	setFlag(LOCKED,b);	}
 		
 		// selection
 		void unselect()						{	if(isSelected() && onUnselect())setFlag(SELECTED,false);	}
-		void select();
-		void unselectSubtree();
+		GUIAPI void select();
+		GUIAPI void unselectSubtree();
 	 // @}
 
 	// -----------------------------------
@@ -163,14 +163,14 @@ class Component: public Util::AttributeProvider, public Util::ReferenceCounter<C
 
 		bool hasLayouter()const											{	return !layouters.empty();	}
 
-		void invalidateLayout();
-		void invalidateSubtreeLayout();
+		GUIAPI void invalidateLayout();
+		GUIAPI void invalidateSubtreeLayout();
 
 		/*! The size of the component is set correctly (if necessary) and all children are layouted recursivly. */
-		uint32_t layout();
-		uint32_t layoutChildren();
+		GUIAPI uint32_t layout();
+		GUIAPI uint32_t layoutChildren();
 		
-		void removeLayouter(Util::WeakPointer<AbstractLayouter> layouter);
+		GUIAPI void removeLayouter(Util::WeakPointer<AbstractLayouter> layouter);
 		
 		template<class Layouter_t> 
 		bool removeLayouter(){
@@ -191,11 +191,11 @@ class Component: public Util::AttributeProvider, public Util::ReferenceCounter<C
 	public:
 		typedef std::vector<Util::Reference<DisplayProperty> > properties_t;
 		void addProperty(DisplayProperty * p)									{	recursiveDisplayProperties.push_back(p);	}
-		void removeProperty(DisplayProperty * p);
+		GUIAPI void removeProperty(DisplayProperty * p);
 		void clearProperties()													{	recursiveDisplayProperties.clear(); }
 		const properties_t & getProperties()const								{	return recursiveDisplayProperties;	}
 		void addLocalProperty(DisplayProperty * p)								{	localDisplayProperties.push_back(p);	}
-		void removeLocalProperty(DisplayProperty * p);
+		GUIAPI void removeLocalProperty(DisplayProperty * p);
 		void clearLocalProperties()												{	localDisplayProperties.clear(); }
 		const properties_t & getLocalProperties()const							{	return localDisplayProperties;	}
 
@@ -209,16 +209,16 @@ class Component: public Util::AttributeProvider, public Util::ReferenceCounter<C
 	/*!	@name Display	*/
 	// @{
 	public:
-		void display(const Geometry::Rect & region);
+		GUIAPI void display(const Geometry::Rect & region);
 
 	private:
 		// ---o
-		virtual void doDisplay(const Geometry::Rect & region);
+		GUIAPI virtual void doDisplay(const Geometry::Rect & region);
 		
 	protected:
-		void enableLocalDisplayProperties();
-		void disableLocalDisplayProperties();
-		void displayDefaultShapes();
+		GUIAPI void enableLocalDisplayProperties();
+		GUIAPI void disableLocalDisplayProperties();
+		GUIAPI void displayDefaultShapes();
 		
 	 // @}
 
@@ -234,9 +234,9 @@ class Component: public Util::AttributeProvider, public Util::ReferenceCounter<C
 	public:
 		bool coversAbsPosition(const Geometry::Vec2 & p)	{	return coversLocalPosition(p-getAbsPosition());	}
 		// ---o
-		virtual bool coversLocalPosition(const Geometry::Vec2 & localPos);
+		GUIAPI virtual bool coversLocalPosition(const Geometry::Vec2 & localPos);
 
-		Geometry::Vec2 getAbsPosition();
+		GUIAPI Geometry::Vec2 getAbsPosition();
 		Geometry::Rect getAbsRect()							{	return Geometry::Rect(getAbsPosition(),relRect.getSize());	}
 
 		/*! ---o 
@@ -251,14 +251,14 @@ class Component: public Util::AttributeProvider, public Util::ReferenceCounter<C
 		Geometry::Vec2 getPosition()const					{	return relRect.getPosition();	}
 		float getWidth()const								{	return relRect.getWidth();	}
 
-		void invalidateAbsPosition();
+		GUIAPI void invalidateAbsPosition();
 		// ---o
-		virtual void invalidateRegion();
+		GUIAPI virtual void invalidateRegion();
 
 		void moveRel(const Geometry::Vec2 & v)				{	setPosition(getPosition()+v);	}
 
 		void setPosition(const Geometry::Vec2 & newPos)		{	setRect( newPos,relRect.getSize() ); }
-		void setRect(const Geometry::Rect & newRect);
+		GUIAPI void setRect(const Geometry::Rect & newRect);
 		void setRect(const Geometry::Vec2 & pos,const Geometry::Vec2 & size)	{	setRect(Geometry::Rect(pos,size));	}
 
 		// boundingRectangle
@@ -272,10 +272,10 @@ class Component: public Util::AttributeProvider, public Util::ReferenceCounter<C
 	// -----------------------------------
 
 		/*! Enable automatic layouting. */
-		void setExtLayout(uint32_t flags, const Geometry::Vec2 & extPos, const Geometry::Vec2 & extRelSize);
-		void setExtLayout(uint32_t flags, const Geometry::Vec2 & extPos );
+		GUIAPI void setExtLayout(uint32_t flags, const Geometry::Vec2 & extPos, const Geometry::Vec2 & extRelSize);
+		GUIAPI void setExtLayout(uint32_t flags, const Geometry::Vec2 & extPos );
 		/*! Disable automatic layouting. */
-		void removeExternalLayout();
+		GUIAPI void removeExternalLayout();
 	// @}
 	
 	// -----------------------------
@@ -283,8 +283,8 @@ class Component: public Util::AttributeProvider, public Util::ReferenceCounter<C
 	/*!	@name Helper	*/
 	// @{
 	public:
-		Component * getComponentAtPos(const Geometry::Vec2 & pos);
-		Component * findSelectedComponent();
+		GUIAPI Component * getComponentAtPos(const Geometry::Vec2 & pos);
+		GUIAPI Component * findSelectedComponent();
 	// @}
 
 	// -----------------------------------
@@ -293,8 +293,8 @@ class Component: public Util::AttributeProvider, public Util::ReferenceCounter<C
 	// @{
 	public:
 		// ---o
-		virtual bool onSelect();
-		virtual bool onUnselect();
+		GUIAPI virtual bool onSelect();
+		GUIAPI virtual bool onUnselect();
 	 // @}
 
 	// -----------------------------------
@@ -322,8 +322,8 @@ class Component: public Util::AttributeProvider, public Util::ReferenceCounter<C
 	
 public:
 	bool hasMouseCursorProperty() const						{	return getFlag(HAS_MOUSECURSOR_PROPERTY); }
-	void setMouseCursorProperty(propertyName_t type);
-	propertyName_t getMouseCursorProperty();
+	GUIAPI void setMouseCursorProperty(propertyName_t type);
+	GUIAPI propertyName_t getMouseCursorProperty();
 	
 	// @}
 	
@@ -332,10 +332,10 @@ public:
 	/*!	@name Tooltip */ 
 	// @{
 	public:
-		virtual bool hasTooltip()const;
-		virtual std::string getTooltip()const;
-		virtual void setTooltip(const std::string & s);
-		virtual void removeTooltip();
+		GUIAPI virtual bool hasTooltip()const;
+		GUIAPI virtual std::string getTooltip()const;
+		GUIAPI virtual void setTooltip(const std::string & s);
+		GUIAPI virtual void removeTooltip();
 	 // @}
 
 };

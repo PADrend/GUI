@@ -26,13 +26,13 @@ class Splitter: public Component {
 	PROVIDES_TYPE_NAME(Splitter)
 	public:
 		enum splittingDirection_t { VERTICAL, HORIZONTAL };
-		Splitter(GUI_Manager & gui,splittingDirection_t _direction,flag_t flags=0);
-		virtual ~Splitter();
+		GUIAPI Splitter(GUI_Manager & gui,splittingDirection_t _direction,flag_t flags=0);
+		GUIAPI virtual ~Splitter();
 
 		splittingDirection_t getDirection()const				{	return direction;	}
 
 		// ---|> Component
-		virtual void doLayout() override;
+		GUIAPI virtual void doLayout() override;
 	private:
 		const splittingDirection_t direction;
 
@@ -40,10 +40,10 @@ class Splitter: public Component {
 		OptionalMouseMotionListener optionalMouseMotionListener;
 
 		// ---|> Component
-		virtual void doDisplay(const Geometry::Rect & region) override;
+		GUIAPI virtual void doDisplay(const Geometry::Rect & region) override;
 
-		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
-		bool onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent);
+		GUIAPI bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
+		GUIAPI bool onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent);
 };
 
 }

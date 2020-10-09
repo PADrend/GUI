@@ -27,8 +27,8 @@ class BitmapFont;
 
 namespace EmbeddedFonts{
 
-BitmapFont * createFont();
-BitmapFont * createBoldFont();
+GUIAPI BitmapFont * createFont();
+GUIAPI BitmapFont * createBoldFont();
 
 }
 

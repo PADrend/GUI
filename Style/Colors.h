@@ -17,44 +17,44 @@ namespace GUI{
 
 namespace Colors{
 
-extern const Util::Color4ub ACTIVE_TITLE_BG_COLOR_1;
-extern const Util::Color4ub ACTIVE_TITLE_BG_COLOR_2;
-extern const Util::Color4ub WINDOW_BG_ACTIVE;
-extern const Util::Color4ub WINDOW_BG_PASSIVE;
-extern const Util::Color4ub TITLE_BG_COLOR_1;
-extern const Util::Color4ub TITLE_BG_COLOR_2;
-extern const Util::Color4ub TITLE_TEXT_COLOR;
+GUIAPI extern const Util::Color4ub ACTIVE_TITLE_BG_COLOR_1;
+GUIAPI extern const Util::Color4ub ACTIVE_TITLE_BG_COLOR_2;
+GUIAPI extern const Util::Color4ub WINDOW_BG_ACTIVE;
+GUIAPI extern const Util::Color4ub WINDOW_BG_PASSIVE;
+GUIAPI extern const Util::Color4ub TITLE_BG_COLOR_1;
+GUIAPI extern const Util::Color4ub TITLE_BG_COLOR_2;
+GUIAPI extern const Util::Color4ub TITLE_TEXT_COLOR;
 
-extern const Util::Color4ub SELECT_COLOR;
-extern const Util::Color4ub COMPONENT_COLOR_1;
-extern const Util::Color4ub COMPONENT_COLOR_2;
-extern const Util::Color4ub BRIGHT_COLOR;
-extern const Util::Color4ub LIGHT_BRIGHT_COLOR;
-extern const Util::Color4ub DARK_COLOR;
-extern const Util::Color4ub BORDER_COLOR;
-extern const Util::Color4ub LIGHT_BORDER_COLOR;
-extern const Util::Color4ub TEXT_COLOR;
-extern const Util::Color4ub LIGHT_TEXT_COLOR;
-extern const Util::Color4ub SELECTED_TEXT_BG;
-extern const Util::Color4ub ALMOST_BLACK_COLOR;
+GUIAPI extern const Util::Color4ub SELECT_COLOR;
+GUIAPI extern const Util::Color4ub COMPONENT_COLOR_1;
+GUIAPI extern const Util::Color4ub COMPONENT_COLOR_2;
+GUIAPI extern const Util::Color4ub BRIGHT_COLOR;
+GUIAPI extern const Util::Color4ub LIGHT_BRIGHT_COLOR;
+GUIAPI extern const Util::Color4ub DARK_COLOR;
+GUIAPI extern const Util::Color4ub BORDER_COLOR;
+GUIAPI extern const Util::Color4ub LIGHT_BORDER_COLOR;
+GUIAPI extern const Util::Color4ub TEXT_COLOR;
+GUIAPI extern const Util::Color4ub LIGHT_TEXT_COLOR;
+GUIAPI extern const Util::Color4ub SELECTED_TEXT_BG;
+GUIAPI extern const Util::Color4ub ALMOST_BLACK_COLOR;
 
-extern const Util::Color4ub TRANSPARENT_COLOR;
+GUIAPI extern const Util::Color4ub TRANSPARENT_COLOR;
 
-extern const Util::Color4ub ACTIVE_COLOR_1;
-extern const Util::Color4ub ACTIVE_COLOR_2;
-extern const Util::Color4ub ACTIVE_COLOR_3;
-extern const Util::Color4ub ACTIVE_COLOR_4;
-extern const Util::Color4ub PASSIVE_COLOR_1;
-extern const Util::Color4ub PASSIVE_COLOR_2;
-extern const Util::Color4ub PASSIVE_COLOR_3;
+GUIAPI extern const Util::Color4ub ACTIVE_COLOR_1;
+GUIAPI extern const Util::Color4ub ACTIVE_COLOR_2;
+GUIAPI extern const Util::Color4ub ACTIVE_COLOR_3;
+GUIAPI extern const Util::Color4ub ACTIVE_COLOR_4;
+GUIAPI extern const Util::Color4ub PASSIVE_COLOR_1;
+GUIAPI extern const Util::Color4ub PASSIVE_COLOR_2;
+GUIAPI extern const Util::Color4ub PASSIVE_COLOR_3;
 
-extern const Util::Color4ub PASSIVE_COLOR_4;
+GUIAPI extern const Util::Color4ub PASSIVE_COLOR_4;
 
-extern const Util::Color4ub TEXTFIELD_BG;
-extern const Util::Color4ub TEXTFIELD_BORDER;
+GUIAPI extern const Util::Color4ub TEXTFIELD_BG;
+GUIAPI extern const Util::Color4ub TEXTFIELD_BORDER;
 
-extern const Util::Color4ub BUTTON_BG_1;
-extern const Util::Color4ub BUTTON_BG_2;
+GUIAPI extern const Util::Color4ub BUTTON_BG_1;
+GUIAPI extern const Util::Color4ub BUTTON_BG_2;
 
 
 }

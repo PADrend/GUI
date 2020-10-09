@@ -30,18 +30,18 @@ class TabbedPanel : public Container {
 		class Tab : public Container {
 				PROVIDES_TYPE_NAME(Tab)
 			public:
-				static const Util::StringIdentifier ACTION_Tab_close;
-				static const Util::StringIdentifier ACTION_Tab_open;
+				GUIAPI static const Util::StringIdentifier ACTION_Tab_close;
+				GUIAPI static const Util::StringIdentifier ACTION_Tab_open;
 
-				Tab(GUI_Manager & gui,const std::string & title="",Container * clientArea=nullptr);
-				virtual ~Tab();
+				GUIAPI Tab(GUI_Manager & gui,const std::string & title="",Container * clientArea=nullptr);
+				GUIAPI virtual ~Tab();
 
 				Container * clientArea()const 				{	return clientAreaPanel;	}
-				void setTitle(const std::string & title);
-				std::string getTitle()const;
-				TabbedPanel * getTabbedPanel()const;
-				bool isActiveTab()const;
-				void makeActiveTab();
+				GUIAPI void setTitle(const std::string & title);
+				GUIAPI std::string getTitle()const;
+				GUIAPI TabbedPanel * getTabbedPanel()const;
+				GUIAPI bool isActiveTab()const;
+				GUIAPI void makeActiveTab();
 
 				float getTabTitlePos() 						{	return titlePanel->getPosition().x();	}
 				float getTabTitleWidth() 					{	return titlePanel->getWidth();	}
@@ -56,7 +56,7 @@ class TabbedPanel : public Container {
 
 				// ---|> Component
 				virtual Geometry::Rect getInnerRect()const override 		{	return clientAreaPanel->getLocalRect();	}
-				virtual void doLayout() override;
+				GUIAPI virtual void doLayout() override;
 
 				virtual bool hasTooltip()const override                  {   return titlePanel->hasTooltip();  }
 				virtual std::string getTooltip()const override           {   return titlePanel->getTooltip();  }
@@ -64,7 +64,7 @@ class TabbedPanel : public Container {
 				virtual void removeTooltip() override                    {   titlePanel->removeTooltip();   }
 			private:
 				// ---|> Component
-				virtual void doDisplay(const Geometry::Rect & region) override;
+				GUIAPI virtual void doDisplay(const Geometry::Rect & region) override;
 
 		protected:
 				Container * clientAreaPanel;
@@ -73,26 +73,26 @@ class TabbedPanel : public Container {
 		};
 		// ---------------------------------------------------
 	public:
-		TabbedPanel(GUI_Manager & gui,flag_t flags=0);
-		virtual ~TabbedPanel(){}
+		GUIAPI TabbedPanel(GUI_Manager & gui,flag_t flags=0);
+		GUIAPI virtual ~TabbedPanel(){}
 
-		Tab * createTab(const std::string & title,Container * clientArea=nullptr);
+		GUIAPI Tab * createTab(const std::string & title,Container * clientArea=nullptr);
 
-		void setActiveTab(Tab * tab);
+		GUIAPI void setActiveTab(Tab * tab);
 		Tab * getActiveTab()const			{	return activeTab;	}
 
-		void setActiveTabIndex(int nr);
-		int getActiveTabIndex()const;
+		GUIAPI void setActiveTabIndex(int nr);
+		GUIAPI int getActiveTabIndex()const;
 
-		void recalculateTabTitlePositions();
+		GUIAPI void recalculateTabTitlePositions();
 
 		// ---|> Container
-		virtual void addContent(const Ref & child) override;
-		virtual void removeContent(const Ref & child) override;
-		virtual void bringChildToFront(Component * c) override;
+		GUIAPI virtual void addContent(const Ref & child) override;
+		GUIAPI virtual void removeContent(const Ref & child) override;
+		GUIAPI virtual void bringChildToFront(Component * c) override;
 
 		// ---|> Component
-		virtual void doLayout() override;
+		GUIAPI virtual void doLayout() override;
 	private:
 		Tab * activeTab;
 };

@@ -17,14 +17,14 @@ class DisplayProperty;
 class GUI_Manager;
 class HoverPropertyHandler;
 
-bool hasComponentHoverProperties(const Component& c);
+GUIAPI bool hasComponentHoverProperties(const Component& c);
 //DisplayProperty* getComponentHoverProperties(const Component& c);
 
 typedef uint8_t hoverPropertyLayer_t;
-void addComponentHoverProperty(Component& c, DisplayProperty* s,hoverPropertyLayer_t layer,bool recursive);
-void clearComponentHoverProperties(Component& c);
+GUIAPI void addComponentHoverProperty(Component& c, DisplayProperty* s,hoverPropertyLayer_t layer,bool recursive);
+GUIAPI void clearComponentHoverProperties(Component& c);
 
-void initHoverPropertyHandler(GUI_Manager& gui,Component& objHolder);
+GUIAPI void initHoverPropertyHandler(GUI_Manager& gui,Component& objHolder);
 
 }
 #endif // GUI_COMPONENT_HOVER_PROPERTY_FEATURE_H

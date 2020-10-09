@@ -22,45 +22,45 @@ namespace GUI {
 class Container : public Component {
 		PROVIDES_TYPE_NAME(Container)
 	public:
-		Container(GUI_Manager & gui,flag_t flags=0);
-		Container(GUI_Manager & gui,const Geometry::Rect & r,flag_t flags=0);
+		GUIAPI Container(GUI_Manager & gui,flag_t flags=0);
+		GUIAPI Container(GUI_Manager & gui,const Geometry::Rect & r,flag_t flags=0);
 
 		typedef Util::Reference<Container> ContainerRef;
 
 	protected:
-		virtual ~Container();
+		GUIAPI virtual ~Container();
 
 	public:
 		void _addChild(const Ref & child)	{	_insertAfter(child,getLastChild());	}
-		void _insertAfter(const Ref & child,const Ref & after);
-		void _insertBefore(const Ref & child,const Ref & before);
-		void _removeChild(const Ref & child);
+		GUIAPI void _insertAfter(const Ref & child,const Ref & after);
+		GUIAPI void _insertBefore(const Ref & child,const Ref & before);
+		GUIAPI void _removeChild(const Ref & child);
 
 		Component * getFirstChild()const	{	return firstChild.get();	}
 		Component * getLastChild()const 	{	return lastChild.get();	}
 
 		/*! This is called by a child @p c whenever its rect is changed, it's added or it's removed.
 			The LAYOUT_VALID flag is cleared.	*/
-		void childRectChanged(Component * c);
+		GUIAPI void childRectChanged(Component * c);
 
 		// ---o
 		virtual void addContent(const Ref & child) 		{	_addChild(child);	}
 		// ---o
 		virtual void removeContent(const Ref & child)	{	_removeChild(child);	}
 		// ---o
-		virtual void clearContents();
+		GUIAPI virtual void clearContents();
 
 		/*! Remove all children and mark them for removal .
 			The childrens' subtrees will be dissolved and their attributes will be removed.
 			\note this does (or should not) not remove the internal children like scroll bars.*/
-		void destroyContents();
+		GUIAPI void destroyContents();
 
 		// ---o
 		virtual size_t getContentsCount()const 			{	return contentsCount;	}
 		// ---o
-		virtual void bringChildToFront(Component * c);
+		GUIAPI virtual void bringChildToFront(Component * c);
 		// ---o
-		virtual std::vector<Component*> getContents();
+		GUIAPI virtual std::vector<Component*> getContents();
 		// ---o
 		virtual void insertAfter(const Ref & child,const Ref & after){
 			_insertAfter(child,after);
@@ -71,16 +71,16 @@ class Container : public Component {
 		}
 
 		// ---|> Component
-		virtual std::string toString()const override;
-		virtual visitorResult_t traverseChildren(Visitor & v) override;
-		virtual visitorResult_t traverseSubtree(Visitor & v) override;
+		GUIAPI virtual std::string toString()const override;
+		GUIAPI virtual visitorResult_t traverseChildren(Visitor & v) override;
+		GUIAPI virtual visitorResult_t traverseSubtree(Visitor & v) override;
 
 	private:
-		virtual void doDisplay(const Geometry::Rect & region) override;
+		GUIAPI virtual void doDisplay(const Geometry::Rect & region) override;
 
 	protected:
-		void displayChildren(const Geometry::Rect & region,bool useScissor=false);
-		void copyChildrenTo(Container & target)const;
+		GUIAPI void displayChildren(const Geometry::Rect & region,bool useScissor=false);
+		GUIAPI void copyChildrenTo(Container & target)const;
 
 		Ref firstChild;
 		Ref lastChild;

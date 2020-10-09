@@ -28,20 +28,20 @@ class Panel: public ScrollableContainer {
 		
 		static const flag_t AUTO_LAYOUT=1<<24; //! unused!
 
-		Panel(GUI_Manager & gui,flag_t flags=0);
-		virtual ~Panel();
+		GUIAPI Panel(GUI_Manager & gui,flag_t flags=0);
+		GUIAPI virtual ~Panel();
 
-		void nextRow(float additionalSpacing=0);
-		void nextColumn(float additionalSpacing=0);
+		GUIAPI void nextRow(float additionalSpacing=0);
+		GUIAPI void nextColumn(float additionalSpacing=0);
 
-		void disableAutoBreak();
-		void enableAutoBreak();
+		GUIAPI void disableAutoBreak();
+		GUIAPI void enableAutoBreak();
 
-		void setMargin(int _margin);
-		void setPadding(int _padding);
+		GUIAPI void setMargin(int _margin);
+		GUIAPI void setPadding(int _padding);
 
 	private:
-		FlowLayouter & accessLayouter();
+		GUIAPI FlowLayouter & accessLayouter();
 };
 }
 #endif // GUI_Panel_H
