@@ -6,10 +6,10 @@
 	You should have received a copy of the MPL along with this library; see the 
 	file LICENSE. If not, you can obtain one at http://mozilla.org/MPL/2.0/.
 */
-#include <GUI/Components/Button.h>
-#include <GUI/Components/Textfield.h>
-#include <GUI/Components/Window.h>
-#include <GUI/GUI_Manager.h>
+#include <Components/Button.h>
+#include <Components/Textfield.h>
+#include <Components/Window.h>
+#include <GUI_Manager.h>
 #include <Util/UI/EventContext.h>
 #include <Util/UI/UI.h>
 #include <Util/References.h>
