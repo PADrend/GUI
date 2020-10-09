@@ -27,7 +27,6 @@
 #include "Components/TreeView.h"
 #include "Components/Image.h"
 #include "Components/Icon.h"
-#include <GUI/config.h>
 
 //
 //#include "Fonts/GLFont.h"
