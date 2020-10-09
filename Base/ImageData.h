@@ -11,7 +11,6 @@
 #ifndef GUI_IMAGE_DATA_H
 #define GUI_IMAGE_DATA_H
 
-#include <config.h>
 #include <Util/ReferenceCounter.h>
 #include <Util/References.h>
 #include <cstdint>

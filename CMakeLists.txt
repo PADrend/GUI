@@ -87,6 +87,7 @@ if(GUI_BACKEND_RENDERING)
 		find_package(Rendering 0.3.0 REQUIRED NO_MODULE)
 	endif()
 	target_link_libraries(GUI LINK_PUBLIC Rendering)
+	target_compile_definitions(GUI PUBLIC GUI_BACKEND_RENDERING)
 else(GUI_BACKEND_RENDERING)		
 	# Dependency to OpenGL
 	find_package(OpenGL REQUIRED)
@@ -100,9 +101,6 @@ else(GUI_BACKEND_RENDERING)
 	target_include_directories(GUI PRIVATE ${GLEW_INCLUDE_DIRS})
 	target_link_libraries(GUI LINK_PRIVATE ${GLEW_LIBRARIES})
 endif(GUI_BACKEND_RENDERING)
-
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/config.h.in" "${CMAKE_CURRENT_BINARY_DIR}/config.h")
-target_include_directories(GUI PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
 # Set version of library
 set_target_properties(GUI PROPERTIES VERSION ${GUI_VERSION}
@@ -122,7 +120,6 @@ file(GLOB GUI_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/Style/*.h")
 install(FILES ${GUI_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/GUI/Style COMPONENT headers)
 file(GLOB GUI_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
 install(FILES ${GUI_HEADERS} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/GUI COMPONENT headers)
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/config.h" DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/GUI COMPONENT headers)
 
 # Install the library
 install(TARGETS GUI EXPORT LibraryExport

@@ -13,7 +13,6 @@
 
 #include "Base/Listener.h"
 #include "Components/Component.h"
-#include <config.h>
 #include <Util/Graphics/Color.h>
 #include <Util/Registry.h>
 #include <Util/AttributeProvider.h>

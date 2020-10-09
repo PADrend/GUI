@@ -11,7 +11,6 @@
 #ifndef GUI_DRAW_H
 #define GUI_DRAW_H
 
-#include <config.h>
 #include <Geometry/Vec2.h>
 #include <Geometry/Rect.h>
 #include <Util/Graphics/Color.h>
