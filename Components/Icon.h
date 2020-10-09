@@ -24,9 +24,9 @@ namespace GUI{
 class Icon: public Component	{
 	PROVIDES_TYPE_NAME(Icon)
 	public:
-		Icon(GUI_Manager & gui,const Geometry::Vec2 & pos, Util::WeakPointer<ImageData> imageData,const Geometry::Rect & imageRect,flag_t flags=0);
-		Icon(GUI_Manager & gui,const Geometry::Rect & r,flag_t flags=0);
-		virtual ~Icon();
+		GUIAPI Icon(GUI_Manager & gui,const Geometry::Vec2 & pos, Util::WeakPointer<ImageData> imageData,const Geometry::Rect & imageRect,flag_t flags=0);
+		GUIAPI Icon(GUI_Manager & gui,const Geometry::Rect & r,flag_t flags=0);
+		GUIAPI virtual ~Icon();
 
 		void setImageData(Util::WeakPointer<ImageData> newImage)	{	imageData=newImage;	}
 		void setImageRect(const Geometry::Rect & newImageRect)		{   imageRect=newImageRect;	}
@@ -36,7 +36,7 @@ class Icon: public Component	{
 
 	private:
 		// ---|> Component
-		virtual void doDisplay(const Geometry::Rect & region) override;
+		GUIAPI virtual void doDisplay(const Geometry::Rect & region) override;
 
 	private:
 		Util::Reference<ImageData> imageData;

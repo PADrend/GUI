@@ -29,8 +29,8 @@ class EditorPanel: public Container {
 
 	public:
 
-		EditorPanel(GUI_Manager & gui,flag_t flags=0);
-		virtual ~EditorPanel();
+		GUIAPI EditorPanel(GUI_Manager & gui,flag_t flags=0);
+		GUIAPI virtual ~EditorPanel();
 
 		// ---|> Container
 		virtual void removeContent(const Ref & child) override	{
@@ -44,10 +44,10 @@ class EditorPanel: public Container {
 		
 	private:
 		// ---|> Component
-		virtual void doDisplay(const Geometry::Rect & region) override;
+		GUIAPI virtual void doDisplay(const Geometry::Rect & region) override;
 
-		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
-		bool onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent);
+		GUIAPI bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
+		GUIAPI bool onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent);
 
 		Geometry::Vec2 dragStartPos;
 		Geometry::Vec2 dragPos;
@@ -55,14 +55,14 @@ class EditorPanel: public Container {
 		MouseButtonListener mouseButtonListener;
 		OptionalMouseMotionListener optionalMouseMotionListener;
 
-		void rectSelect_start(const Geometry::Vec2 & pos);
-		void rectSelect_break();
-		void rectSelect_finish(const Geometry::Vec2 & pos);
+		GUIAPI void rectSelect_start(const Geometry::Vec2 & pos);
+		GUIAPI void rectSelect_break();
+		GUIAPI void rectSelect_finish(const Geometry::Vec2 & pos);
 
-		void move_start(const Geometry::Vec2 & pos);
-		void move_execute(const Geometry::Vec2 & delta);
-		void move_break(const Geometry::Vec2 & pos);
-		void move_finish();
+		GUIAPI void move_start(const Geometry::Vec2 & pos);
+		GUIAPI void move_execute(const Geometry::Vec2 & delta);
+		GUIAPI void move_break(const Geometry::Vec2 & pos);
+		GUIAPI void move_finish();
 		
 	// -----------
 
@@ -73,20 +73,20 @@ class EditorPanel: public Container {
 		/*! Add a Component to the set of marked children, if @p c is a direct child.
 			@note Does not call markingChanged()
 			@return true iff c was marked. */
-		bool markChild(Component * c);
+		GUIAPI bool markChild(Component * c);
 		/*! Remove a Component from the marking list.
 			@note Does not call markingChanged()
 			@return true iff c was removed. */
-		bool unmarkChild(Component * c);
+		GUIAPI bool unmarkChild(Component * c);
 		/*!	Remove all components from the marking.
 			@note Does not call markingChanged() */
-		void unmarkAll();
+		GUIAPI void unmarkAll();
 		const markedChildrenSet_t & getMarkedChildren() const	{	return markedChildren;	}
 		markedChildrenSet_t & getMarkedChildren() 				{	return markedChildren;	}
 
 		/*! Notifies the GUI-Manager of a changed marking via gui.componentDataChanged(...)
 			Should be called, whenever the marking has changed. */
-		void markingChanged();
+		GUIAPI void markingChanged();
 	private:
 		markedChildrenSet_t markedChildren;
 	// @}

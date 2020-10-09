@@ -27,41 +27,41 @@ class Slider : public Container {
 		static const flag_t SHOW_VALUE=1<<25;
 		static const flag_t SLIDER_BUTTONS=1<<26;
 
-		Slider(GUI_Manager & gui, const Geometry::Rect & r, float left, float right, int steps, flag_t flags = 0);
-		virtual ~Slider();
+		GUIAPI Slider(GUI_Manager & gui, const Geometry::Rect & r, float left, float right, int steps, flag_t flags = 0);
+		GUIAPI virtual ~Slider();
 
-		void setRange(float left,float right,int steps);
+		GUIAPI void setRange(float left,float right,int steps);
 
-		void setValue(float f);
-		float getValue()const;
+		GUIAPI void setValue(float f);
+		GUIAPI float getValue()const;
 
-		void setValueRef(float * valueRef);
+		GUIAPI void setValueRef(float * valueRef);
 
-		void updateDataFromPos(const Geometry::Vec2 & p);
-		void updateData(float f);
+		GUIAPI void updateDataFromPos(const Geometry::Vec2 & p);
+		GUIAPI void updateData(float f);
 		float getStepWidth()const 			{	return stepWidth;	}
 
 		void setMarkerSize(const int newMarkerSize)	{	markerSize=newMarkerSize;	}
 		int getMarkerSize()const					{	return markerSize;	}
-		void setRelMarkerSize(const float relMarkerSize);
+		GUIAPI void setRelMarkerSize(const float relMarkerSize);
 
 		// ---o
-		virtual void dataUpdated() ;
+		GUIAPI virtual void dataUpdated() ;
 
 		// ---|> Component
-		virtual void doLayout() override;
+		GUIAPI virtual void doLayout() override;
 
 	private:
 		// ---|> Component
-		virtual void doDisplay(const Geometry::Rect & region) override;
+		GUIAPI virtual void doDisplay(const Geometry::Rect & region) override;
 
-		bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
-		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
+		GUIAPI bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
+		GUIAPI bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
 
 	protected:
 		// ---o
-		virtual float getPosFromValue(float value)const;
-		virtual float getValueFromPos(float pos)const;
+		GUIAPI virtual float getPosFromValue(float value)const;
+		GUIAPI virtual float getValueFromPos(float pos)const;
 
 		float rangeLeft;
 		float rangeRight;

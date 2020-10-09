@@ -25,28 +25,28 @@ class Button : public Container {
 	public:
 		static const flag_t FLAT_BUTTON = 1<<24;
 				
-		Button(GUI_Manager & gui,flag_t flags=0);
-		virtual ~Button();
+		GUIAPI Button(GUI_Manager & gui,flag_t flags=0);
+		GUIAPI virtual ~Button();
 
-		void setText(const std::string & text);
-		std::string getText()const;
+		GUIAPI void setText(const std::string & text);
+		GUIAPI std::string getText()const;
 
 		bool isSwitchedOn()const 						{	return switchedOn;	}
 		void setSwitch(bool b) 							{	switchedOn = b;	}
 		void setFont(AbstractFont * newFont)			{   textLabel->setFont(newFont);	}
 		void setActionListener(HandleActionFun fun)		{	actionListener = std::move(fun);	}
 		void setTextStyle(unsigned int style)			{   textLabel->setTextStyle(style);	}
-		void setColor(const Util::Color4ub & newColor);
+		GUIAPI void setColor(const Util::Color4ub & newColor);
 
 		// ---o
-		virtual void action();
+		GUIAPI virtual void action();
 
 	private:
 		// ---|> Component
-		virtual void doDisplay(const Geometry::Rect & region) override;
+		GUIAPI virtual void doDisplay(const Geometry::Rect & region) override;
 
-		bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
-		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
+		GUIAPI bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
+		GUIAPI bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
 
 	protected:
 		Util::WeakPointer<Label> textLabel;

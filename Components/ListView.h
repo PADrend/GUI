@@ -32,18 +32,18 @@ class ListView : public Container {
 	//	@{
 public:
 		// flags
-		static const flag_t AT_LEAST_ONE_MARKING;
-		static const flag_t AT_MOST_ONE_MARKING;
+		GUIAPI static const flag_t AT_LEAST_ONE_MARKING;
+		GUIAPI static const flag_t AT_MOST_ONE_MARKING;
 
-		ListView(GUI_Manager & gui,flag_t flags=0);
-		virtual ~ListView();
+		GUIAPI ListView(GUI_Manager & gui,flag_t flags=0);
+		GUIAPI virtual ~ListView();
 
 		// ---|> Component
 		Container * getContentContainer()const					{	return clientArea.get();	}
 		float getEntryHeight()const							{	return entryHeight;	}
 
 		// ---|> Component
-		virtual void doLayout() override;
+		GUIAPI virtual void doLayout() override;
 
 		void setEntryHeight(float h) {
 			entryHeight=h;
@@ -64,16 +64,16 @@ public:
 				virtual ~ListViewClientArea() {}
 
 				// ---|> Component
-				virtual void doLayout() override;
+				GUIAPI virtual void doLayout() override;
 
 			private:
 				// ---|> Component
-				virtual void doDisplay(const Geometry::Rect & region) override;
+				GUIAPI virtual void doDisplay(const Geometry::Rect & region) override;
 
 		};
 
 		// ---|> Component
-		virtual void doDisplay(const Geometry::Rect & region) override;
+		GUIAPI virtual void doDisplay(const Geometry::Rect & region) override;
 
 		float entryHeight;
 		Util::WeakPointer<ListViewClientArea> clientArea;
@@ -85,9 +85,9 @@ public:
 	//	@{
 	public:
 		// ---|> Container
-		virtual void addContent(const Ref & child) override;
+		GUIAPI virtual void addContent(const Ref & child) override;
 		// ---|> Container
-		virtual void clearContents() override;
+		GUIAPI virtual void clearContents() override;
 		// ---|> Container
 		virtual std::vector<Component*> getContents() override 				{	return clientArea->getContents();		}
 
@@ -95,23 +95,23 @@ public:
 		Component * getEntry(size_t i)const							{	return i<entryRegistry.size() ? entryRegistry[i] : nullptr;}
 
 		// ---|> Container
-		virtual void insertAfter(const Ref & child,const Ref & after) override;
+		GUIAPI virtual void insertAfter(const Ref & child,const Ref & after) override;
 		// ---|> Container
-		virtual void insertBefore(const Ref & child,const Ref & after) override;
+		GUIAPI virtual void insertBefore(const Ref & child,const Ref & after) override;
 		// ---|> Container
 		virtual size_t getContentsCount()const override						{   return clientArea->getContentsCount();	}
 		// ---|> Container
-		virtual void removeContent(const Ref & child) override;
+		GUIAPI virtual void removeContent(const Ref & child) override;
 
 
 	private:
-		void rebuildRegistry();
-		void resetPositions(size_t beginningIndex);
+		GUIAPI void rebuildRegistry();
+		GUIAPI void resetPositions(size_t beginningIndex);
 
 		static const size_t npos = static_cast<size_t>(-1);
 
 		//! returns npos if no element is at the given position
-		size_t getEntryIndexByPosition(const Geometry::Vec2 & p)const;
+		GUIAPI size_t getEntryIndexByPosition(const Geometry::Vec2 & p)const;
 		// a collection of all components, mapping the index(=the row) to the component
 		std::vector<Component *> entryRegistry; //
 	//	@}
@@ -123,8 +123,8 @@ public:
 	public:
 		Component * getCursorEntry()const					{	return getEntry(cursor);	}
 		size_t getCursorIndex()const						{	return cursor;	}
-		void moveCursor(int delta);
-		void scrollToCursor();
+		GUIAPI void moveCursor(int delta);
+		GUIAPI void scrollToCursor();
 		void setCursorIndex(size_t i)						{	cursor = i;	}
 	private:
 		size_t cursor;
@@ -139,9 +139,9 @@ public:
 		MouseButtonListener mouseButtonListener;
 		OptionalMouseMotionListener optionalMouseMotionListener;
 
-		bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
-		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
-		bool onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent);
+		GUIAPI bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
+		GUIAPI bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
+		GUIAPI bool onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent);
 	//	@}
 
 	// ------------------
@@ -153,21 +153,21 @@ public:
 		typedef std::list<Component *> markingList_t;
 
 		//! Add a marking to the given component and call marking changed.
-		void addMarking(Component * c);
-		void clearMarkings(bool forced=false);
+		GUIAPI void addMarking(Component * c);
+		GUIAPI void clearMarkings(bool forced=false);
 		const markingList_t & getMarkings()const			{	return markingList;	};
 		bool isMarked(Component * c)const					{	return markingSet.count(c)>0;	}
 		// ---o
-		virtual void markingChanged();
-		void removeMarking(Component * c,bool forced=false);
-		void setMarking(Component * c);
-		void setMarkings(const markingList_t & markings);
+		GUIAPI virtual void markingChanged();
+		GUIAPI void removeMarking(Component * c,bool forced=false);
+		GUIAPI void setMarking(Component * c);
+		GUIAPI void setMarkings(const markingList_t & markings);
 
 	private:
-		void doAddMarking(Component * c);
-		bool doClearMarking(bool forced);
-		bool doRemoveMarking(Component * c,bool forced);
-		void performMarkingAction(const size_t index,const bool accumulative,const bool grouping);
+		GUIAPI void doAddMarking(Component * c);
+		GUIAPI bool doClearMarking(bool forced);
+		GUIAPI bool doRemoveMarking(Component * c,bool forced);
+		GUIAPI void performMarkingAction(const size_t index,const bool accumulative,const bool grouping);
 
 		markingSet_t markingSet;
 		markingList_t markingList;
@@ -179,11 +179,11 @@ public:
 	//! @name Scrolling
 	//	@{
 	public:
-		void scrollTo(const Geometry::Vec2 & pos,float duration);
-		void setScrollingPosition(const Geometry::Vec2 & pos);
+		GUIAPI void scrollTo(const Geometry::Vec2 & pos,float duration);
+		GUIAPI void setScrollingPosition(const Geometry::Vec2 & pos);
 		const Geometry::Vec2 & getScrollPos()const			{	return scrollPos;	}
 	private:
-		void finishScrolling();
+		GUIAPI void finishScrolling();
 		Util::WeakPointer<Scrollbar> scrollBar;
 		std::unique_ptr<DataChangeListenerHandle> optionalScrollBarListener;
 		Geometry::Vec2 scrollPos;

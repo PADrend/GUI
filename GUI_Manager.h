@@ -13,7 +13,7 @@
 
 #include "Base/Listener.h"
 #include "Components/Component.h"
-#include <GUI/config.h>
+#include <config.h>
 #include <Util/Graphics/Color.h>
 #include <Util/Registry.h>
 #include <Util/AttributeProvider.h>
@@ -82,8 +82,8 @@ class GUI_Manager {
 
 	//! @name Clipboard access
 	//	@{
-		void copyStringToClipboard(const std::string & s);
-		std::string getStringFromClipboard() const;
+		GUIAPI void copyStringToClipboard(const std::string & s);
+		GUIAPI std::string getStringFromClipboard() const;
 	//	@}
 
 	// ----------
@@ -97,15 +97,15 @@ class GUI_Manager {
 		 * Create a new GUI manager and associate it with the given event
 		 * context to receive user interface events.
 		 */
-		GUI_Manager(Util::UI::EventContext * context=nullptr);
-		~GUI_Manager();
-		bool handleEvent(const Util::UI::Event & e);
+		GUIAPI GUI_Manager(Util::UI::EventContext * context=nullptr);
+		GUIAPI ~GUI_Manager();
+		GUIAPI bool handleEvent(const Util::UI::Event & e);
 	#ifdef GUI_BACKEND_RENDERING
-		void display(Rendering::RenderingContext& rc);
+		GUIAPI void display(Rendering::RenderingContext& rc);
 	#else // GUI_BACKEND_RENDERING
-		void display();
+		GUIAPI void display();
 	#endif // GUI_BACKEND_RENDERING
-		Geometry::Rect getScreenRect()const;
+		GUIAPI Geometry::Rect getScreenRect()const;
 
 		//! Associate a window (e.g. X11 or SDL) to the GUI manager
 		void setWindow(Util::UI::Window * newWindow) {
@@ -129,11 +129,11 @@ class GUI_Manager {
 	//! @name Animation handling
 	//	@{
 	public:
-		void addAnimationHandler(AnimationHandler * );
-		void finishAnimations(Component * c);
-		void stopAnimations(Component * c);
+		GUIAPI void addAnimationHandler(AnimationHandler * );
+		GUIAPI void finishAnimations(Component * c);
+		GUIAPI void stopAnimations(Component * c);
 	private:
-		void executeAnimations();
+		GUIAPI void executeAnimations();
 		typedef std::vector<std::unique_ptr<AnimationHandler>> animationHandlerList_t;
 		animationHandlerList_t animationHandlerList;
 	//	@}
@@ -143,8 +143,8 @@ class GUI_Manager {
 	//! @name Cleanup
 	//	@{
 	public:
-		void markForRemoval(Component *c);
-		void cleanup();
+		GUIAPI void markForRemoval(Component *c);
+		GUIAPI void cleanup();
 	private:
 		std::list<Util::Reference<Component> > removalList;
 	//	@}
@@ -157,24 +157,24 @@ class GUI_Manager {
 		Component::Ref activeComponent;
 		Util::Reference<Container> globalContainer;
 	public:
-		void registerWindow(Component * w);
-		void unregisterWindow(Component *w);
+		GUIAPI void registerWindow(Component * w);
+		GUIAPI void unregisterWindow(Component *w);
 
-		void unselectAll();
-		void setActiveComponent(Component * c);
+		GUIAPI void unselectAll();
+		GUIAPI void setActiveComponent(Component * c);
 		bool isActiveComponent(const Component * c)const 			{	return activeComponent==c;	}
-		Component * getComponentAtPos(const Geometry::Vec2 & pos);
-		void selectNext(Component * c);
-		void selectPrev(Component * c);
-		bool selectFirst(Component * c);
-		bool selectLast(Component * c);
+		GUIAPI Component * getComponentAtPos(const Geometry::Vec2 & pos);
+		GUIAPI void selectNext(Component * c);
+		GUIAPI void selectPrev(Component * c);
+		GUIAPI bool selectFirst(Component * c);
+		GUIAPI bool selectLast(Component * c);
 
 		Component * getActiveComponent()							{	return activeComponent.get();	}
 
 		//! Check if the component and all its parents are enabled and contained int the global container.
-		bool isCurrentlyEnabled(Component * c)const;
+		GUIAPI bool isCurrentlyEnabled(Component * c)const;
 
-		void closeAllMenus();
+		GUIAPI void closeAllMenus();
 	//	@}
 
 	// ----------
@@ -327,21 +327,21 @@ class GUI_Manager {
 
 
 
-		void componentActionPerformed(Component *c,const Util::StringIdentifier & actionName);
-		void componentDataChanged(Component * c);
-		void componentDestruction(const Component * component);
+		GUIAPI void componentActionPerformed(Component *c,const Util::StringIdentifier & actionName);
+		GUIAPI void componentDataChanged(Component * c);
+		GUIAPI void componentDestruction(const Component * component);
 
-		bool isCtrlPressed() const;
-		bool isShiftPressed() const;
+		GUIAPI bool isCtrlPressed() const;
+		GUIAPI bool isShiftPressed() const;
 		
-		void enableKeyRepetition(const Util::UI::KeyboardEvent & keyEvent);
-		void disableKeyRepetition();
+		GUIAPI void enableKeyRepetition(const Util::UI::KeyboardEvent & keyEvent);
+		GUIAPI void disableKeyRepetition();
 	private:
 		std::unique_ptr<std::pair<float,Util::UI::KeyboardEvent>> keyRepeatInfo; // next activation time(sec), keyboard event
 
-		bool handleMouseMovement(const Util::UI::MotionEvent & motionEvent);
-		bool handleMouseButton(const Util::UI::ButtonEvent & buttonEvent);
-		bool handleKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
+		GUIAPI bool handleMouseMovement(const Util::UI::MotionEvent & motionEvent);
+		GUIAPI bool handleMouseButton(const Util::UI::ButtonEvent & buttonEvent);
+		GUIAPI bool handleKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
 	//	@}
 
 	// ----------
@@ -349,32 +349,32 @@ class GUI_Manager {
 	//! @name Factories
 	//	@{
 	public:
-		Button * createButton(const std::string & text,flag_t flags=0);
-		Container * createContainer(const Geometry::Rect & r,flag_t flags=0);
-		Connector * createConnector(flag_t flags=0);
-		EditorPanel * createEditorPanel(flag_t flags=0);
-		Panel * createPanel(flag_t flags=0);
-		Checkbox * createCheckbox(const std::string & text="",bool checked=false,flag_t flags=0);
-		Icon * createIcon(const Geometry::Vec2 & pos, Util::WeakPointer<ImageData> imageData,const Geometry::Rect & imageRect,flag_t flags=0);
-		Icon * createIcon(const Geometry::Rect & r,flag_t flags=0);
-		Image * createImage(const Geometry::Rect & r,flag_t flags=0);
-		Image * createImage(const Util::FileName & fileName,flag_t flags=0);
-		Image * createImage(const Util::Bitmap & bitmap,flag_t flags=0);
-		Label * createLabel(const Geometry::Rect & r,const std::string & text="",flag_t flags=0);
-		Label * createLabel(const std::string & text="",flag_t flags=0);
-		ListView * createListView(flag_t flags=0);
-		Menu * createMenu(flag_t flags=0);
-		NextColumn * createNextColumn(float additionalSpacing=0.0f);
-		NextRow * createNextRow(float additionalSpacing=0.0f);
-		Slider * createSlider(const Geometry::Rect & r,float left=0,float right=1,int steps=10,flag_t flags=0);
-		Splitter * createVSplitter(flag_t flags=0);
-		Splitter * createHSplitter(flag_t flags=0);
-		TabbedPanel * createTabbedPanel(flag_t flags=0);
-		Textarea * createTextarea(const std::string &text="",flag_t flags=0);
-		Textfield * createTextfield(const std::string &text="",flag_t flags=0);
-		TreeView * createTreeView(const Geometry::Rect & r,flag_t flags=0);
-		Container * createTreeViewEntry(Component * c);
-		Window * createWindow(const Geometry::Rect & r,const std::string & title="",flag_t flags=0);
+		GUIAPI Button * createButton(const std::string & text,flag_t flags=0);
+		GUIAPI Container * createContainer(const Geometry::Rect & r,flag_t flags=0);
+		GUIAPI Connector * createConnector(flag_t flags=0);
+		GUIAPI EditorPanel * createEditorPanel(flag_t flags=0);
+		GUIAPI Panel * createPanel(flag_t flags=0);
+		GUIAPI Checkbox * createCheckbox(const std::string & text="",bool checked=false,flag_t flags=0);
+		GUIAPI Icon * createIcon(const Geometry::Vec2 & pos, Util::WeakPointer<ImageData> imageData,const Geometry::Rect & imageRect,flag_t flags=0);
+		GUIAPI Icon * createIcon(const Geometry::Rect & r,flag_t flags=0);
+		GUIAPI Image * createImage(const Geometry::Rect & r,flag_t flags=0);
+		GUIAPI Image * createImage(const Util::FileName & fileName,flag_t flags=0);
+		GUIAPI Image * createImage(const Util::Bitmap & bitmap,flag_t flags=0);
+		GUIAPI Label * createLabel(const Geometry::Rect & r,const std::string & text="",flag_t flags=0);
+		GUIAPI Label * createLabel(const std::string & text="",flag_t flags=0);
+		GUIAPI ListView * createListView(flag_t flags=0);
+		GUIAPI Menu * createMenu(flag_t flags=0);
+		GUIAPI NextColumn * createNextColumn(float additionalSpacing=0.0f);
+		GUIAPI NextRow * createNextRow(float additionalSpacing=0.0f);
+		GUIAPI Slider * createSlider(const Geometry::Rect & r,float left=0,float right=1,int steps=10,flag_t flags=0);
+		GUIAPI Splitter * createVSplitter(flag_t flags=0);
+		GUIAPI Splitter * createHSplitter(flag_t flags=0);
+		GUIAPI TabbedPanel * createTabbedPanel(flag_t flags=0);
+		GUIAPI Textarea * createTextarea(const std::string &text="",flag_t flags=0);
+		GUIAPI Textfield * createTextfield(const std::string &text="",flag_t flags=0);
+		GUIAPI TreeView * createTreeView(const Geometry::Rect & r,flag_t flags=0);
+		GUIAPI Container * createTreeViewEntry(Component * c);
+		GUIAPI Window * createWindow(const Geometry::Rect & r,const std::string & title="",flag_t flags=0);
 	//	@}
 
 	// ----------
@@ -382,7 +382,7 @@ class GUI_Manager {
 	//! @name Invalidated regions
 	//	@{
 	public:
-		void invalidateRegion(const Geometry::Rect & region);
+		GUIAPI void invalidateRegion(const Geometry::Rect & region);
 		void enableLazyRendering()			{	lazyRendering = true;	}
 		void disableLazyRendering()			{	lazyRendering = false;	}
 		bool isLazyRenderingEnabled()const	{	return lazyRendering;	}
@@ -400,23 +400,23 @@ class GUI_Manager {
 	public:
 		StyleManager & getStyleManager()const						{	return *style; }
 
-		void displayLineShape(const propertyId_t id,const std::vector<Geometry::Vec2> & points,uint16_t flags=0);
-		void displayShape(const propertyId_t id,const Geometry::Rect & rect,uint16_t flags=0);
+		GUIAPI void displayLineShape(const propertyId_t id,const std::vector<Geometry::Vec2> & points,uint16_t flags=0);
+		GUIAPI void displayShape(const propertyId_t id,const Geometry::Rect & rect,uint16_t flags=0);
 	
-		void disableProperty(const Util::Reference<DisplayProperty> & p)const;
-		void enableProperty(const Util::Reference<DisplayProperty> & p)const;
-		Util::Color4ub getActiveColor(const propertyId_t id)const;
-		AbstractFont * getActiveFont(const propertyId_t id)const;
-		AbstractFont * getDefaultFont(const propertyId_t id)const;
+		GUIAPI void disableProperty(const Util::Reference<DisplayProperty> & p)const;
+		GUIAPI void enableProperty(const Util::Reference<DisplayProperty> & p)const;
+		GUIAPI Util::Color4ub getActiveColor(const propertyId_t id)const;
+		GUIAPI AbstractFont * getActiveFont(const propertyId_t id)const;
+		GUIAPI AbstractFont * getDefaultFont(const propertyId_t id)const;
 
-		float getGlobalValue(const propertyId_t id)const;
+		GUIAPI float getGlobalValue(const propertyId_t id)const;
 
-		void registerMouseCursor(const propertyName_t & id, const Util::Reference<Util::Bitmap> & bitmap, const uint32_t clickX, const uint32_t clickY);
-		void removeMouseCursor(const propertyName_t & id);
-		void setDefaultColor(const propertyId_t id,const Util::Color4ub & c);
-		void setDefaultFont(const propertyId_t id,AbstractFont * f);
-		void setDefaultShape(const propertyId_t id,AbstractShape * f);
-		void setGlobalValue(const propertyId_t id,float v);
+		GUIAPI void registerMouseCursor(const propertyName_t & id, const Util::Reference<Util::Bitmap> & bitmap, const uint32_t clickX, const uint32_t clickY);
+		GUIAPI void removeMouseCursor(const propertyName_t & id);
+		GUIAPI void setDefaultColor(const propertyId_t id,const Util::Color4ub & c);
+		GUIAPI void setDefaultFont(const propertyId_t id,AbstractFont * f);
+		GUIAPI void setDefaultShape(const propertyId_t id,AbstractShape * f);
+		GUIAPI void setGlobalValue(const propertyId_t id,float v);
 	//	@}
 
 	// ----------
@@ -425,8 +425,8 @@ class GUI_Manager {
 	//	@{
 	public:
 		std::stack<Geometry::Rect_i> scissors;
-		void pushScissor(const Geometry::Rect_i & r);
-		void popScissor();
+		GUIAPI void pushScissor(const Geometry::Rect_i & r);
+		GUIAPI void popScissor();
 	//	@}
 
 	//!	@name Internal state

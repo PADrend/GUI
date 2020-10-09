@@ -58,6 +58,15 @@ add_library(GUI SHARED
 )
 add_subdirectory(examples)
 
+if(MSVC)
+	target_compile_definitions(GUI PRIVATE "GUIAPI=__declspec(dllexport)")
+	target_compile_definitions(GUI INTERFACE "GUIAPI=__declspec(dllimport)")
+	target_compile_definitions(GUI PRIVATE NOMINMAX)
+else()
+	target_compile_definitions(GUI PRIVATE "GUIAPI=")
+	target_compile_definitions(GUI INTERFACE "GUIAPI=")
+endif()
+
 # Dependency to Geometry
 if(NOT TARGET Geometry)
 	find_package(Geometry 0.3.0 REQUIRED NO_MODULE)
@@ -93,7 +102,7 @@ else(GUI_BACKEND_RENDERING)
 endif(GUI_BACKEND_RENDERING)
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/config.h.in" "${CMAKE_CURRENT_BINARY_DIR}/config.h")
-target_include_directories(GUI PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/..)
+target_include_directories(GUI PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
 # Set version of library
 set_target_properties(GUI PROPERTIES VERSION ${GUI_VERSION}

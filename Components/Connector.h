@@ -23,24 +23,24 @@ class Connector: public Container{
 		PROVIDES_TYPE_NAME(Connector)
 	public:
 		/*! Find all Connectors in container which are connected the Component enpoint on one side. */
-		static void findConnectors(Container * container,const Component * endpoint,
+		GUIAPI static void findConnectors(Container * container,const Component * endpoint,
 									std::list<Connector*> & connectors);
 
-		Connector(GUI_Manager & gui,flag_t flags=0);
-		virtual ~Connector();
+		GUIAPI Connector(GUI_Manager & gui,flag_t flags=0);
+		GUIAPI virtual ~Connector();
 
 		// ---|> Component
-		void doLayout() override;
-		bool coversLocalPosition(const Geometry::Vec2 & pos) override;
+		GUIAPI void doLayout() override;
+		GUIAPI bool coversLocalPosition(const Geometry::Vec2 & pos) override;
 	private:
 		// ---|> Component
-		void doDisplay(const Geometry::Rect & region) override;
+		GUIAPI void doDisplay(const Geometry::Rect & region) override;
 
 
 	public:
 
-		float getLength()const;
-		void addConnectorPoint();
+		GUIAPI float getLength()const;
+		GUIAPI void addConnectorPoint();
 
 		Component * getFirstComponent()const	{	return firstComponent.get();	}
 		Component * getSecondComponent()const	{	return secondComponent.get();	}
@@ -51,9 +51,9 @@ class Connector: public Container{
 		class ConnectorPoint: public Container{
 				PROVIDES_TYPE_NAME(ConnectorPoint)
 			public:
-				ConnectorPoint(GUI_Manager & gui,flag_t flags=0);
-				ConnectorPoint(const ConnectorPoint & c);
-				virtual ~ConnectorPoint();
+				GUIAPI ConnectorPoint(GUI_Manager & gui,flag_t flags=0);
+				GUIAPI ConnectorPoint(const ConnectorPoint & c);
+				GUIAPI virtual ~ConnectorPoint();
 
 //				// ---|> Component
 //				virtual Component * clone()const;

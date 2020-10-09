@@ -32,7 +32,7 @@ class BitmapFont : public AbstractFont{
 	public:
 		/*! Load a .ttf or .otf file.
 			Returns a BitmapFont or throws an exception.	*/
-		static Util::Reference<BitmapFont> createFont(const Util::FileName & fontFile,uint32_t fontSize,const std::string & charMap_utf8);
+		GUIAPI static Util::Reference<BitmapFont> createFont(const Util::FileName & fontFile,uint32_t fontSize,const std::string & charMap_utf8);
 		
 		/*
 			+cursor(0,0)                       _
@@ -71,10 +71,10 @@ class BitmapFont : public AbstractFont{
 		
 		typedef std::unordered_map<uint32_t, Glyph> typefaceMap_t; // unicode -> Glyph
 
-		BitmapFont(Util::Reference<ImageData> bitmap,int lineHeight);
-		virtual ~BitmapFont();
+		GUIAPI BitmapFont(Util::Reference<ImageData> bitmap,int lineHeight);
+		GUIAPI virtual ~BitmapFont();
 
-		void addGlyph(uint32_t characterCode,uint32_t width, uint32_t height, const Geometry::Vec2i & textureOffset, const Geometry::Vec2i & screenOffset, int xAdvance);
+		GUIAPI void addGlyph(uint32_t characterCode,uint32_t width, uint32_t height, const Geometry::Vec2i & textureOffset, const Geometry::Vec2i & screenOffset, int xAdvance);
 		
 		const Glyph & getGlyph(uint32_t characterCode)const{
 			static const Glyph emptyGlyph;
@@ -88,10 +88,10 @@ class BitmapFont : public AbstractFont{
 		void setTabWidth(uint32_t s){	tabWidth = s;}
 		
 		// ---|> AbstractFont
-		virtual void enable() override;
-		virtual void disable() override;
-		virtual void renderText(const Geometry::Vec2 & pos, const std::string & text, const Util::Color4ub & color) override;
-		virtual Geometry::Vec2 getRenderedTextSize( const std::string & text) override;
+		GUIAPI virtual void enable() override;
+		GUIAPI virtual void disable() override;
+		GUIAPI virtual void renderText(const Geometry::Vec2 & pos, const std::string & text, const Util::Color4ub & color) override;
+		GUIAPI virtual Geometry::Vec2 getRenderedTextSize( const std::string & text) override;
 
 	private:
 		std::map<std::pair<uint32_t,uint32_t>, int16_t> kerning; // use std::map instead of unordered map to allow pair as key.

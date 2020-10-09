@@ -17,9 +17,9 @@ namespace GUI{
 
 namespace Colors{
 
-extern const Util::Color4ub BLACK;
-extern const Util::Color4ub WHITE;
-extern const Util::Color4ub NO_COLOR;
+GUIAPI extern const Util::Color4ub BLACK;
+GUIAPI extern const Util::Color4ub WHITE;
+GUIAPI extern const Util::Color4ub NO_COLOR;
 
 }
 

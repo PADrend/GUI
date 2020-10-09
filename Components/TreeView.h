@@ -34,87 +34,87 @@ class TreeView: public Container {
 				PROVIDES_TYPE_NAME(TreeViewEntry)
 			public:
 
-				static const Util::StringIdentifier ACTION_TreeViewEntry_collapse;
-				static const Util::StringIdentifier ACTION_TreeViewEntry_open;
+				GUIAPI static const Util::StringIdentifier ACTION_TreeViewEntry_collapse;
+				GUIAPI static const Util::StringIdentifier ACTION_TreeViewEntry_open;
 				
 				static const flag_t COLLAPSED_ENTRY = 1<<24;
 
-				TreeViewEntry(GUI_Manager & gui,TreeView * myTreeView,Component * c=nullptr,flag_t flags=0);
-				virtual ~TreeViewEntry();
+				GUIAPI TreeViewEntry(GUI_Manager & gui,TreeView * myTreeView,Component * c=nullptr,flag_t flags=0);
+				GUIAPI virtual ~TreeViewEntry();
 
 				//! ---|> Component
-				virtual void doLayout() override;
+				GUIAPI virtual void doLayout() override;
 
 				//! (internal) should only be called from within the owning TreeView
 				void _setMarked(bool b)			{	marked=b;	}
 				bool isMarked()const 			{	return marked;	}
 				TreeView * getTreeView()const 	{	return myTreeView;	}
-				TreeViewEntry * getFirstSubentry()const;
+				GUIAPI TreeViewEntry * getFirstSubentry()const;
 				bool isCollapsed()const			{	return getFlag(COLLAPSED_ENTRY);	}
-				void collapse();
-				void open();
+				GUIAPI void collapse();
+				GUIAPI void open();
 
 				// change the first component of the entry (which is normally only set in the constructor and never changed.)
-				void setComponent(const Ref & c);
+				GUIAPI void setComponent(const Ref & c);
 
 				// ---|> Container
-				virtual void addContent(const Ref & child) override;
-				virtual void clearContents() override;
-				virtual void removeContent(const Ref & child) override;
-				virtual std::vector<Component*> getContents() override;
-				virtual void insertAfter(const Ref & child,const Ref & after) override;
-				virtual void insertBefore(const Ref & child,const Ref & after) override;
+				GUIAPI virtual void addContent(const Ref & child) override;
+				GUIAPI virtual void clearContents() override;
+				GUIAPI virtual void removeContent(const Ref & child) override;
+				GUIAPI virtual std::vector<Component*> getContents() override;
+				GUIAPI virtual void insertAfter(const Ref & child,const Ref & after) override;
+				GUIAPI virtual void insertBefore(const Ref & child,const Ref & after) override;
 
 			private:
 				// ---|> Component
-				virtual void doDisplay(const Geometry::Rect & region) override;
+				GUIAPI virtual void doDisplay(const Geometry::Rect & region) override;
 
-				bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
+				GUIAPI bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
 
-				void setTreeView( TreeView * myTreeView);
+				GUIAPI void setTreeView( TreeView * myTreeView);
 				TreeView * myTreeView;
 				bool marked;
 				MouseButtonListener mouseButtonListener;
 
-				void unmarkSubtree(Component * root)const;
+				GUIAPI void unmarkSubtree(Component * root)const;
 		};
 
-		TreeView(GUI_Manager & gui,const Geometry::Rect & r,const std::string & actionName="",flag_t flags=0);
-		virtual ~TreeView();
+		GUIAPI TreeView(GUI_Manager & gui,const Geometry::Rect & r,const std::string & actionName="",flag_t flags=0);
+		GUIAPI virtual ~TreeView();
 
 		TreeViewEntry * getRootEntry()const					{	return root.get();	}
 		Util::StringIdentifier getActionName()const			{	return actionName;	}
 
-		void scroll(float amount);
-		void scrollTo(float position);
-		void scrollToSelection();
+		GUIAPI void scroll(float amount);
+		GUIAPI void scrollTo(float position);
+		GUIAPI void scrollToSelection();
 		float getScrollPos()const 							{	return scrollPos;	}
 
-		void markEntry(TreeViewEntry * e);
-		void unmarkEntry(TreeViewEntry * e);
-		void unmarkAll();
+		GUIAPI void markEntry(TreeViewEntry * e);
+		GUIAPI void unmarkEntry(TreeViewEntry * e);
+		GUIAPI void unmarkAll();
 
-		void markComponent(Component * c);
-		void unmarkComponent(Component * c);
-		std::vector<Component*> getMarkedComponents();
-		void markingChanged();
+		GUIAPI void markComponent(Component * c);
+		GUIAPI void unmarkComponent(Component * c);
+		GUIAPI std::vector<Component*> getMarkedComponents();
+		GUIAPI void markingChanged();
 
 		// ---|> Container
-		virtual void addContent(const Ref & child) override;
-		virtual void clearContents() override;
-		virtual void removeContent(const Ref & child) override;
-		virtual std::vector<Component*> getContents() override;
+		GUIAPI virtual void addContent(const Ref & child) override;
+		GUIAPI virtual void clearContents() override;
+		GUIAPI virtual void removeContent(const Ref & child) override;
+		GUIAPI virtual std::vector<Component*> getContents() override;
 
 		// ---|> Component
-		virtual void doLayout() override;
+		GUIAPI virtual void doLayout() override;
 
 	private:
 		// ---|> Component
-		virtual void doDisplay(const Geometry::Rect & region) override;
+		GUIAPI virtual void doDisplay(const Geometry::Rect & region) override;
 
-		bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
-		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
-		bool onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent);
+		GUIAPI bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
+		GUIAPI bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
+		GUIAPI bool onMouseMove(Component * /*component*/, const Util::UI::MotionEvent & motionEvent);
 
 		Geometry::Vec2 currentMousePos;
 

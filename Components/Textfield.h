@@ -24,24 +24,24 @@ namespace GUI {
 class Textfield: public Component {
 		PROVIDES_TYPE_NAME(Textfield)
 	public:
-		Textfield(GUI_Manager & gui, const std::string & text = "", flag_t flags = 0);
-		virtual ~Textfield();
+		GUIAPI Textfield(GUI_Manager & gui, const std::string & text = "", flag_t flags = 0);
+		GUIAPI virtual ~Textfield();
 
 		void setTextRef(std::string * newTextRef) 		{	textRef=newTextRef;	}
-		void setText(const std::string & newText);
-		const std::string & getText()const;
+		GUIAPI void setText(const std::string & newText);
+		GUIAPI const std::string & getText()const;
 //		void setFont(AbstractFont * newFont);
 
 		// ---|> Component
-		virtual bool onSelect() override;
-		virtual bool onUnselect() override;
+		GUIAPI virtual bool onSelect() override;
+		GUIAPI virtual bool onUnselect() override;
 	private:
 		// ---|> Component
-		virtual void doDisplay(const Geometry::Rect & region) override;
+		GUIAPI virtual void doDisplay(const Geometry::Rect & region) override;
 
-		bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
-		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
-		bool onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent);
+		GUIAPI bool onKeyEvent(const Util::UI::KeyboardEvent & keyEvent);
+		GUIAPI bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
+		GUIAPI bool onMouseMove(Component * component, const Util::UI::MotionEvent & motionEvent);
 
 		std::string text;
 		std::string * textRef;
@@ -57,9 +57,9 @@ class Textfield: public Component {
 		MouseButtonListener mouseButtonListener;
 		OptionalMouseMotionListener optionalMouseMotionListener;
 
-		Geometry::Vec2 getCursorCoordinate(int cursorPos);
-		int getCursorPositionFromCoordinate(const Geometry::Vec2 & pos);
-		void setCursorPos(int _cursorPos,bool shift=false);
+		GUIAPI Geometry::Vec2 getCursorCoordinate(int cursorPos);
+		GUIAPI int getCursorPositionFromCoordinate(const Geometry::Vec2 & pos);
+		GUIAPI void setCursorPos(int _cursorPos,bool shift=false);
 
 		bool isTextSelected()const	{	return selectionStart!=selectionEnd;	}
 		int leftSelect()const 		{	return selectionStart<selectionEnd?selectionStart:selectionEnd;	}
@@ -76,11 +76,11 @@ class Textfield: public Component {
 		std::vector<std::string> options;
 		int currentOptionIndex;
 	public:
-		void addOption(const std::string & option);
-		std::string getOption(int index);
-		void clearOptions();
+		GUIAPI void addOption(const std::string & option);
+		GUIAPI std::string getOption(int index);
+		GUIAPI void clearOptions();
 		int getCurrentOptionIndex()const 	{	return currentOptionIndex;	}
-		void setCurrentOptionIndex(int index);
+		GUIAPI void setCurrentOptionIndex(int index);
 		bool hasOptions()const 				{	return countOptions()>0;	}
 		int countOptions()const 			{	return options.size();	}
 };

@@ -26,29 +26,29 @@ class Scrollbar : public Container {
 		// flags
 		static const flag_t VERTICAL=1<<24;
 
-		Scrollbar(GUI_Manager & gui, flag_t flags = 0);
-		virtual ~Scrollbar();
+		GUIAPI Scrollbar(GUI_Manager & gui, flag_t flags = 0);
+		GUIAPI virtual ~Scrollbar();
 
-		int getMarkerSize()const;
+		GUIAPI int getMarkerSize()const;
 		uint32_t getMaxScrollPos()const						{	return maxScrollPos;	}
 		bool isVertical()const 								{	return getFlag(VERTICAL);	}
-		void setMaxScrollPos(const uint32_t maxScrollPos);
-		void setScrollPos(const uint32_t f);
+		GUIAPI void setMaxScrollPos(const uint32_t maxScrollPos);
+		GUIAPI void setScrollPos(const uint32_t f);
 		uint32_t getScrollPos()const						{	return scrollPos;	}
 
 		//! Sets the scrollPos and issues an dataChanged event to registered listeners
-		void updateScrollPos(const int32_t f);
+		GUIAPI void updateScrollPos(const int32_t f);
 
 		// ---|> Component
-		virtual void doLayout() override;
+		GUIAPI virtual void doLayout() override;
 
 	private:
 		// ---|> Component
-		virtual void doDisplay(const Geometry::Rect & region) override;
+		GUIAPI virtual void doDisplay(const Geometry::Rect & region) override;
 
-		bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
+		GUIAPI bool onMouseButton(Component * component, const Util::UI::ButtonEvent & buttonEvent);
 
-		float getMarkerPosFromScrollPos(float value)const;
+		GUIAPI float getMarkerPosFromScrollPos(float value)const;
 
 		uint32_t maxScrollPos;
 		uint32_t scrollPos;

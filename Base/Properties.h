@@ -33,8 +33,8 @@ class ColorProperty : public DisplayProperty {
 		void setColor(const Util::Color4ub& c)		{	color=c;	}
 
 		//! ---|> DisplayProperty
-		virtual void doEnable(StyleManager & s) override;
-		virtual void doDisable(StyleManager & s) override;
+		GUIAPI virtual void doEnable(StyleManager & s) override;
+		GUIAPI virtual void doDisable(StyleManager & s) override;
 };
 
 //! FontProperty ---|> DisplayProperty
@@ -50,8 +50,8 @@ class FontProperty : public DisplayProperty {
 		void setFont(AbstractFont * f)				{	font=f;	}
 
 		//! ---|> DisplayProperty
-		virtual void doEnable(StyleManager & s) override;
-		virtual void doDisable(StyleManager & s) override;
+		GUIAPI virtual void doEnable(StyleManager & s) override;
+		GUIAPI virtual void doDisable(StyleManager & s) override;
 };
 
 /*! UseColorProperty ---|> DisplayProperty
@@ -65,8 +65,8 @@ class UseColorProperty : public DisplayProperty {
 		virtual ~UseColorProperty() {}
 
 		//! ---|> DisplayProperty
-		virtual void doEnable(StyleManager & s) override;
-		virtual void doDisable(StyleManager & s) override;
+		GUIAPI virtual void doEnable(StyleManager & s) override;
+		GUIAPI virtual void doDisable(StyleManager & s) override;
 };
 
 /*! UseFontProperty ---|> DisplayProperty
@@ -80,8 +80,8 @@ class UseFontProperty : public DisplayProperty {
 		virtual ~UseFontProperty() {}
 
 		//! ---|> DisplayProperty
-		virtual void doEnable(StyleManager & s) override;
-		virtual void doDisable(StyleManager & s) override;
+		GUIAPI virtual void doEnable(StyleManager & s) override;
+		GUIAPI virtual void doDisable(StyleManager & s) override;
 };
 
 /*! UseShapeProperty ---|> DisplayProperty
@@ -95,8 +95,8 @@ class UseShapeProperty : public DisplayProperty {
 		virtual ~UseShapeProperty() {}
 
 		//! ---|> DisplayProperty
-		virtual void doEnable(StyleManager & s) override;
-		virtual void doDisable(StyleManager & s) override;
+		GUIAPI virtual void doEnable(StyleManager & s) override;
+		GUIAPI virtual void doDisable(StyleManager & s) override;
 };
 
 //! ShapeProperty ---|> DisplayProperty
@@ -112,8 +112,8 @@ class ShapeProperty : public DisplayProperty {
 		void setShape(AbstractShape * s)			{	shape=s;	}
 
 		//! ---|> DisplayProperty
-		virtual void doEnable(StyleManager & s) override;
-		virtual void doDisable(StyleManager & s) override;
+		GUIAPI virtual void doEnable(StyleManager & s) override;
+		GUIAPI virtual void doDisable(StyleManager & s) override;
 };
 
 }
