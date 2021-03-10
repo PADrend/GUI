@@ -195,7 +195,7 @@ class WindowCloseAnimation:public AnimationHandler{
 	public:
 		float originalHeight;
 		WindowCloseAnimation(Window * w) :
-			AnimationHandler(w,0.3),originalHeight(w->getHeight()){
+			AnimationHandler(w,0.3f),originalHeight(w->getHeight()){
 		}
 		virtual ~WindowCloseAnimation()	{}
 
@@ -225,7 +225,7 @@ class WindowSpielereiAnimation:public AnimationHandler{
 		float prevTime;
 
 		WindowSpielereiAnimation(Window * w) :
-			AnimationHandler(w,0.3),pos(w->getPosition()),lastPos(w->getPosition()),prevTime(-1){
+			AnimationHandler(w,0.3f),pos(w->getPosition()),lastPos(w->getPosition()),prevTime(-1){
 		}
 		virtual ~WindowSpielereiAnimation()	{}
 
@@ -237,7 +237,7 @@ class WindowSpielereiAnimation:public AnimationHandler{
 
 			float lastDuration=getLastTime() - prevTime;
 			Geometry::Vec2f movement= lastDuration==0 ? Geometry::Vec2f(0,0) :
-					(w->getPosition()-lastPos+ Geometry::Vec2f(0, 0.098))/lastDuration * (t-getLastTime()) ;
+					(w->getPosition()-lastPos+ Geometry::Vec2f(0, 0.098f))/lastDuration * (t-getLastTime()) ;
 			prevTime=getLastTime();
 
 			if( (w->getPosition().y() + movement.y() + w->getHeight()) > 1024 && movement.y() >0){
@@ -245,20 +245,20 @@ class WindowSpielereiAnimation:public AnimationHandler{
 				if(d>8 && w->getHeight()>50)
 					w->setHeight( w->getHeight() - std::min(d,10.0f));
 
-				movement.x( movement.x()*0.5);
-				movement.y( movement.y()*-0.5);
+				movement.x( movement.x()*0.5f);
+				movement.y( movement.y()*-0.5f);
 			}
 			if( (w->getPosition().x() + movement.x() + w->getWidth()) > 1024 && movement.x() >0){
-				movement.x( movement.x()*-0.5);
-				movement.y( movement.y()*0.8);
+				movement.x( movement.x()*-0.5f);
+				movement.y( movement.y()*0.8f);
 			}
 			if( w->getPosition().y() < 0 && movement.y() <0){
-				movement.x( movement.x()*0.5);
-				movement.y( movement.y()*-0.5);
+				movement.x( movement.x()*0.5f);
+				movement.y( movement.y()*-0.5f);
 			}
 			if( w->getPosition().x() < 0 && movement.x() <0){
-				movement.x( movement.x()*-0.5);
-				movement.y( movement.y()*0.8);
+				movement.x( movement.x()*-0.5f);
+				movement.y( movement.y()*0.8f);
 			}
 			lastPos=pos;
 			pos+=movement;
@@ -282,15 +282,15 @@ Window::Window(GUI_Manager & _gui,const Geometry::Rect & _r,const std::string & 
 
 	setMouseCursorProperty(PROPERTY_MOUSECURSOR_COMPONENTS);
 	    
-	const int borderSize=getGUI().getGlobalValue(PROPERTY_WINDOW_BORDER_SIZE);
-	const int titleHeight=getGUI().getGlobalValue(PROPERTY_WINDOW_TITLEBAR_HEIGHT);
+	const int borderSize=static_cast<int>(getGUI().getGlobalValue(PROPERTY_WINDOW_BORDER_SIZE));
+	const int titleHeight=static_cast<int>(getGUI().getGlobalValue(PROPERTY_WINDOW_TITLEBAR_HEIGHT));
 
 	titlePanel=new TitlePanel(*this);
 	titlePanel->setExtLayout( ExtLayouter::REFERENCE_X_LEFT|ExtLayouter::POS_X_ABS|ExtLayouter::ALIGN_X_LEFT|
 									ExtLayouter::REFERENCE_Y_TOP|ExtLayouter::POS_Y_ABS|ExtLayouter::ALIGN_Y_TOP|
 									ExtLayouter::WIDTH_ABS | ExtLayouter::HEIGHT_ABS,
-									Geometry::Vec2(borderSize,borderSize),
-									Geometry::Vec2(-2.0f * std::max(borderSize,1),titleHeight-borderSize) );
+									Geometry::Vec2(static_cast<float>(borderSize),static_cast<float>(borderSize)),
+									Geometry::Vec2(-2.0f * std::max(borderSize,1),static_cast<float>(titleHeight-borderSize)) );
 
 	_addChild(titlePanel.get());
 	resizePanel=new ResizePanel(*this);
@@ -358,7 +358,7 @@ Window::Window(GUI_Manager & _gui,const Geometry::Rect & _r,const std::string & 
 	clientAreaPanel->setExtLayout( ExtLayouter::REFERENCE_X_LEFT|ExtLayouter::POS_X_ABS|ExtLayouter::ALIGN_X_LEFT|
 										ExtLayouter::REFERENCE_Y_TOP|ExtLayouter::POS_Y_ABS|ExtLayouter::ALIGN_Y_TOP|
 										ExtLayouter::WIDTH_ABS | ExtLayouter::HEIGHT_ABS,
-										Geometry::Vec2(borderSize,titleHeight),
+										Geometry::Vec2(static_cast<float>(borderSize),static_cast<float>(titleHeight)),
 										Geometry::Vec2(-2.0f * borderSize, -static_cast<float>(titleHeight)));
 
 	setTitle(_title);
@@ -375,12 +375,12 @@ void Window::close(){
 
 //! ---|> Component
 void Window::doLayout(){
-	const unsigned int titleHeight=getGUI().getGlobalValue(PROPERTY_WINDOW_TITLEBAR_HEIGHT);
+	const unsigned int titleHeight=static_cast<unsigned int>(getGUI().getGlobalValue(PROPERTY_WINDOW_TITLEBAR_HEIGHT));
 	const bool hideComponents = getFlag(HIDDEN_WINDOW) && !isSelected();
 
 	if(getWidth()<10 || getHeight()<titleHeight){
 		Geometry::Rect r=getLocalRect();
-		r.include(10,titleHeight);
+		r.include(10,static_cast<float>(titleHeight));
 		setRect(r);
 	}
 	if(hideComponents){
@@ -394,7 +394,7 @@ void Window::doLayout(){
 	if(getFlag(NO_CLOSE_BUTTON)||isMinimized()||hideComponents ){
 		disableButton->disable();
 	}else{
-		disableButton->setSize(titleHeight-2,titleHeight-2);
+		disableButton->setSize(static_cast<float>(titleHeight-2),static_cast<float>(titleHeight-2));
 		disableButton->setPosition(Geometry::Vec2(titleButtonPos,1));
 		disableButton->enable();
 		titleButtonPos-=titleHeight;
@@ -404,13 +404,13 @@ void Window::doLayout(){
 		hiddenButton->disable();
 		minimizeButton->disable();
 	}else{
-		hiddenButton->setSize(titleHeight-2,titleHeight-2);
+		hiddenButton->setSize(static_cast<float>(titleHeight-2),static_cast<float>(titleHeight-2));
 		hiddenButton->setPosition(Geometry::Vec2(titleButtonPos,1));
 		hiddenButton->enable();
 		hiddenButton->setSwitch(getFlag(HIDDEN_WINDOW));
 		titleButtonPos-=titleHeight;
 
-		minimizeButton->setSize(titleHeight-2,titleHeight-2);
+		minimizeButton->setSize(static_cast<float>(titleHeight-2),static_cast<float>(titleHeight-2));
 		minimizeButton->setPosition(Geometry::Vec2(titleButtonPos,1));
 		minimizeButton->enable();
 		titleButtonPos-=titleHeight;
@@ -540,7 +540,7 @@ void Window::minimize(){
 	storedRect = getRect();
 	getGUI().addAnimationHandler(
 			new WindowRectAnimation(this,Geometry::Rect(getPosition().getX(),getPosition().getY(),
-											150,getGUI().getGlobalValue(PROPERTY_WINDOW_TITLEBAR_HEIGHT)),0.2, false));
+											150,getGUI().getGlobalValue(PROPERTY_WINDOW_TITLEBAR_HEIGHT)),0.2f, false));
 	clientAreaPanel->disable();
 }
 
@@ -550,7 +550,7 @@ void Window::restoreRect(){
 		return;
 	getGUI().finishAnimations(this);
 	getGUI().addAnimationHandler(
-			new WindowRectAnimation(this,storedRect,0.2, true));
+			new WindowRectAnimation(this,storedRect,0.2f, true));
 
 	minimized=false;
 }

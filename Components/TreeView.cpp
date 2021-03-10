@@ -41,7 +41,7 @@ class TV_ScrollAnimation:public AnimationHandler{
 				return false;
 			}
 			TreeView * tv= dynamic_cast<TreeView *>(getComponent());
-			tv->scrollTo( (tv->getScrollPos()*2 + targetPos ) /3.0 );
+			tv->scrollTo( (tv->getScrollPos()*2 + targetPos ) /3.0f );
 			return true;
 		}
 
@@ -100,12 +100,12 @@ void TreeView::TreeViewEntry::doDisplay(const Geometry::Rect & region) {
 		}
 	}
 	if(getContentsCount() > 1 && dynamic_cast<TreeViewEntry*>(getParent())) {
-		const int markerHeight = std::min<int>(getFirstChild()->getHeight(),20);
+		const int markerHeight = std::min<int>(static_cast<int>(getFirstChild()->getHeight()),20);
 	
-		shape_activeIndentation->display(Geometry::Rect(4,0,1,markerHeight*0.3));
-		(isCollapsed()&&getNext() ? shape_activeIndentation : shape_passiveIndentation) ->display(Geometry::Rect(4,markerHeight*0.8,1,getHeight()-markerHeight*0.8-1));
+		shape_activeIndentation->display(Geometry::Rect(4,0,1,markerHeight*0.3f));
+		(isCollapsed()&&getNext() ? shape_activeIndentation : shape_passiveIndentation) ->display(Geometry::Rect(4,markerHeight*0.8f,1,getHeight()-markerHeight*0.8f-1));
 			
-		shape_subgroup->display(Geometry::Rect(1,1,8,markerHeight),isCollapsed() ? 0 : AbstractShape::ACTIVE);
+		shape_subgroup->display(Geometry::Rect(1,1,8,static_cast<float>(markerHeight)),isCollapsed() ? 0 : AbstractShape::ACTIVE);
 	}else{
 		shape_activeIndentation->display(Geometry::Rect(4,0,1,getHeight()-1));
 	}
@@ -279,7 +279,7 @@ void TreeView::TreeViewEntry::doLayout() {
 	// \note Even if isCollapsed(), the other entries need to be moved out of the way 
 	//   so that they do not grab the click events for the first component.
 	for (Component * c=getFirstChild();c!=nullptr;c=c->getNext()) {
-		c->setPosition(Geometry::Vec2(10,h));
+		c->setPosition(Geometry::Vec2(10,static_cast<float>(h)));
 		h += static_cast<uint32_t>(c->getHeight());
 	}
 	setSize( getParent()->getWidth()-getPosition().x(),
@@ -363,7 +363,7 @@ void TreeView::doLayout() {
 													if(scrollBar.isNotNull()) {
 														invalidateRegion();
 														invalidateLayout();
-														scrollTo(scrollBar->getScrollPos());
+														scrollTo(static_cast<float>(scrollBar->getScrollPos()));
 													}
 												})));
 			_addChild(scrollBar.get());
@@ -371,7 +371,7 @@ void TreeView::doLayout() {
 		const int maxScrollPos = std::max(0,static_cast<int>(root->getHeight()-getHeight()));
 		scrollPos = std::min(root->getHeight()-getHeight(),scrollPos);
 		scrollBar->setMaxScrollPos(maxScrollPos); 
-		scrollBar->setScrollPos( scrollPos );
+		scrollBar->setScrollPos( static_cast<uint32_t>(scrollPos) );
 	}else{
 		scrollPos = 0;
 		if(scrollBar.isNotNull()){
@@ -500,13 +500,13 @@ bool TreeView::onMouseButton(Component * /*component*/, const Util::UI::ButtonEv
 //		scroll(-getHeight()*0.25);
 
 		getGUI().stopAnimations(this);
-		getGUI().addAnimationHandler(new TV_ScrollAnimation(this, scrollPos-getHeight()*0.5 ,0.3));
+		getGUI().addAnimationHandler(new TV_ScrollAnimation(this, scrollPos-getHeight()*0.5f ,0.3f));
 
 		return true;
 	}else if(buttonEvent.pressed && buttonEvent.button == Util::UI::MOUSE_WHEEL_DOWN) {
 //		scroll(+getHeight()*0.25);
 		getGUI().stopAnimations(this);
-		getGUI().addAnimationHandler(new TV_ScrollAnimation(this, scrollPos+getHeight()*0.5 ,0.3));
+		getGUI().addAnimationHandler(new TV_ScrollAnimation(this, scrollPos+getHeight()*0.5f ,0.3f));
 		return true;
 	}else{
 		return false;
@@ -518,7 +518,7 @@ bool TreeView::onMouseMove(Component * /*component*/, const Util::UI::MotionEven
 		optionalMouseMotionListener.disable();
 		return false;
 	}
-	scroll(motionEvent.deltaY * -2.0);
+	scroll(motionEvent.deltaY * -2.0f);
 	return true;
 }
 
@@ -550,11 +550,11 @@ void TreeView::scrollToSelection() {
 
 		if( yPos < scrollPos+entry->getHeight()*0.5 ){
 			getGUI().stopAnimations(this);
-			getGUI().addAnimationHandler(new TV_ScrollAnimation(this,yPos - entry->getHeight()*0.5 ,0.4));
+			getGUI().addAnimationHandler(new TV_ScrollAnimation(this,yPos - entry->getHeight()*0.5f ,0.4f));
 		}
 		else if( yPos+entry->getHeight()*2.0 > scrollPos+getHeight() ){
 			getGUI().stopAnimations(this);
-			getGUI().addAnimationHandler(new TV_ScrollAnimation(this,yPos - std::max(getHeight()-entry->getHeight()*3.0,getHeight()*0.3 ),0.4));
+			getGUI().addAnimationHandler(new TV_ScrollAnimation(this,yPos - std::max(getHeight()-entry->getHeight()*3.0f,getHeight()*0.3f ),0.4f));
 		}
 	}
 //	std::cout << getHeight();

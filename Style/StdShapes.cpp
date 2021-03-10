@@ -175,9 +175,9 @@ void TriangleSelectorShape::display(const Rect & rect,flag_t flags){
 	colors.insert(colors.end(),3, color.getAsUInt());
 
 	const float sideLength = std::min(rect.getWidth(),rect.getHeight());
-	const float halfSideLength = sideLength*0.5;
+	const float halfSideLength = sideLength*0.5f;
 	const float h = std::sqrt( sideLength*sideLength - halfSideLength*halfSideLength );
-	const float halfH = h*0.5;
+	const float halfH = h*0.5f;
 	const Geometry::Vec2 center = rect.getCenter();
 	if(flags&ACTIVE){
 		vertices.push_back(center.x()-halfSideLength);		vertices.push_back(center.y()-halfH);
@@ -243,13 +243,13 @@ void SmoothConnectorShape::displayLine(const std::vector<Geometry::Vec2> & point
 	for(size_t i=1;i<points.size();++i){
 		const Geometry::Vec2 p0(points[i-1]); // startPoint
 		const Geometry::Vec2 p3(points[i]); // endPoint
-		const float d = std::min(p0.distance(p3)*0.4,100.0);
+		const float d = std::min(p0.distance(p3)*0.4f,100.0f);
 		const Geometry::Vec2 p1(p0+Geometry::Vec2(d,0));
 		const Geometry::Vec2 p2(p3-Geometry::Vec2(d,0));
 
 		vertices.push_back(p0.x());
 		vertices.push_back(p0.y());
-		for(float t=0.0;t<=1.00;t += t<0.5 ? ((t*t)+0.1)*0.1 : (( (1.0-t)*(1.0-t))+0.1)*0.1 ){
+		for(float t=0.0f;t<=1.0f;t += t<0.5f ? ((t*t)+0.1f)*0.1f : (( (1.0f-t)*(1.0f-t))+0.1f)*0.1f ){
 			const Geometry::Vec2 p_t = Interpolation::cubicBezier(p0, p1, p2, p3, t);
 			vertices.push_back(p_t.x());
 			vertices.push_back(p_t.y());

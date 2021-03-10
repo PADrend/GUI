@@ -245,8 +245,8 @@ static void drawVertices(const draw_mode_t mode, const std::vector<Geometry::Vec
 	for(uint32_t i=0; i<vertices.size(); ++i)
 		updateVertex(ctxt.meshOffset+i, {vertices[i], {0,0}, color});
 	
-	ctxt.commands.emplace_back(ctxt.meshOffset, vertices.size(), ctxt.position, ctxt.scissor, mode, blending);
-	ctxt.meshOffset += vertices.size();
+	ctxt.commands.emplace_back(ctxt.meshOffset, static_cast<uint32_t>(vertices.size()), ctxt.position, ctxt.scissor, mode, blending);
+	ctxt.meshOffset += static_cast<uint32_t>(vertices.size());
 }
 
 static void drawVertices(const draw_mode_t mode, const std::vector<Geometry::Vec2>& vertices, const std::vector<Util::Color4f>& colors, bool blending=false) {
@@ -256,8 +256,8 @@ static void drawVertices(const draw_mode_t mode, const std::vector<Geometry::Vec
 	for(uint32_t i=0; i<vertices.size(); ++i)
 		updateVertex(ctxt.meshOffset+i, {vertices[i], {0,0}, colors[i]});
 	
-	ctxt.commands.emplace_back(ctxt.meshOffset, vertices.size(), ctxt.position, ctxt.scissor, mode, blending);
-	ctxt.meshOffset += vertices.size();
+	ctxt.commands.emplace_back(ctxt.meshOffset, static_cast<uint32_t>(vertices.size()), ctxt.position, ctxt.scissor, mode, blending);
+	ctxt.meshOffset += static_cast<uint32_t>(vertices.size());
 }
 
 static void drawTexturedVertices(const draw_mode_t mode, const std::vector<Geometry::Vec2>& vertices, const std::vector<Geometry::Vec2>& uvs, const Util::Color4f& color, bool blending=false) {
@@ -268,8 +268,8 @@ static void drawTexturedVertices(const draw_mode_t mode, const std::vector<Geome
 	for(uint32_t i=0; i<vertices.size(); ++i)
 		updateVertex(ctxt.meshOffset+i, {vertices[i], uvs[i], color});
 	
-	ctxt.commands.emplace_back(ctxt.meshOffset, vertices.size(), ctxt.position, ctxt.scissor, mode, blending, ctxt.activeTexture);
-	ctxt.meshOffset += vertices.size();
+	ctxt.commands.emplace_back(ctxt.meshOffset, static_cast<uint32_t>(vertices.size()), ctxt.position, ctxt.scissor, mode, blending, ctxt.activeTexture);
+	ctxt.meshOffset += static_cast<uint32_t>(vertices.size());
 }
 
 //! (internal)
@@ -392,7 +392,7 @@ void Draw::beginDrawing(Rendering::RenderingContext& rc, const Geometry::Vec2i &
 	rc.pushScissor();
 	resetScissor();	
 	rc.pushAndSetShader(ctxt.shader.get());
-	ctxt.shader->setUniform(rc, Uniform(UNIFORM_SCREEN_SCALE, Geometry::Vec2(2.0/screenSize.getWidth(),-2.0/screenSize.getHeight())));
+	ctxt.shader->setUniform(rc, Uniform(UNIFORM_SCREEN_SCALE, Geometry::Vec2(2.0f/screenSize.getWidth(),-2.0f/screenSize.getHeight())));
 		
 	GET_GL_ERROR();
 }
@@ -605,10 +605,10 @@ void Draw::drawText(const std::string & text,const Geometry::Rect & rect,Abstrac
 	if ( style&TEXT_ALIGN_RIGHT) {
 		pos+=Geometry::Vec2( rect.getWidth()-size.getWidth(),0);
 	}else if ( style&TEXT_ALIGN_CENTER) {
-		pos+=Geometry::Vec2( (rect.getWidth()-size.getWidth())*0.5,0);
+		pos+=Geometry::Vec2( (rect.getWidth()-size.getWidth())*0.5f,0);
 	}
 	if ( style&TEXT_ALIGN_MIDDLE) {
-		pos+=Geometry::Vec2( 0, (rect.getHeight()-size.getHeight())*0.5);
+		pos+=Geometry::Vec2( 0, (rect.getHeight()-size.getHeight())*0.5f);
 	}
 	font->renderText( pos, text,c);
 	font->disable();
@@ -632,7 +632,7 @@ void Draw::drawCross(const Geometry::Rect & r,const Util::Color4ub & c,float lin
 	if (c == Colors::NO_COLOR)
 		return;
 
-	const float f = lineWidth*0.4;
+	const float f = lineWidth*0.4f;
 	const std::vector<Geometry::Vec2> vertices = {
 		{r.getMinX()+f,r.getMinY()+0},
 		{r.getMinX()+0,r.getMinY()+f},

@@ -136,7 +136,7 @@ void ListView::doLayout() {
 												scrollBar.get(),
 												[this](Component *) {
 													if(scrollBar.isNotNull()) {
-														setScrollingPosition( Geometry::Vec2(0.0f,scrollBar->getScrollPos() ));
+														setScrollingPosition( Geometry::Vec2(0.0f,static_cast<float>(scrollBar->getScrollPos()) ));
 													}
 												})));
 			scrollBar->setExtLayout( 	ExtLayouter::POS_X_ABS|ExtLayouter::REFERENCE_X_RIGHT|ExtLayouter::ALIGN_X_RIGHT|
@@ -151,7 +151,7 @@ void ListView::doLayout() {
 	
 	if(scrollBar.isNotNull()){
 		scrollBar->setMaxScrollPos(std::max(0,static_cast<int>(maxScrollPos.y()))); 
-		scrollBar->setScrollPos( scrollPos.y() );
+		scrollBar->setScrollPos( static_cast<uint32_t>(scrollPos.y()) );
 	}
 	
 
@@ -244,10 +244,10 @@ void ListView::scrollToCursor() {
 	if(c == nullptr) {
 		return;
 	} else if( c->getPosition().getY() - getEntryHeight() < getScrollPos().getY() ) {
-		scrollTo(c->getPosition() + Geometry::Vec2(0, -getEntryHeight()), 0.1);
+		scrollTo(c->getPosition() + Geometry::Vec2(0.0f, -getEntryHeight()), 0.1f);
 
 	} else if( c->getPosition().getY() + getEntryHeight() * 1.5 > getScrollPos().getY() + getHeight() ) {
-		scrollTo(c->getPosition() + Geometry::Vec2(0, 1.5 * getEntryHeight() - getHeight()), 0.1);
+		scrollTo(c->getPosition() + Geometry::Vec2(0.0f, 1.5f * getEntryHeight() - getHeight()), 0.1f);
 	}
 }
 
@@ -289,13 +289,13 @@ bool ListView::onMouseButton(Component * /*component*/, const Util::UI::ButtonEv
 		return true;
 	} else if(buttonEvent.button == Util::UI::MOUSE_WHEEL_DOWN && buttonEvent.pressed) {
 		finishScrolling();
-		const float amount = std::min(getEntryHeight() * 3.0, getHeight() * 0.33);
-		scrollTo(scrollPos + Geometry::Vec2(0, amount), 0.1);
+		const float amount = std::min(getEntryHeight() * 3.0f, getHeight() * 0.33f);
+		scrollTo(scrollPos + Geometry::Vec2(0, amount), 0.1f);
 		return true;
 	} else if(buttonEvent.button == Util::UI::MOUSE_WHEEL_UP && buttonEvent.pressed) {
 		finishScrolling();
-		const float amount = std::min(getEntryHeight() * 3.0, getHeight() * 0.33);
-		scrollTo(scrollPos + Geometry::Vec2(0, -amount), 0.1);
+		const float amount = std::min(getEntryHeight() * 3.0f, getHeight() * 0.33f);
+		scrollTo(scrollPos + Geometry::Vec2(0, -amount), 0.1f);
 		return true;
 	} else {
 		return false;
@@ -332,11 +332,11 @@ bool ListView::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {
 			scrollToCursor();
 			return true;
 		} else if(keyEvent.key == Util::UI::KEY_PAGEUP) {
-			moveCursor(getNumVisibleEntries() * -0.75);
+			moveCursor(static_cast<int>(getNumVisibleEntries() * -0.75f));
 			scrollToCursor();
 			return true;
 		} else if(keyEvent.key == Util::UI::KEY_PAGEDOWN) {
-			moveCursor(getNumVisibleEntries() * 0.75);
+			moveCursor(static_cast<int>(getNumVisibleEntries() * 0.75f));
 			scrollToCursor();
 			return true;
 		} else if(keyEvent.key == Util::UI::KEY_SPACE) {
@@ -368,7 +368,7 @@ class ListView_ScrollAnimation: public AnimationHandler {
 			}
 			ListView * p = dynamic_cast<ListView *>(getComponent());
 
-			for(float f = 0.0; f < t - getStartTime(); f += 0.01) // for every 10 ms
+			for(float f = 0.0f; f < t - getStartTime(); f += 0.01f) // for every 10 ms
 				p->setScrollingPosition( (p->getScrollPos() * 99.0f + targetPos) * 0.01f);
 			return true;
 		}

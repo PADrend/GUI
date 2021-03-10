@@ -93,7 +93,7 @@ void Textfield::doDisplay(const Geometry::Rect & /*region*/) {
 
 	const Geometry::Vec2 textSize = Draw::getTextSize(getText(),fontReference.get());
 	const Geometry::Vec2 textPos(getGUI().getGlobalValue(PROPERTY_TEXTFIELD_INDENTATION)+scrollPos,
-								(getHeight()-textSize.getHeight())*0.5);
+								(getHeight()-textSize.getHeight())*0.5f);
 
 	Draw::drawText(getText(),textPos,
 					fontReference.get(),getGUI().getActiveColor(PROPERTY_TEXTFIELD_TEXT_COLOR));
@@ -115,7 +115,7 @@ void Textfield::setText(const std::string & newText) {
 
 	// assure right cursor and scroll-pos
 	scrollPos = 0;
-	setCursorPos( this->cursorPos > static_cast<int>(newText.length()) ? newText.length() : cursorPos);
+	setCursorPos( static_cast<int>(this->cursorPos > static_cast<int>(newText.length()) ? newText.length() : cursorPos));
 }
 
 const std::string & Textfield::getText()const {
@@ -140,16 +140,16 @@ int Textfield::getCursorPositionFromCoordinate(const Geometry::Vec2 & pos) {
 	for(size_t cursor=1;cursor<getText().length();++cursor) {
 		const float textWidth = Draw::getTextSize(getText().substr(0,cursor),fontReference.get()).x();
 		if(textWidth >= cPos-2) 
-			return cursor;
+			return static_cast<int>(cursor);
 	}
-	return getText().length();
+	return static_cast<int>(getText().length());
 }
 
 void Textfield::setCursorPos(int _cursorPos,bool _shift) {
 	invalidateRegion();
 
 	if (_cursorPos<0)_cursorPos=0;
-	if (_cursorPos>static_cast<int>(getText().length()))_cursorPos=getText().size();
+	if (_cursorPos>static_cast<int>(getText().length()))_cursorPos=static_cast<int>(getText().size());
 //    shift=isShiftKeyPressed();
 	if (_shift) {
 		if (selectionStart==-1) {
@@ -163,9 +163,9 @@ void Textfield::setCursorPos(int _cursorPos,bool _shift) {
 
 	Geometry::Vec2 cPos=getCursorCoordinate(cursorPos);
 	if(cPos.x()>getWidth()-15)
-		scrollPos -= cPos.x()-getWidth()+20;
+		scrollPos -= static_cast<int>(cPos.x()-getWidth()+20);
 	else if(cPos.x()<5)
-		scrollPos -= cPos.x()-10;
+		scrollPos -= static_cast<int>(cPos.x()-10);
 	if(cursorPos==0 || scrollPos> 0)
 		scrollPos=0;
 //	scrollPos(0.0f),
@@ -174,7 +174,7 @@ void Textfield::setCursorPos(int _cursorPos,bool _shift) {
 static int getPrevCursorPos(const std::string & str,int cursor){
 	if(cursor<=1 || str.empty())
 		return 0;
-	if(cursor>static_cast<int>(str.length())) cursor = str.length();
+	if(cursor>static_cast<int>(str.length())) cursor = static_cast<int>(str.length());
 	--cursor;
 	uint8_t c = static_cast<uint8_t>(str[cursor]);
 	while( c>=128 && c<=191 && cursor>0){ // search for first byte of multi byte characters
@@ -186,7 +186,7 @@ static int getPrevCursorPos(const std::string & str,int cursor){
 
 static int getNextCursorPos(const std::string & str,int cursor){
 	cursor =  cursor + Util::StringUtils::readUTF8Codepoint(str,cursor).second;
-	return cursor > static_cast<int>(str.length()) ? str.length() : cursor;
+	return cursor > static_cast<int>(str.length()) ? static_cast<int>(str.length()) : cursor;
 }
 
 bool Textfield::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {
@@ -201,7 +201,7 @@ bool Textfield::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {
 	const bool _shift = getGUI().isShiftPressed();
 	if (keyEvent.key == Util::UI::KEY_A && getGUI().isCtrlPressed()) {
 		setCursorPos(0);
-		setCursorPos(getText().length(),true);
+		setCursorPos(static_cast<int>(getText().length()),true);
 		return true;
 	}
 	else if (keyEvent.key == Util::UI::KEY_TAB) {
@@ -213,7 +213,7 @@ bool Textfield::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {
 		if (cursorPos>0)
 			setCursorPos(getPrevCursorPos(getText(),cursorPos),_shift);
 	} else if (keyEvent.key == Util::UI::KEY_END) {
-		setCursorPos(getText().length(),_shift);
+		setCursorPos(static_cast<int>(getText().length()),_shift);
 	} else if (keyEvent.key == Util::UI::KEY_HOME) {
 		setCursorPos(0,_shift);
 	} else if (keyEvent.key == Util::UI::KEY_DELETE) {
@@ -283,7 +283,7 @@ bool Textfield::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {
 		std::string t(getText());
 		t.insert(cursorPos,s);
 		setText(t);
-		setCursorPos(cursorPos+s.length());
+		setCursorPos(static_cast<int>(cursorPos+s.length()));
 	}
 	// does not work... No idea why...
 //     else if (ke->getChar() == 'z' &&ke->getModifier()&KMOD_CTRL  ) {
@@ -322,14 +322,14 @@ bool Textfield::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {
 		std::string t(getText());
 		t.insert(cursorPos, codePoint);
 		setText(t);
-		setCursorPos(cursorPos+codePoint.length());
+		setCursorPos(static_cast<int>(cursorPos+codePoint.length()));
 
 		// auto completion
 		if(autoCompletion) {
 			for(const auto & option : options) {
 				if(option.compare(0, t.length(), t) == 0 && t.length() != option.length()) {
 					setText(option);
-					selectionStart = option.length();
+					selectionStart = static_cast<int>(option.length());
 					selectionEnd = cursorPos;
 				}
 			}
@@ -439,7 +439,7 @@ void Textfield::setCurrentOptionIndex(int index){
 
 	text=getOption(currentOptionIndex);
 	if(cursorPos>=static_cast<int>(text.length())){
-		setCursorPos(text.length());
+		setCursorPos(static_cast<int>(text.length()));
 	}
 	if(oldText!=getText() || oldIndex!=index)
 		getGUI().componentDataChanged(this);

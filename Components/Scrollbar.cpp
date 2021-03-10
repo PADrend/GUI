@@ -63,10 +63,10 @@ class ScrollMarker : public Component {
 		if(catchDragStartPos){
 			catchDragStartPos = false;
 			dragStartPos = p;
-			dragStartScroll = myScrollbar.getScrollPos();
+			dragStartScroll = static_cast<float>(myScrollbar.getScrollPos());
 		}else{
-			myScrollbar.updateScrollPos( ((p-dragStartPos) * myScrollbar.getMaxScrollPos() / 
-										((myScrollbar.isVertical() ? myScrollbar.getHeight() : myScrollbar.getWidth())-myScrollbar.getMarkerSize())) + dragStartScroll ) ;
+			myScrollbar.updateScrollPos( static_cast<int32_t>(((p-dragStartPos) * myScrollbar.getMaxScrollPos() / 
+										((myScrollbar.isVertical() ? myScrollbar.getHeight() : myScrollbar.getWidth())-myScrollbar.getMarkerSize())) + dragStartScroll) ) ;
 		
 		}
 		return true;
@@ -104,13 +104,13 @@ Scrollbar::~Scrollbar() = default;
 //! ---|> Component
 void Scrollbar::doLayout(){
 
-	const float pos=getMarkerPosFromScrollPos(getScrollPos());
+	const float pos=getMarkerPosFromScrollPos(static_cast<float>(getScrollPos()));
 	if(isVertical()){
 		marker->setPosition(Geometry::Vec2(0,pos));
-		marker->setSize(getWidth(),getMarkerSize());
+		marker->setSize(getWidth(),static_cast<float>(getMarkerSize()));
 	}else{
 		marker->setPosition(Geometry::Vec2(pos,0));
-		marker->setSize(getMarkerSize(),getHeight());
+		marker->setSize(static_cast<float>(getMarkerSize()),getHeight());
 	}
 }
 
@@ -137,21 +137,21 @@ bool Scrollbar::onMouseButton(Component * /*component*/, const Util::UI::ButtonE
 		if (buttonEvent.button == Util::UI::MOUSE_BUTTON_LEFT) {
 			const Geometry::Vec2 localPos = Geometry::Vec2(buttonEvent.x, buttonEvent.y) - getAbsPosition();
 			const float p = isVertical() ? localPos.getY() : localPos.getX();
-			const float markerPos = getMarkerPosFromScrollPos(getScrollPos());
+			const float markerPos = getMarkerPosFromScrollPos(static_cast<float>(getScrollPos()));
 			// clicked above marker? -> pgUp
 			if(p<markerPos){
-				updateScrollPos(getScrollPos() - (isVertical() ? getHeight() : getWidth())*0.9 );
+				updateScrollPos(static_cast<int32_t>(getScrollPos() - (isVertical() ? getHeight() : getWidth())*0.9f) );
 			}// clicked below marker? -> pgDown
 			else if(p>markerPos+getMarkerSize()){
-				updateScrollPos(getScrollPos() + (isVertical() ? getHeight() : getWidth())*0.9 );
+				updateScrollPos(static_cast<int32_t>(getScrollPos() + (isVertical() ? getHeight() : getWidth())*0.9f) );
 			} // marker clicked? -> kame active
 			else{
 				static_cast<ScrollMarker*>(marker.get())->startDragging();
 			}
 		}else if(buttonEvent.button == Util::UI::MOUSE_WHEEL_UP) {
-			updateScrollPos(getScrollPos()-(isVertical() ? getHeight() : getWidth())*0.2);
+			updateScrollPos(static_cast<int32_t>(getScrollPos()-(isVertical() ? getHeight() : getWidth())*0.2f));
 		}else if(buttonEvent.button == Util::UI::MOUSE_WHEEL_DOWN) {
-			updateScrollPos(getScrollPos()+(isVertical() ? getHeight() : getWidth())*0.2);
+			updateScrollPos(static_cast<int32_t>(getScrollPos()+(isVertical() ? getHeight() : getWidth())*0.2f));
 		}
 	}
 	return true;

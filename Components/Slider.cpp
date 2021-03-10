@@ -117,7 +117,7 @@ void Slider::doLayout(){
 
 	const float pos=getPosFromValue(getValue());
 	sliderMarker->setPosition(Geometry::Vec2(pos,0));
-	sliderMarker->setSize(getMarkerSize(),getHeight());
+	sliderMarker->setSize(static_cast<float>(getMarkerSize()),getHeight());
 }
 
 //! ---|> Component
@@ -135,8 +135,8 @@ void Slider::doDisplay(const Geometry::Rect & region) {
 	// show bar
 	// left side
 	Geometry::Rect rect=getLocalRect();
-	rect.moveRel(getFlag(SLIDER_BUTTONS)?buttonSize:0 ,	getHeight()*0.3);
-	rect.setSize( pos , getHeight()*0.3);
+	rect.moveRel(getFlag(SLIDER_BUTTONS)?buttonSize:0 ,	getHeight()*0.3f);
+	rect.setSize( pos , getHeight()*0.3f);
 	getGUI().displayShape(PROPERTY_SLIDER_BAR_SHAPE,rect);
 
 	if (isSelected()) {
@@ -147,9 +147,9 @@ void Slider::doDisplay(const Geometry::Rect & region) {
 
 	// right side
 	rect=getLocalRect();
-	rect.moveRel( (getFlag(SLIDER_BUTTONS)?buttonSize:0) + pos + getMarkerSize(),getHeight()*0.3);
+	rect.moveRel( (getFlag(SLIDER_BUTTONS)?buttonSize:0) + pos + getMarkerSize(),getHeight()*0.3f);
 
-	rect.setSize( getWidth() - (getFlag(SLIDER_BUTTONS)?-(2.0*buttonSize):0) - getMarkerSize() - pos , getHeight()*0.3);
+	rect.setSize( getWidth() - (getFlag(SLIDER_BUTTONS)?-(2.0f*buttonSize):0.0f) - getMarkerSize() - pos , getHeight()*0.3f);
 	getGUI().displayShape(PROPERTY_SLIDER_BAR_SHAPE,rect);
 
 	if (isSelected()) {
@@ -160,7 +160,7 @@ void Slider::doDisplay(const Geometry::Rect & region) {
 
 	// show null-bar
 	rect=getLocalRect();
-	rect.moveRel(0,getHeight()*0.3);
+	rect.moveRel(0,getHeight()*0.3f);
 	float nullPos=getPosFromValue(0.0f);
 	if(getFlag(SLIDER_BUTTONS)){
 		if(nullPos<buttonSize)

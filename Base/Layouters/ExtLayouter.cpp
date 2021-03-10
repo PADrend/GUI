@@ -100,7 +100,7 @@ void ExtLayouter::layout(Util::WeakPointer<Component> component){
 				parentWidth * extPos.getX();
 
 		if( flags&REFERENCE_X_CENTER ){
-			x -= rect.getWidth()*0.5;
+			x -= rect.getWidth()*0.5f;
 		}else if( flags&REFERENCE_X_RIGHT && !(flags&ALIGN_X_RIGHT) ){
 			x -= rect.getWidth();
 		} else if( flags&REFERENCE_X_LEFT && !(flags&ALIGN_X_LEFT) ){
@@ -110,7 +110,7 @@ void ExtLayouter::layout(Util::WeakPointer<Component> component){
 		if( flags&ALIGN_X_RIGHT ){
 			x = parentWidth - x - rect.getWidth();
 		}else if( flags&ALIGN_X_CENTER ){
-			x = parentWidth*0.5 + x;
+			x = parentWidth*0.5f + x;
 		}//else ALIGN_X_LEFT: default
 	}
 
@@ -122,7 +122,7 @@ void ExtLayouter::layout(Util::WeakPointer<Component> component){
 				parentHeight * extPos.getY();
 
 		if( flags&REFERENCE_Y_CENTER ){
-			y -= rect.getHeight()*0.5;
+			y -= rect.getHeight()*0.5f;
 		}else if( flags&REFERENCE_Y_BOTTOM && !(flags&ALIGN_Y_BOTTOM) ){
 			y -= rect.getHeight();
 		}else if( flags&REFERENCE_Y_TOP && !(flags&ALIGN_Y_TOP) ){
@@ -132,7 +132,7 @@ void ExtLayouter::layout(Util::WeakPointer<Component> component){
 		if( flags&ALIGN_Y_BOTTOM ){
 			y = parentHeight - y - rect.getHeight();
 		}else if( flags&ALIGN_Y_CENTER ){
-			y = parentHeight*0.5 + y;
+			y = parentHeight*0.5f + y;
 		}//else REFERENCE_Y_TOP: default
 	}
 	rect.setPosition(Geometry::Vec2(x,y));
