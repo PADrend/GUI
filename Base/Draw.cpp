@@ -47,7 +47,7 @@ struct Vertex {
 	Util::Color4f col;
 };
 
-static const uint32_t maxVertexCount = 32768; // 1 MB
+static const uint32_t maxVertexCount = 3*32768;
 
 static const char * const vs = 
 R"***(#version 130
@@ -238,38 +238,47 @@ static void updateVertex(uint32_t index, const Vertex& v) {
 //-------------------------------------------
 #endif // GUI_BACKEND_RENDERING
 
-static void drawVertices(const draw_mode_t mode, const std::vector<Geometry::Vec2>& vertices, const Util::Color4f& color, bool blending=false) {
-	if(ctxt.meshOffset+vertices.size() > maxVertexCount)
+static void drawVertices(const draw_mode_t mode, const std::vector<Geometry::Vec2>& vertices, const Util::Color4f& color, bool blending=false, uint32_t offset=0, uint32_t count=0) {
+	if(count == 0)
+		count = static_cast<uint32_t>(vertices.size());
+
+	if(ctxt.meshOffset+count > maxVertexCount)
 		Draw::flush();
 	
-	for(uint32_t i=0; i<vertices.size(); ++i)
-		updateVertex(ctxt.meshOffset+i, {vertices[i], {0,0}, color});
+	for(uint32_t i=0; i<count; ++i)
+		updateVertex(ctxt.meshOffset+i, {vertices[offset+i], {0,0}, color});
 	
-	ctxt.commands.emplace_back(ctxt.meshOffset, static_cast<uint32_t>(vertices.size()), ctxt.position, ctxt.scissor, mode, blending);
-	ctxt.meshOffset += static_cast<uint32_t>(vertices.size());
+	ctxt.commands.emplace_back(ctxt.meshOffset, count, ctxt.position, ctxt.scissor, mode, blending);
+	ctxt.meshOffset += count;
 }
 
-static void drawVertices(const draw_mode_t mode, const std::vector<Geometry::Vec2>& vertices, const std::vector<Util::Color4f>& colors, bool blending=false) {
-	if(ctxt.meshOffset+vertices.size() > maxVertexCount)
+static void drawVertices(const draw_mode_t mode, const std::vector<Geometry::Vec2>& vertices, const std::vector<Util::Color4f>& colors, bool blending=false, uint32_t offset=0, uint32_t count=0) {
+	if(count == 0)
+		count = static_cast<uint32_t>(vertices.size());
+
+	if(ctxt.meshOffset+count > maxVertexCount)
 		Draw::flush();
-		
-	for(uint32_t i=0; i<vertices.size(); ++i)
-		updateVertex(ctxt.meshOffset+i, {vertices[i], {0,0}, colors[i]});
+
+	for(uint32_t i=0; i<count; ++i)
+		updateVertex(ctxt.meshOffset+i, {vertices[offset+i], {0,0}, colors[offset+i]});
 	
-	ctxt.commands.emplace_back(ctxt.meshOffset, static_cast<uint32_t>(vertices.size()), ctxt.position, ctxt.scissor, mode, blending);
-	ctxt.meshOffset += static_cast<uint32_t>(vertices.size());
+	ctxt.commands.emplace_back(ctxt.meshOffset, count, ctxt.position, ctxt.scissor, mode, blending);
+	ctxt.meshOffset += count;
 }
 
-static void drawTexturedVertices(const draw_mode_t mode, const std::vector<Geometry::Vec2>& vertices, const std::vector<Geometry::Vec2>& uvs, const Util::Color4f& color, bool blending=false) {
+static void drawTexturedVertices(const draw_mode_t mode, const std::vector<Geometry::Vec2>& vertices, const std::vector<Geometry::Vec2>& uvs, const Util::Color4f& color, bool blending=false, uint32_t offset=0, uint32_t count=0) {
 	assert(vertices.size() == uvs.size());
-	if(ctxt.meshOffset+vertices.size() > maxVertexCount)
+	if(count == 0)
+		count = static_cast<uint32_t>(vertices.size());
+
+	if(ctxt.meshOffset+count > maxVertexCount)
 		Draw::flush();
 		
-	for(uint32_t i=0; i<vertices.size(); ++i)
-		updateVertex(ctxt.meshOffset+i, {vertices[i], uvs[i], color});
+	for(uint32_t i=0; i<count; ++i)
+		updateVertex(ctxt.meshOffset+i, {vertices[offset+i], uvs[offset+i], color});
 	
-	ctxt.commands.emplace_back(ctxt.meshOffset, static_cast<uint32_t>(vertices.size()), ctxt.position, ctxt.scissor, mode, blending, ctxt.activeTexture);
-	ctxt.meshOffset += static_cast<uint32_t>(vertices.size());
+	ctxt.commands.emplace_back(ctxt.meshOffset, count, ctxt.position, ctxt.scissor, mode, blending, ctxt.activeTexture);
+	ctxt.meshOffset += count;
 }
 
 //! (internal)
@@ -837,15 +846,20 @@ void Draw::dropShadow(const Geometry::Rect & r1,const Geometry::Rect & r2, const
 
 //! (static)
 void Draw::drawTexturedTriangles(const std::vector<float> & posAndUV, const Util::Color4ub & c, bool blend/* = true*/) {
+	uint32_t vertexCount = static_cast<uint32_t>(posAndUV.size() >> 2);
 	std::vector<Geometry::Vec2> vertices;
 	std::vector<Geometry::Vec2> uvs;
-	vertices.reserve(posAndUV.size()/4);
-	uvs.reserve(posAndUV.size()/4);
+	vertices.reserve(vertexCount);
+	uvs.reserve(vertexCount);
+	
 	for(uint32_t i=0; i<posAndUV.size(); i+=4) {
 		vertices.emplace_back(posAndUV[i], posAndUV[i+1]);
 		uvs.emplace_back(posAndUV[i+2], posAndUV[i+3]);
-	}	
-	drawTexturedVertices(DRAW_TRIANGLES, vertices, uvs, c, blend);
+	}
+	for(uint32_t offset=0; offset<vertexCount; offset+=maxVertexCount) {
+		uint32_t batchSize = std::min(vertexCount-offset, maxVertexCount);
+		drawTexturedVertices(DRAW_TRIANGLES, vertices, uvs, c, blend, offset, batchSize);
+	}
 }
 
 
@@ -868,26 +882,36 @@ void Draw::drawTexturedRect(const Geometry::Rect_i & screenRect,const Geometry::
 void Draw::drawLine(const std::vector<float> & vertices,const std::vector<uint32_t> & colors,const float lineWidth/*=1.0*/,bool lineSmooth/*=false*/) {
 	std::vector<Geometry::Vec2> vertices2;
 	std::vector<Util::Color4f> colors2;
-	vertices2.reserve(vertices.size()/2);
+	uint32_t vertexCount = static_cast<uint32_t>(vertices.size()/2);
+	vertices2.reserve(vertexCount);
 	colors2.reserve(colors.size());
 	for(uint32_t i=0; i<vertices.size(); i+=2)
 		vertices2.emplace_back(vertices[i], vertices[i+1]);
 	for(uint32_t c : colors)
-		colors2.emplace_back(Util::Color4ub(c));		
-	drawVertices(DRAW_LINE_STRIP, vertices2, colors2, true);
+		colors2.emplace_back(Util::Color4ub(c));
+	
+	for(uint32_t offset=0; offset<vertexCount; offset+=(maxVertexCount-1)) {
+		uint32_t batchSize = std::min(vertexCount-offset, maxVertexCount);
+		drawVertices(DRAW_LINE_STRIP, vertices2, colors2, true, offset, batchSize);
+	}
 }
 
 //! (static)
 void Draw::drawLines(const std::vector<float> & vertices,const std::vector<uint32_t> & colors,const float lineWidth/*=1.0*/) {
 	std::vector<Geometry::Vec2> vertices2;
 	std::vector<Util::Color4f> colors2;
-	vertices2.reserve(vertices.size()/2);
+	uint32_t vertexCount = static_cast<uint32_t>(vertices.size()/2);
+	vertices2.reserve(vertexCount);
 	colors2.reserve(colors.size());
 	for(uint32_t i=0; i<vertices.size(); i+=2)
 		vertices2.emplace_back(vertices[i], vertices[i+1]);
 	for(uint32_t c : colors)
-		colors2.emplace_back(Util::Color4ub(c));		
-	drawVertices(DRAW_LINES, vertices2, colors2, true);
+		colors2.emplace_back(Util::Color4ub(c));
+	
+	for(uint32_t offset=0; offset<vertexCount; offset+=maxVertexCount) {
+		uint32_t batchSize = std::min(vertexCount-offset, maxVertexCount);
+		drawVertices(DRAW_LINES, vertices2, colors2, true, offset, batchSize);
+	}
 }
 
 
@@ -895,7 +919,11 @@ void Draw::drawLines(const std::vector<float> & vertices,const std::vector<uint3
 void Draw::drawTriangleFan(const std::vector<float> & vertices,const std::vector<uint32_t> & colors) {
 	std::vector<Geometry::Vec2> vertices2;
 	std::vector<Util::Color4f> colors2;
-	vertices2.reserve(vertices.size()/2);
+	uint32_t vertexCount = static_cast<uint32_t>(vertices.size()/2);
+	if(vertexCount > maxVertexCount) {
+		throw std::runtime_error("Cannot draw triangle fan with more than " + std::to_string(maxVertexCount) + " vertices.");
+	}
+	vertices2.reserve(vertexCount);
 	colors2.reserve(colors.size());
 	for(uint32_t i=4; i<vertices.size(); i+=2) {
 		vertices2.emplace_back(vertices[0], vertices[1]);
@@ -906,7 +934,8 @@ void Draw::drawTriangleFan(const std::vector<float> & vertices,const std::vector
 		colors2.emplace_back(Util::Color4ub(colors[0]));
 		colors2.emplace_back(Util::Color4ub(colors[i-1]));
 		colors2.emplace_back(Util::Color4ub(colors[i]));
-	}	
+	}
+
 	drawVertices(DRAW_TRIANGLES, vertices2, colors2, true);
 }
 
