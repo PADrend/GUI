@@ -293,6 +293,10 @@ Rect GUI_Manager::getScreenRect()const{
 	return globalContainer->getLocalRect();
 }
 
+void GUI_Manager::setScreenSize(const Geometry::Vec2& size) {
+	globalContainer->setSize(size);
+}
+
 // ------------------------------------------------------------------------
 // Event handling & Listener
 bool GUI_Manager::isCtrlPressed() const {
@@ -458,8 +462,9 @@ void GUI_Manager::display()
 			
 		#ifdef GUI_BACKEND_RENDERING
 			Geometry::Rect_i viewport = rc.getViewport();
-			globalContainer->setSize(static_cast<float>(viewport.getWidth()), static_cast<float>(viewport.getHeight()));
-			Draw::beginDrawing(rc, Geometry::Vec2i(viewport.getWidth(),viewport.getHeight()));
+			//globalContainer->setSize(static_cast<float>(viewport.getWidth()), static_cast<float>(viewport.getHeight()));
+			Geometry::Vec2 renderScale(static_cast<float>(viewport.getWidth()) / globalContainer->getWidth(), static_cast<float>(viewport.getHeight()) / globalContainer->getHeight());
+			Draw::beginDrawing(rc, Geometry::Vec2i(viewport.getWidth(),viewport.getHeight()), renderScale);
 		#else // GUI_BACKEND_RENDERING
 			Geometry::Rect_i viewport = Draw::queryViewport();
 			globalContainer->setSize(static_cast<float>(viewport.getWidth()), static_cast<float>(viewport.getHeight()));

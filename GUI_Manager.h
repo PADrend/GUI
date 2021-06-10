@@ -105,6 +105,7 @@ class GUI_Manager {
 		GUIAPI void display();
 	#endif // GUI_BACKEND_RENDERING
 		GUIAPI Geometry::Rect getScreenRect()const;
+		GUIAPI void setScreenSize(const Geometry::Vec2& size);
 
 		//! Associate a window (e.g. X11 or SDL) to the GUI manager
 		void setWindow(Util::UI::Window * newWindow) {

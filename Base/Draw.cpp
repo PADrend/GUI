@@ -122,6 +122,7 @@ struct DrawContext {
 	uint32_t meshOffset = 0;
 	Geometry::Vec2i position,screenSize;
 	Geometry::Rect_i scissor;
+	Geometry::Vec2 scale;
 	
 	RenderingContext* rc;
 	Util::Reference<Shader> shader;
@@ -149,6 +150,7 @@ struct DrawContext {
 	uint32_t meshOffset = 0;
 	Geometry::Vec2i position,screenSize;
 	Geometry::Rect_i scissor;
+	Geometry::Vec2 scale;
 	
 	GLuint shaderProg = 0;
 	GLuint vertexBuffer = 0;
@@ -379,7 +381,7 @@ static bool init() {
 #ifdef GUI_BACKEND_RENDERING
 
 //! (static)
-void Draw::beginDrawing(Rendering::RenderingContext& rc, const Geometry::Vec2i & screenSize) {
+void Draw::beginDrawing(Rendering::RenderingContext& rc, const Geometry::Vec2i & screenSize, const Geometry::Vec2 & renderScale) {
 	ctxt.rc = &rc;
 	
 	static bool initialized = false;
@@ -391,6 +393,7 @@ void Draw::beginDrawing(Rendering::RenderingContext& rc, const Geometry::Vec2i &
 	ctxt.position = Geometry::Vec2(0,0);
 	ctxt.activeTexture = nullptr;
 	ctxt.screenSize = screenSize;
+	ctxt.scale = renderScale;
 	ctxt.meshOffset = 0;
 		
 	rc.pushAndSetDepthBuffer(DepthBufferParameters(false, false, Comparison::ALWAYS));
@@ -401,7 +404,7 @@ void Draw::beginDrawing(Rendering::RenderingContext& rc, const Geometry::Vec2i &
 	rc.pushScissor();
 	resetScissor();	
 	rc.pushAndSetShader(ctxt.shader.get());
-	ctxt.shader->setUniform(rc, Uniform(UNIFORM_SCREEN_SCALE, Geometry::Vec2(2.0f/screenSize.getWidth(),-2.0f/screenSize.getHeight())));
+	ctxt.shader->setUniform(rc, Uniform(UNIFORM_SCREEN_SCALE, Geometry::Vec2(2.0f/screenSize.getWidth(),-2.0f/screenSize.getHeight()) * ctxt.scale));
 		
 	GET_GL_ERROR();
 }
@@ -507,9 +510,11 @@ void Draw::flush() {
 	#ifdef GUI_BACKEND_RENDERING
 		BlendingParameters blending(BlendingParameters::SRC_ALPHA, BlendingParameters::ONE_MINUS_SRC_ALPHA);
 		ctxt.mesh->openVertexData().markAsChanged();
+		float yOffset = static_cast<float>(ctxt.screenSize.y()) * ctxt.scale.y() - static_cast<float>(ctxt.screenSize.getHeight());
 		for(const auto& cmd : ctxt.commands) {
 			ctxt.shader->setUniform(*ctxt.rc, {UNIFORM_POS_OFFSET, cmd.offset});
-			ctxt.rc->setScissor(ScissorParameters(cmd.scissor));
+			Geometry::Rect scissor(cmd.scissor.getX() * ctxt.scale.x(), cmd.scissor.getY() * ctxt.scale.y() - yOffset, cmd.scissor.getWidth() * ctxt.scale.x(), cmd.scissor.getHeight() * ctxt.scale.y());
+			ctxt.rc->setScissor(ScissorParameters(Geometry::Rect_i(scissor)));
 			if(cmd.blending)
 				blending.enable();
 			else
