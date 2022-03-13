@@ -66,13 +66,13 @@ class StackingLayouter : public AbstractLayouter{
 				throw std::invalid_argument("FlowLayouter can only be applied to Containers.");
 			}
 			if(vertical){
-				int x = 0;
+				float x = 0;
 				for(Component * c=container->getFirstChild();c!=nullptr;c=c->getNext()){
 					c->setPosition( Geometry::Vec2(x,0));
 					x+=c->getWidth();
 				}
 			}else{
-				int y = 0;
+				float y = 0;
 				for(Component * c=container->getFirstChild();c!=nullptr;c=c->getNext()){
 					c->setPosition( Geometry::Vec2(0,y));
 					y+=c->getHeight();

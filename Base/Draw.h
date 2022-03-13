@@ -29,7 +29,7 @@ class Draw {
 	public:
 		// general
 #ifdef GUI_BACKEND_RENDERING
-		GUIAPI static void beginDrawing(Rendering::RenderingContext& rc, const Geometry::Vec2i & screenSize);
+		GUIAPI static void beginDrawing(Rendering::RenderingContext& rc, const Geometry::Vec2i & screenSize, const Geometry::Vec2 & renderScale={1.0f,1.0f});
 		GUIAPI static Rendering::RenderingContext& getRenderingContext();
 #else // GUI_BACKEND_RENDERING
 		GUIAPI static void beginDrawing(const Geometry::Vec2i & screenSize);

@@ -48,9 +48,9 @@ static size_t getPrevCursorPosInLine(const std::string & str,size_t posInLine){
 	return posInLine;
 }
 
-static int getNextCursorPos(const std::string & str,int cursor){
+static size_t getNextCursorPos(const std::string & str,size_t cursor){
 	cursor =  cursor + Util::StringUtils::readUTF8Codepoint(str,cursor).second;
-	return cursor > static_cast<int>(str.length()) ? str.length() : cursor;
+	return cursor > str.length() ? str.length() : cursor;
 }
 
 // -----------------------------------------------------------------
@@ -91,12 +91,12 @@ public:
 
 				if(c1.first == c2.first){ // same line
 					gui.displayShape(PROPERTY_TEXTFIELD_TEXT_SELECTION_SHAPE,
-											Geometry::Rect(p1.x(),p1.y(),p2.x()-p1.x(),lineHeight));
+											Geometry::Rect(p1.x(),p1.y(),p2.x()-p1.x(),static_cast<float>(lineHeight)));
 				}else{
 					gui.displayShape(PROPERTY_TEXTFIELD_TEXT_SELECTION_SHAPE,
-											Geometry::Rect(p1.x(),p1.y(),localRect.getWidth()-p1.x(),lineHeight));
+											Geometry::Rect(p1.x(),p1.y(),localRect.getWidth()-p1.x(),static_cast<float>(lineHeight)));
 					gui.displayShape(PROPERTY_TEXTFIELD_TEXT_SELECTION_SHAPE,
-											Geometry::Rect(0,p2.y(),p2.x(),lineHeight));
+											Geometry::Rect(0,p2.y(),p2.x(),static_cast<float>(lineHeight)));
 					if(c2.first-c1.first>1){
 						gui.displayShape(PROPERTY_TEXTFIELD_TEXT_SELECTION_SHAPE,
 												Geometry::Rect(0,p1.y()+lineHeight,ta.getWidth(),p2.y()-p1.y()-lineHeight));
@@ -105,7 +105,7 @@ public:
 			}
 			// draw cursor
 			const Geometry::Vec2 c = cursorToTextPos(ta,ta.getCursor())-scrollPos;
-			gui.displayShape(PROPERTY_TEXTFIELD_CURSOR_SHAPE,Geometry::Rect(c.x(),c.y(),1,lineHeight));
+			gui.displayShape(PROPERTY_TEXTFIELD_CURSOR_SHAPE,Geometry::Rect(c.x(),c.y(),1,static_cast<float>(lineHeight)));
 
 			// draw component selection
 			Geometry::Rect rect=localRect;
@@ -119,7 +119,7 @@ public:
 
 		//auto & data = getData(ta);
 		for(size_t l = firstLine; l<endLine; ++l ){
-			Draw::drawText(ta.getLine(l),cursorToTextPos(ta,std::make_pair(l,0))-scrollPos,
+			Draw::drawText(ta.getLine(static_cast<uint32_t>(l)),cursorToTextPos(ta,std::make_pair(static_cast<uint32_t>(l),0))-scrollPos,
 					ta._getActiveFont(),gui.getActiveColor(PROPERTY_TEXTFIELD_TEXT_COLOR));
 //					ta._getActiveFont(),data.lineMarker[l]);
 		}
@@ -128,7 +128,7 @@ public:
 			gui.displayShape(PROPERTY_SCROLLABLE_MARKER_LEFT_SHAPE, localRect, 0);
 		if(scrollPos.y()>0)
 			gui.displayShape(PROPERTY_SCROLLABLE_MARKER_TOP_SHAPE, localRect, 0);
-		if(cursorToTextPos(ta,std::make_pair(ta.getNumberOfLines(),0)).y()-scrollPos.y()>localRect.getHeight())
+		if(cursorToTextPos(ta,std::make_pair(static_cast<uint32_t>(ta.getNumberOfLines()),0)).y()-scrollPos.y()>localRect.getHeight())
 			gui.displayShape(PROPERTY_SCROLLABLE_MARKER_BOTTOM_SHAPE, localRect, 0);
 
 	}
@@ -145,23 +145,23 @@ public:
 		const float x = (line.empty()||c.second==0) ? 0 :
 					Draw::getTextSize(line.substr(0,c.second),ta._getActiveFont()).width();
 
-		return Geometry::Vec2(x,c.first*ta._getLineHeight());
+		return Geometry::Vec2(x,static_cast<float>(c.first*ta._getLineHeight()));
 	}
 	Textarea::cursor_t textPosToCursor(const Textarea& ta,const Geometry::Vec2 &textPos)const override{
 		if(ta.getNumberOfLines()==0||textPos.y()<0){
 			return std::make_pair(0,0);
 		}
 		const size_t lineNr = std::min( static_cast<size_t>(textPos.y() / ta._getLineHeight()), ta.getNumberOfLines()-1);
-		const std::string & line = ta.getLine(lineNr);
+		const std::string & line = ta.getLine(static_cast<uint32_t>(lineNr));
 		
-		int cursor = 0;
-		while( cursor<static_cast<int>(line.length()) ){
-			const int next = getNextCursorPos(line,cursor);
+		size_t cursor = 0;
+		while( cursor<line.length() ){
+			const size_t next = getNextCursorPos(line,cursor);
 			if( Draw::getTextSize(line.substr(0,next),ta._getActiveFont()).x() >= textPos.x())
-				return std::make_pair(lineNr,cursor);
+				return std::make_pair(static_cast<uint32_t>(lineNr),cursor);
 			cursor = next;
 		}
-		return std::make_pair(lineNr,line.length());
+		return std::make_pair(static_cast<uint32_t>(lineNr),line.length());
 	}
 	void onLinesInserted(Textarea& /*ta*/,size_t /*first*/,size_t /*number*/) override{
 /*		auto & data = getData(ta);
@@ -222,7 +222,7 @@ void Textarea::doDisplay(const Geometry::Rect & region) {
 
 void Textarea::setText(const std::string & fullText) {
 	invalidateRegion();
-	_deleteText(range(std::make_pair(0,0),std::make_pair(getNumberOfLines()+1,0)));
+	_deleteText(range(std::make_pair(0,0),std::make_pair(static_cast<uint32_t>(getNumberOfLines()+1),0)));
 	_insertText(std::make_pair(0,0),fullText);
 	dataChanged = false;
 	consolidate();
@@ -231,7 +231,7 @@ void Textarea::setText(const std::string & fullText) {
 }
 
 std::string Textarea::getText()const {
-	return getText(range(std::make_pair(0,0),std::make_pair(lines.size(),0)) );
+	return getText(range(std::make_pair(0,0),std::make_pair(static_cast<uint32_t>(lines.size()),0)) );
 
 }
 const std::string & Textarea::getLine(uint32_t nr)const{
@@ -239,7 +239,7 @@ const std::string & Textarea::getLine(uint32_t nr)const{
 	return nr<lines.size() ? lines[nr] : emptyString;
 }
 float Textarea::getTextHeight()const{
-	return processor->cursorToTextPos(*this,std::make_pair(lines.size(),0)).y();
+	return processor->cursorToTextPos(*this,std::make_pair(static_cast<uint32_t>(lines.size()),0)).y();
 }
 
 void Textarea::moveCursor(const cursor_t & c,bool updateSelection){
@@ -274,7 +274,7 @@ void Textarea::scrollTo(const Geometry::Vec2 & p){
 	if(newScroll!=scrollPos){
 		scrollPos = newScroll;
 		if(scrollBar.isNotNull())
-			scrollBar->setScrollPos( getScrollPos().y() );
+			scrollBar->setScrollPos( static_cast<uint32_t>(getScrollPos().y()) );
 		invalidateRegion();
 	}
 }
@@ -294,7 +294,7 @@ std::string Textarea::getText(const range_t & r)const{
 		lastLineChar = std::string::npos;
 	} 
 	
-	const std::string & firstLine = getLine(firstLineNr);
+	const std::string & firstLine = getLine(static_cast<uint32_t>(firstLineNr));
 
 	if(firstLineNr == lastLineNr){ // only inside one line?
 		return firstLineChar<firstLine.length() ? 
@@ -307,10 +307,10 @@ std::string Textarea::getText(const range_t & r)const{
 		result << "\n";
 		
 		for(size_t l = firstLineNr+1; l<lastLineNr; ++l) // in between line
-			result << getLine(l) << "\n"; 
+			result << getLine(static_cast<uint32_t>(l)) << "\n"; 
 		
 		 // last line
-		result << getLine(lastLineNr).substr(0, std::min(getLine(lastLineNr).length(),lastLineChar));
+		result << getLine(static_cast<uint32_t>(lastLineNr)).substr(0, std::min(getLine(static_cast<uint32_t>(lastLineNr)).length(),lastLineChar));
 		return result.str();
 	}
 }
@@ -403,7 +403,7 @@ Textarea::range_t Textarea::_insertText(const cursor_t & pos,const std::string &
 		if(!parts.empty()){
 			lines.insert(std::next(lines.begin(),pos.first+1),parts.begin(),parts.end());
 			processor->onLinesInserted(*this,pos.first,parts.size());
-			endPos.first+=parts.size();
+			endPos.first+=static_cast<uint32_t>(parts.size());
 		}
 	}
 	markForConsolidation(pos.first,endPos.first);
@@ -424,7 +424,7 @@ bool Textarea::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {
 	const bool ctrlPressed = getGUI().isCtrlPressed();
 	if(keyEvent.key == Util::UI::KEY_A && ctrlPressed) { // select all
 		moveCursor(std::make_pair(0,0));
-		moveCursor(std::make_pair(lines.size(),std::string::npos-1),true);
+		moveCursor(std::make_pair(static_cast<uint32_t>(lines.size()),std::string::npos-1),true);
 		return true;
 	}
 	else if(keyEvent.key == Util::UI::KEY_TAB) {
@@ -456,13 +456,13 @@ bool Textarea::onKeyEvent(const Util::UI::KeyboardEvent & keyEvent) {
 	} else if(keyEvent.key == Util::UI::KEY_PAGEUP) {
 		moveCursor(std::make_pair(std::max(0,static_cast<int>(cursor.first-getHeight()/lineHeight+2)),cursor.second),shiftPressed);
 	} else if(keyEvent.key == Util::UI::KEY_PAGEDOWN) {
-		moveCursor(std::make_pair(cursor.first+getHeight()/lineHeight-2,cursor.second),shiftPressed);
+		moveCursor(std::make_pair(static_cast<uint32_t>(cursor.first+getHeight()/lineHeight-2),cursor.second),shiftPressed);
 	} else if(keyEvent.key == Util::UI::KEY_DELETE) {
 		cursor_t pos2;
 		if(isTextSelected()) {
 			pos2 = selectionStart;
 		} else {
-			const int bytesToDelete = getNextCursorPos(getLine(cursor.first),cursor.second) - cursor.second;
+			const size_t bytesToDelete = getNextCursorPos(getLine(cursor.first),cursor.second) - cursor.second;
 			if(bytesToDelete>0 && cursor.second+bytesToDelete<=getLine(cursor.first).length()) // delete single codepoint in this row
 				pos2 = std::make_pair(cursor.first,cursor.second+bytesToDelete);
 			else // remove line break
@@ -615,7 +615,7 @@ void Textarea::consolidate(){
 }
 	
 void Textarea::updateScrollPos(){
-	const int maxScrollPos = getTextHeight()-getHeight();
+	const int maxScrollPos = static_cast<int>(getTextHeight()-getHeight());
 //	std::cout << "MaxScrollPos"<<maxScrollPos<<"\n";
 	if(maxScrollPos>0){
 		if(scrollBar.isNull()){
@@ -625,7 +625,7 @@ void Textarea::updateScrollPos(){
 												[this](Component *) {
 													if(scrollBar.isNotNull()) {
 														scrollTo(Geometry::Vec2(getScrollPos().x(),
-																				scrollBar->getScrollPos()));
+																				static_cast<float>(scrollBar->getScrollPos())));
 													}
 												})));
 			scrollBar->setExtLayout( 	ExtLayouter::POS_X_ABS|ExtLayouter::REFERENCE_X_RIGHT|ExtLayouter::ALIGN_X_RIGHT|
@@ -635,7 +635,7 @@ void Textarea::updateScrollPos(){
 			_addChild(scrollBar.get());
 		}
 		scrollBar->setMaxScrollPos(maxScrollPos);
-		scrollBar->setScrollPos( getScrollPos().y() );
+		scrollBar->setScrollPos( static_cast<uint32_t>(getScrollPos().y()) );
 	}else{
 		 if(scrollBar.isNotNull()){
 			getGUI().removeDataChangeListener(scrollBar.get(), 

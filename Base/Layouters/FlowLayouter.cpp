@@ -58,7 +58,7 @@ void FlowLayouter::layout(Util::WeakPointer<Component> component){
 		columnStarts.reserve(columnWidths.size());
 
 		// init columns' starting positions
-		float x=margin;
+		float x=static_cast<float>(margin);
 		columnStarts.push_back(x);
 
 		for(const auto & columnWidth : columnWidths) {
@@ -67,12 +67,12 @@ void FlowLayouter::layout(Util::WeakPointer<Component> component){
 		}
 	}
 	const bool autoBreak = getAutoBreak();
-	const int rightBorder = getMaximize() && container->hasParent() ? container->getParent()->getWidth() : container->getWidth();
+	const int rightBorder = static_cast<int>(getMaximize() && container->hasParent() ? container->getParent()->getWidth() : container->getWidth());
 
 	// reorder children
 	{
 		unsigned int columnNr=0;
-		Geometry::Vec2 cursor(columnStarts.front(),margin);
+		Geometry::Vec2 cursor(columnStarts.front(),static_cast<float>(margin));
 
 		float maxY=cursor.getY();
 		float maxX=0;

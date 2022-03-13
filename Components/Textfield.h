@@ -82,7 +82,7 @@ class Textfield: public Component {
 		int getCurrentOptionIndex()const 	{	return currentOptionIndex;	}
 		GUIAPI void setCurrentOptionIndex(int index);
 		bool hasOptions()const 				{	return countOptions()>0;	}
-		int countOptions()const 			{	return options.size();	}
+		int countOptions()const 			{	return static_cast<int>(options.size());	}
 };
 
 }

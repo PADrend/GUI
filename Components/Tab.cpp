@@ -220,11 +220,11 @@ void TabbedPanel::Tab::doLayout() {
 	if (isActiveTab()) {
 		shift = -2;
 	}
-	clientAreaPanel->setPosition(Geometry::Vec2(0,titleHeight+3));
+	clientAreaPanel->setPosition(Geometry::Vec2(0,static_cast<float>(titleHeight+3)));
 	clientAreaPanel->setSize(getWidth(),getHeight()-titleHeight-3);
 
-	titlePanel->setPosition(Geometry::Vec2(getTabTitlePos(),2+shift));
-	titlePanel->setSize(titlePanel->getWidth(),titleHeight-shift);
+	titlePanel->setPosition(Geometry::Vec2(getTabTitlePos(),static_cast<float>(2+shift)));
+	titlePanel->setSize(titlePanel->getWidth(),static_cast<float>(titleHeight-shift));
 
 	titleTextLabel->setPosition(Geometry::Vec2(2,2));
 	titleTextLabel->setSize(titlePanel->getLocalRect().getWidth()-4,titlePanel->getLocalRect().getHeight());

@@ -129,7 +129,7 @@ bool EditorPanel::onMouseMove(Component * /*component*/, const Util::UI::MotionE
 bool EditorPanel::onMouseButton(Component * /*component*/, const Util::UI::ButtonEvent & buttonEvent) {
 	if(buttonEvent.pressed && getGUI().isCtrlPressed()) {
 		if(buttonEvent.button == Util::UI::MOUSE_WHEEL_UP) {
-			float scale=0.8;
+			float scale=0.8f;
 			for(Component * child=getFirstChild();child!=nullptr;child=child->getNext()){
 				child->setPosition( child->getPosition()*scale);
 				child->setWidth(child->getWidth()*scale);

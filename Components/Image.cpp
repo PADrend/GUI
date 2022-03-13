@@ -34,8 +34,8 @@ Image::Image(GUI_Manager & _gui,
 			 flag_t _flags/*=0*/):
 		Component(_gui,_flags),
 		data(new ImageData(new Util::Bitmap(_bitmap))) {
-	setWidth(_bitmap.getWidth());
-	setHeight(_bitmap.getHeight());
+	setWidth(static_cast<float>(_bitmap.getWidth()));
+	setHeight(static_cast<float>(_bitmap.getHeight()));
 }
 
 //! (dtor)

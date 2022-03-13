@@ -151,8 +151,8 @@ void Style::initStyleManager(StyleManager & m){
 	m.setDefaultMouseCursor(PROPERTY_MOUSECURSOR_DEFAULT);
 
 	// misc
-	m.setGlobalValue(PROPERTY_KEY_REPEAT_DELAY_1 , 0.5 );
-	m.setGlobalValue(PROPERTY_KEY_REPEAT_DELAY_2 , 0.05 );
+	m.setGlobalValue(PROPERTY_KEY_REPEAT_DELAY_1 , 0.5f );
+	m.setGlobalValue(PROPERTY_KEY_REPEAT_DELAY_2 , 0.05f );
 
 }
 

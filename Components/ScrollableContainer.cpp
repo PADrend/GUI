@@ -87,7 +87,7 @@ void ScrollableContainer::doLayout() {
 														if(scrollPos.y() != vScrollBar->getScrollPos()) {
 															invalidateRegion();
 															invalidateLayout();
-															scrollPos.y(vScrollBar->getScrollPos());
+															scrollPos.y(static_cast<float>(vScrollBar->getScrollPos()));
 														}
 													}
 												})));
@@ -98,8 +98,8 @@ void ScrollableContainer::doLayout() {
 
 			_addChild(vScrollBar.get());
 		}
-		vScrollBar->setMaxScrollPos(maxScrollPos.y());
-		vScrollBar->setScrollPos(scrollPos.y());
+		vScrollBar->setMaxScrollPos(static_cast<uint32_t>(maxScrollPos.y()));
+		vScrollBar->setScrollPos(static_cast<uint32_t>(scrollPos.y()));
 	 }
 
 	if (maxScrollPos.x()<=0){
@@ -168,7 +168,7 @@ class ScrollableContainer_ScrollAnimation:public AnimationHandler{
 			}
 			ScrollableContainer * p= dynamic_cast<ScrollableContainer *>(getComponent());
 
-			for(float f=0.0;f<t-getStartTime();f+=0.01) // for every 10 ms
+			for(float f=0.0f;f<t-getStartTime();f+=0.01f) // for every 10 ms
 				p->scrollTo( (p->getScrollPos()*99.0f + targetPos)*0.01f);
 			return true;
 		}

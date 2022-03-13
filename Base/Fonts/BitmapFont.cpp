@@ -27,7 +27,7 @@ Util::Reference<BitmapFont> BitmapFont::createFont(const Util::FileName & fontFi
 	const auto charMap_utf32 = Util::StringUtils::utf8_to_utf32(charMap_utf8);
 	auto bitmapAndFontInfo = fontRenderer.createGlyphBitmap(fontSize,charMap_utf32);
 	Util::Reference<Util::Bitmap> bitmap = bitmapAndFontInfo.first;
-	if(bitmap->getPixelFormat().getNumComponents()!=4){ // alpha values are required!
+	if(bitmap->getPixelFormat().getComponentCount()!=4){ // alpha values are required!
 		const uint32_t width = bitmap->getWidth();
 		const uint32_t height = bitmap->getHeight();
 		Util::Reference<Util::Bitmap> convertedBitmap = new Util::Bitmap(width,height,Util::PixelFormat::RGBA);
@@ -58,7 +58,7 @@ Util::Reference<BitmapFont> BitmapFont::createFont(const Util::FileName & fontFi
 		font->setTabWidth(spaceGlyph.xAdvance*4);
 
 	for(const auto & kerningMapEntry : fontRenderer.createKerningMap(charMap_utf32))
-		font->setKerning(kerningMapEntry.first.first, kerningMapEntry.first.second, kerningMapEntry.second);
+		font->setKerning(kerningMapEntry.first.first, kerningMapEntry.first.second, static_cast<int16_t>(kerningMapEntry.second));
 	return font;
 }
 
@@ -123,9 +123,9 @@ void BitmapFont::renderText( const Vec2 & _pos, const std::string & text, const 
 			float dx = 0;
 			if(!type.isValid()){
 				if( codePoint.first == static_cast<uint32_t>('\t') ){ // tab
-					dx = tabWidth - static_cast<int>(pos.x() - _pos.x())%tabWidth;
+					dx = static_cast<float>(tabWidth - static_cast<int>(pos.x() - _pos.x())%tabWidth);
 				}else{
-					const Geometry::Rect r(static_cast<int>(pos.getX()+1) , static_cast<int>(pos.getY()+1) , 5, getLineHeight()-1);
+					const Geometry::Rect r(std::floor(pos.getX()+1.0f) , std::floor(pos.getY()+1.0f) , 5.0f, static_cast<float>(getLineHeight()-1));
 					Draw::drawLineRect(r,Colors::WHITE,false);
 					dx = 7.0;
 				}
@@ -134,10 +134,10 @@ void BitmapFont::renderText( const Vec2 & _pos, const std::string & text, const 
 				if(kerningIt!=kerning.end())
 					pos.x( pos.x()+kerningIt->second );
 				const Geometry::Rect rect = Geometry::Rect(
-												static_cast<int>(pos.getX()) + type.screenRect.getX() ,
-												static_cast<int>(pos.getY()) + type.screenRect.getY() ,
-												type.screenRect.getWidth() ,
-												type.screenRect.getHeight());
+												std::floor(pos.getX()) + static_cast<float>(type.screenRect.getX()) ,
+												std::floor(pos.getY()) + static_cast<float>(type.screenRect.getY()) ,
+												static_cast<float>(type.screenRect.getWidth()) ,
+												static_cast<float>(type.screenRect.getHeight()));
 
 				posAndUV.push_back(rect.getMinX());	posAndUV.push_back(rect.getMaxY());	posAndUV.push_back(type.uvRect.getMinX());	posAndUV.push_back(type.uvRect.getMaxY());
 				posAndUV.push_back(rect.getMaxX());	posAndUV.push_back(rect.getMaxY());	posAndUV.push_back(type.uvRect.getMaxX());	posAndUV.push_back(type.uvRect.getMaxY());
@@ -147,7 +147,7 @@ void BitmapFont::renderText( const Vec2 & _pos, const std::string & text, const 
 				posAndUV.push_back(rect.getMinX());	posAndUV.push_back(rect.getMinY());	posAndUV.push_back(type.uvRect.getMinX());	posAndUV.push_back(type.uvRect.getMinY());
 				posAndUV.push_back(rect.getMinX());	posAndUV.push_back(rect.getMaxY());	posAndUV.push_back(type.uvRect.getMinX());	posAndUV.push_back(type.uvRect.getMaxY());
 
-				dx = type.xAdvance;
+				dx = static_cast<float>(type.xAdvance);
 			}
 			pos.setX(pos.getX()+dx);
 		}
@@ -166,7 +166,7 @@ Vec2 BitmapFont::getRenderedTextSize( const std::string & text ){
 	float y = 0;
 
 	if(text.length() > 0)
-		y=getLineHeight();
+		y=static_cast<float>(getLineHeight());
 	
 	uint32_t prevChar = 0;
 	size_t cursor = 0;

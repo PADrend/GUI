@@ -190,18 +190,18 @@ class TooltipHandler : public Component {
 			switch(mode){
 				case ACTIVE:{
 					if(activeComponent.isNull()){
-						startingTime=Util::Timer::now();
+						startingTime=static_cast<float>(Util::Timer::now());
 						mode=SEARCHING;
 						invalidateRegion();
 					}
 					break;
 				}
 				case SEARCHING:{
-					startingTime=Util::Timer::now();
+					startingTime=static_cast<float>(Util::Timer::now());
 					break;
 				}
 				case INACTIVE:{
-					startingTime=Util::Timer::now();
+					startingTime=static_cast<float>(Util::Timer::now());
 					mode=SEARCHING;
 					invalidateRegion();
 					break;
@@ -234,14 +234,14 @@ class TooltipHandler : public Component {
 
 
 			Vec2 pos=activeComponent->getAbsPosition()+
-						Vec2(activeComponent->getWidth()*0.9+4,activeComponent->getHeight()-2);
+						Vec2(activeComponent->getWidth()*0.9f+4.0f,activeComponent->getHeight()-2.0f);
 			// outside the screen? -> move to the left side of the component
 			if(pos.getX()+ttSize.getWidth()>getGUI().getScreenRect().getWidth()){
 				pos.setX( activeComponent->getAbsPosition().getX()+2-ttSize.getWidth() );
 			}
 			// outside the screen? -> move to the top side of the component
 			if(pos.getY()+ttSize.getHeight()>getGUI().getScreenRect().getHeight()){
-				pos.setY( activeComponent->getAbsPosition().getY()+activeComponent->getHeight()*0.1-ttSize.getHeight() );
+				pos.setY( activeComponent->getAbsPosition().getY()+activeComponent->getHeight()*0.1f-ttSize.getHeight() );
 			}
 
 			setRect(Rect(pos.getX(),pos.getY(),ttSize.getWidth(),ttSize.getHeight()));
@@ -291,6 +291,10 @@ GUI_Manager::~GUI_Manager() {
 
 Rect GUI_Manager::getScreenRect()const{
 	return globalContainer->getLocalRect();
+}
+
+void GUI_Manager::setScreenSize(const Geometry::Vec2& size) {
+	globalContainer->setSize(size);
 }
 
 // ------------------------------------------------------------------------
@@ -425,7 +429,7 @@ bool GUI_Manager::handleEvent(const Util::UI::Event & e) {
 void GUI_Manager::enableKeyRepetition(const Util::UI::KeyboardEvent & keyEvent){
 	if(keyRepeatInfo.get()==nullptr || keyRepeatInfo->second.key != keyEvent.key){
 		keyRepeatInfo.reset( new std::pair<float,Util::UI::KeyboardEvent>(
-				Util::Timer::now()+ getGlobalValue(PROPERTY_KEY_REPEAT_DELAY_1),keyEvent) );
+				static_cast<float>(Util::Timer::now())+ getGlobalValue(PROPERTY_KEY_REPEAT_DELAY_1),keyEvent) );
 	}
 }
 void GUI_Manager::disableKeyRepetition(){
@@ -458,11 +462,12 @@ void GUI_Manager::display()
 			
 		#ifdef GUI_BACKEND_RENDERING
 			Geometry::Rect_i viewport = rc.getViewport();
-			globalContainer->setSize(viewport.getWidth(), viewport.getHeight());
-			Draw::beginDrawing(rc, Geometry::Vec2i(viewport.getWidth(),viewport.getHeight()));
+			//globalContainer->setSize(static_cast<float>(viewport.getWidth()), static_cast<float>(viewport.getHeight()));
+			Geometry::Vec2 renderScale(static_cast<float>(viewport.getWidth()) / globalContainer->getWidth(), static_cast<float>(viewport.getHeight()) / globalContainer->getHeight());
+			Draw::beginDrawing(rc, Geometry::Vec2i(viewport.getWidth(),viewport.getHeight()), renderScale);
 		#else // GUI_BACKEND_RENDERING
 			Geometry::Rect_i viewport = Draw::queryViewport();
-			globalContainer->setSize(viewport.getWidth(), viewport.getHeight());
+			globalContainer->setSize(static_cast<float>(viewport.getWidth()), static_cast<float>(viewport.getHeight()));
 			Draw::beginDrawing(Geometry::Vec2i(viewport.getWidth(),viewport.getHeight()));
 		#endif // GUI_BACKEND_RENDERING
 	}
@@ -513,7 +518,7 @@ void GUI_Manager::display()
 
 		//! key repetition \note !!! This is not the proper place to do this, as this may introduce side effects !!!!
 		if(keyRepeatInfo.get()!=nullptr && keyRepeatInfo->first < time){
-			keyRepeatInfo->first = time + getGlobalValue(PROPERTY_KEY_REPEAT_DELAY_2);
+			keyRepeatInfo->first = static_cast<float>(time) + getGlobalValue(PROPERTY_KEY_REPEAT_DELAY_2);
 			handleKeyEvent(keyRepeatInfo->second);
 		}
 	}
@@ -706,12 +711,12 @@ void GUI_Manager::cleanup(){
 
 void GUI_Manager::addAnimationHandler(AnimationHandler * h){
 	animationHandlerList.emplace_back(h);
-	h->setStartTime( Util::Timer::now() );
+	h->setStartTime( static_cast<float>(Util::Timer::now()) );
 }
 
 //! (internal)
 void GUI_Manager::executeAnimations(){
-	const float t = Util::Timer::now();
+	const float t = static_cast<float>(Util::Timer::now());
 	animationHandlerList_t animationHandlerList2;
 	animationHandlerList2.reserve( animationHandlerList.size() );
 	std::swap(animationHandlerList2,animationHandlerList);
